@@ -60,9 +60,9 @@ const { toggleTargetId } = Astro.props;
 	<button
 		type="button"
 		class="lighthouse"
-		aria-label="Click to reveal festival location"
+		aria-label="Click on the lighthouse"
 		aria-expanded="false"
-		title="Click for location"
+		title="Click on the lighthouse"
 	>
 		<!-- Tower SVG: classic Pacific coast station -->
 		<div class="lighthouse-tower">
@@ -98,7 +98,7 @@ const { toggleTargetId } = Astro.props;
 		<div class="beam">
 			<!-- Circle: at top of beam, sits on triangle's base -->
 			<div class="beam-circle">
-				<span class="location-text">Location: Powerhouse Park, Del Mar</span>
+				<span class="location-text">Click on the pirate ship!</span>
 			</div>
 			<!-- Triangle: flat edge at top (meets circle), point at bottom toward lighthouse -->
 			<div class="beam-light"></div>
@@ -220,7 +220,7 @@ const { toggleTargetId } = Astro.props;
 	}
 
 	.lighthouse:hover {
-		transform: scale(1.08);
+		transform: none;
 	}
 
 	/* ===== Tower SVG ===== */
@@ -244,13 +244,13 @@ const { toggleTargetId } = Astro.props;
 	}
 
 	/* ===== Beam container =====
-	   bottom: 78px fixed pivot (no float when tower scales);
+	   bottom: 55px fixed pivot (no float when tower scales);
 	   left: 50% + translateX(-50%) centers on lens;
 	   transform-origin 50% 100% = rotation from lantern */
 	.beam {
 		position: absolute;
 		left: 50%;
-		bottom: 78px;
+		bottom: 50px;
 		transform: translateX(-50%) translateY(12px);
 		transform-origin: 50% 100%;
 		display: flex;
@@ -311,9 +311,9 @@ const { toggleTargetId } = Astro.props;
 	/* ===== Spotlight bubble (circle with text) =====
 	   clamp() ensures legible size while scaling down on smaller devices */
 	.beam-circle {
-		width: clamp(90px, 22vw, 130px);
-		height: clamp(90px, 22vw, 130px);
-		transform: translateY(-2px);
+		width: clamp(72px, 18vw, 100px);
+		height: clamp(72px, 18vw, 100px);
+		transform: translateY(-8px);
 		border-radius: 50%;
 		background: radial-gradient(
 			circle at 35% 35%,
@@ -334,7 +334,7 @@ const { toggleTargetId } = Astro.props;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem 1.25rem;
+		padding: 0.65rem 0.85rem;
 	}
 
 	/* ===== Typography: premium festival/event look ===== */
@@ -367,10 +367,11 @@ const { toggleTargetId } = Astro.props;
 			bottom: 34px;
 		}
 		.lighthouse:hover {
-			transform: scale(1.05);
+			transform: none;
 		}
 		.beam {
-			bottom: 56px;
+			/* Bring beam anchor closer to lantern on mobile */
+			bottom: 52px;
 			left: 50%;
 		}
 		.lighthouse.shining .beam {
@@ -382,12 +383,12 @@ const { toggleTargetId } = Astro.props;
 		}
 		.beam-light {
 			width: 70px;
-			height: 95px;
+			height: 82px;
 		}
 		.beam-circle {
-			width: clamp(72px, 18vw, 88px);
-			height: clamp(72px, 18vw, 88px);
-			padding: 0.5rem 0.65rem;
+			width: clamp(62px, 15vw, 76px);
+			height: clamp(62px, 15vw, 76px);
+			padding: 0.4rem 0.5rem;
 		}
 		.location-text {
 			font-size: 0.72rem;
@@ -411,16 +412,16 @@ const { toggleTargetId } = Astro.props;
 			bottom: 30px;
 		}
 		.beam {
-			bottom: 48px;
+			bottom: 45px;
 		}
 		.beam-light {
 			width: 58px;
-			height: 78px;
+			height: 66px;
 		}
 		.beam-circle {
-			width: 64px;
-			height: 64px;
-			padding: 0.4rem 0.5rem;
+			width: 56px;
+			height: 56px;
+			padding: 0.3rem 0.4rem;
 		}
 		.location-text {
 			font-size: 0.65rem;
