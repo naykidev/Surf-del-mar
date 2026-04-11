@@ -595,16 +595,18 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 	.nav-tower {
 		margin-bottom: 0;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		justify-content: center; /* Ensure no internal padding is pushing it up */
-		padding: 0.75rem 1.1rem;
-		min-width: 98px;
+		justify-content: flex-start;
+		padding: 0.45rem 1.1rem 0.55rem;
+		min-width: 108px;
+		min-height: 52px;
 		transform: translateY(0);
 		color: var(--color-ink) !important;
 		font-weight: 800;
 		text-transform: uppercase;
-		font-size: 0.75rem;
-		letter-spacing: 0.1em;
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
 		text-decoration: none;
 		position: relative;
 		z-index: 2;
@@ -614,10 +616,13 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 	}
 
 	.nav-tower-text {
-		display: inline-block;
+		display: block;
 		position: relative;
 		z-index: 2;
-		/* Removed translateX to fix centering */
+		margin-top: auto;
+		padding-top: 0.15rem;
+		line-height: 1.1;
+		transform: translateY(-9px);
 	}
 
 	.nav-tower {
@@ -649,14 +654,14 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.12);
 	}
 
-	/* Square Window */
+	/* Square Window — lower-left, vertically aligned with “HOME” */
 	.nav-tower::before {
 		content: '';
 		position: absolute;
-		top: 32%;
-		left: 12%;
-		width: 20%;
-		height: 20%;
+		top: 44%;
+		left: 10%;
+		width: 17%;
+		height: 14%;
 		background: linear-gradient(165deg, #4a7c9e 0%, #2d5a7a 35%, #1a3d52 100%);
 		border: 1px solid rgba(0,0,0,0.2);
 		box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
