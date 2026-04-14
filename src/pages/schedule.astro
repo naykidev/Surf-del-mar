@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import type { ScheduleEvent } from '../lib/firebase';
+import ScheduleIntro from '../../content/calendar.md';
 
 const EVENT_CATEGORIES = ['General', 'Music', 'Film', 'Symposium', 'Reunion', 'Exhibition', 'Parade', 'Reception', 'Other'];
 
@@ -23,12 +24,21 @@ const initialEvents: ScheduleEvent[] = [
 ];
 ---
 
-<BaseLayout title="Festival Schedule" description="Surf Del Mar 4-day festival schedule — October 8–11, 2026.">
+<BaseLayout title="Festival Schedule" description="Surf Del Mar 4-day festival schedule — October 8–11, 2026." pageKey="schedule">
 	<section class="hero schedule-hero">
 		<div class="hero-content">
 			<span class="eyebrow">4-Day Event</span>
 			<h1 class="hero-title">Surf Del Mar Schedule</h1>
 			<p class="tagline">October 8–11, 2026</p>
+		</div>
+	</section>
+
+	<!-- Editable in Decap CMS: content/calendar.md (intro copy only; event grid uses Firebase / admin below) -->
+	<section class="schedule-cms-intro" aria-label="Schedule introduction">
+		<div class="container schedule-intro-inner">
+			<div class="schedule-intro-markdown">
+				<ScheduleIntro />
+			</div>
 		</div>
 	</section>
 
@@ -166,6 +176,94 @@ const initialEvents: ScheduleEvent[] = [
 			return null;
 		}
 
+		function parseCsvLine(line) {
+			const result = [];
+			let cur = '';
+			let inQuote = false;
+			for (let i = 0; i < line.length; i++) {
+				const c = line[i];
+				if (c === '"') {
+					if (inQuote && line[i + 1] === '"') {
+						cur += '"';
+						i++;
+						continue;
+					}
+					inQuote = !inQuote;
+					continue;
+				}
+				if (!inQuote && c === ',') {
+					result.push(cur.trim());
+					cur = '';
+					continue;
+				}
+				cur += c;
+			}
+			result.push(cur.trim());
+			return result;
+		}
+
+		function parseScheduleCsv(text) {
+			const lines = text.trim().split(/\r?\n/).filter(Boolean);
+			if (lines.length < 2) return null;
+			const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase().replace(/\s/g, ''));
+			const ix = (names) => {
+				for (const n of names) {
+					const j = header.indexOf(n.toLowerCase().replace(/\s/g, ''));
+					if (j >= 0) return j;
+				}
+				return -1;
+			};
+			const events = [];
+			const makeId = () => `ev-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+			for (let i = 1; i < lines.length; i++) {
+				const cols = parseCsvLine(lines[i]);
+				if (cols.length < 3) continue;
+				const get = (names) => {
+					const j = ix(names);
+					return j >= 0 ? cols[j] : '';
+				};
+				events.push({
+					id: get(['id']) || makeId(),
+					date: get(['date']) || '2026-10-08',
+					startTime: get(['starttime', 'start']) || '10:00',
+					endTime: get(['endtime', 'end']) || '12:00',
+					title: get(['title']) || 'Untitled',
+					venue: get(['venue']) || 'TBD',
+					category: get(['category']) || 'General',
+					description: get(['description', 'desc']) || '',
+					advocacy: /^(true|1|yes)$/i.test(get(['advocacy'])),
+				});
+			}
+			return events;
+		}
+
+		function eventsToCsv(events) {
+			const head = 'date,startTime,endTime,title,venue,category,description,advocacy';
+			const esc = (s) => `"${String(s ?? '').replace(/"/g, '""')}"`;
+			const rows = events.map((ev) =>
+				[ev.date, ev.startTime, ev.endTime, ev.title, ev.venue, ev.category, ev.description ?? '', ev.advocacy ? 'true' : 'false']
+					.map(esc)
+					.join(',')
+			);
+			return [head, ...rows].join('\n');
+		}
+
+		function normalizeImportedEvents(arr) {
+			const makeId = () => `ev-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+			if (!Array.isArray(arr)) return [];
+			return arr.map((raw) => ({
+				id: raw.id && String(raw.id).trim() ? String(raw.id) : makeId(),
+				date: raw.date || '2026-10-08',
+				startTime: raw.startTime || '10:00',
+				endTime: raw.endTime || '12:00',
+				title: raw.title || 'Untitled',
+				venue: raw.venue || 'TBD',
+				category: raw.category || 'General',
+				description: raw.description || '',
+				advocacy: !!raw.advocacy,
+			}));
+		}
+
 		const FESTIVAL_DATES = ['2026-10-08', '2026-10-09', '2026-10-10', '2026-10-11'];
 
 		function render(events, options) {
@@ -204,12 +302,21 @@ const initialEvents: ScheduleEvent[] = [
 						<button type="button" class="btn btn-outline" id="schedule-undo" title="Undo">Undo</button>
 						<button type="button" class="btn btn-outline" id="schedule-redo" title="Redo">Redo</button>
 						<button type="button" class="btn btn-primary" id="schedule-add-event">Add event</button>
+						<button type="button" class="btn btn-outline" id="schedule-export-csv" title="Download CSV">Export CSV</button>
+						<label class="btn btn-outline schedule-import-csv-label" title="Replace all events from a CSV file">Import CSV
+							<input type="file" id="schedule-import-csv" accept=".csv,text/csv,text/plain" hidden />
+						</label>
+						<button type="button" class="btn btn-outline" id="schedule-apply-json" title="Replace with JSON from box below">Apply JSON</button>
 						<button type="button" class="btn btn-outline" id="schedule-reset">Reset to original</button>
 						<button type="button" class="btn btn-primary" id="schedule-save">
 							<span class="schedule-save-text">Save changes</span>
 							<span class="schedule-spinner" hidden aria-hidden="true"></span>
 						</button>
 						<span class="schedule-last-saved" id="schedule-last-saved"></span>
+					</div>
+					<div class="schedule-bulk-panel">
+						<label class="schedule-bulk-label">Bulk edit: paste a JSON array of events (same fields as in Firestore), then Apply JSON — or use Import CSV (header row: date,startTime,endTime,title,venue,category,description,advocacy)</label>
+						<textarea id="schedule-json-bulk" class="schedule-bulk-json" rows="4" spellcheck="false" placeholder='[{"id":"ev-1","date":"2026-10-08","startTime":"10:00","endTime":"12:00","title":"…","venue":"…","category":"General","description":"","advocacy":false}]'></textarea>
 					</div>`;
 			}
 			if (options.lastUpdated) {
@@ -455,6 +562,54 @@ const initialEvents: ScheduleEvent[] = [
 				}
 			});
 
+			document.getElementById('schedule-export-csv')?.addEventListener('click', () => {
+				const csv = eventsToCsv(state.events);
+				const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = 'surf-del-mar-schedule.csv';
+				a.click();
+				URL.revokeObjectURL(a.href);
+			});
+
+			document.getElementById('schedule-import-csv')?.addEventListener('change', (e) => {
+				const input = e.target;
+				const file = input && input.files && input.files[0];
+				if (!file) return;
+				const reader = new FileReader();
+				reader.onload = () => {
+					const text = String(reader.result || '');
+					const parsed = parseScheduleCsv(text);
+					if (!parsed || !parsed.length) {
+						alert('Could not parse CSV. Use header: date,startTime,endTime,title,venue,category,description,advocacy');
+						return;
+					}
+					if (!confirm(`Replace all ${state.events.length} events with ${parsed.length} from CSV?`)) return;
+					pushState();
+					setEvents(parsed);
+				};
+				reader.readAsText(file);
+				input.value = '';
+			});
+
+			document.getElementById('schedule-apply-json')?.addEventListener('click', () => {
+				const ta = document.getElementById('schedule-json-bulk');
+				const raw = ta && 'value' in ta ? ta.value : '';
+				try {
+					const arr = JSON.parse(raw || '[]');
+					const next = normalizeImportedEvents(arr);
+					if (!next.length) {
+						alert('JSON must be a non-empty array of event objects.');
+						return;
+					}
+					if (!confirm(`Replace all events with ${next.length} from JSON?`)) return;
+					pushState();
+					setEvents(next);
+				} catch (err) {
+					alert('Invalid JSON: ' + (err instanceof Error ? err.message : String(err)));
+				}
+			});
+
 			// Drag and drop
 			let draggedEl = null;
 			let draggedId = null;
@@ -583,6 +738,53 @@ const initialEvents: ScheduleEvent[] = [
 		margin: 0;
 		font-weight: 500;
 	}
+
+	/* Decap CMS: content/calendar.md — intro only */
+	.schedule-cms-intro {
+		position: relative;
+		z-index: 1;
+		padding: 0 2rem 1.5rem;
+		background: linear-gradient(to bottom, #dbeafe, var(--color-foam));
+	}
+	.schedule-intro-inner {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+	.schedule-intro-markdown {
+		background: rgba(255, 255, 255, 0.88);
+		border: 1px solid rgba(44, 82, 130, 0.12);
+		border-radius: 12px;
+		padding: 1.25rem 1.5rem;
+		font-size: 1rem;
+		line-height: 1.65;
+		color: var(--surf-blue-dark);
+	}
+	.schedule-intro-markdown :global(h1),
+	.schedule-intro-markdown :global(h2),
+	.schedule-intro-markdown :global(h3) {
+		font-family: var(--font-display);
+		margin: 0 0 0.5rem 0;
+		font-size: 1.35rem;
+		font-weight: 600;
+		color: var(--surf-blue-dark);
+	}
+	.schedule-intro-markdown :global(p) {
+		margin: 0 0 0.75rem 0;
+	}
+	.schedule-intro-markdown :global(p:last-child) {
+		margin-bottom: 0;
+	}
+	.schedule-intro-markdown :global(ul),
+	.schedule-intro-markdown :global(ol) {
+		margin: 0.5rem 0 0.75rem 1.25rem;
+		padding: 0;
+	}
+	.schedule-intro-markdown :global(a) {
+		color: var(--surf-blue-mid);
+		font-weight: 600;
+		text-decoration: underline;
+	}
+
 	.schedule-content {
 		position: relative;
 		z-index: 1;
@@ -629,6 +831,37 @@ const initialEvents: ScheduleEvent[] = [
 		font-size: 0.8rem;
 		color: var(--surf-blue-mid);
 		margin-left: auto;
+	}
+	.schedule-import-csv-label {
+		cursor: pointer;
+		margin: 0;
+		display: inline-flex;
+		align-items: center;
+	}
+	.schedule-bulk-panel {
+		margin: -1.5rem 0 2rem;
+		padding: 1rem 1.25rem;
+		background: rgba(255, 255, 255, 0.55);
+		border: 1px solid rgba(44, 82, 130, 0.12);
+		border-radius: 12px;
+	}
+	.schedule-bulk-label {
+		display: block;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--surf-blue-mid);
+		margin-bottom: 0.5rem;
+		line-height: 1.45;
+	}
+	.schedule-bulk-json {
+		width: 100%;
+		font-family: ui-monospace, monospace;
+		font-size: 0.75rem;
+		padding: 0.65rem 0.75rem;
+		border: 1px solid rgba(44, 82, 130, 0.2);
+		border-radius: 8px;
+		resize: vertical;
+		min-height: 5rem;
 	}
 	.schedule-spinner {
 		display: inline-block;

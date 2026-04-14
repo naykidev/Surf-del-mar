@@ -1,0 +1,13 @@
+/**
+ * Shared external URLs (header, footer, homepage donate block).
+ * Override Zeffy with PUBLIC_ZEFFY_DONATION_URL in Netlify or .env.
+ */
+export const HISTORICAL_SOCIETY_URL = 'https://delmarhistoricalsociety.org/';
+
+const ZEFFY_FALLBACK = 'https://www.zeffy.com/en-US/donation-form/help-keep-mhs-surf-going';
+
+export function getZeffyDonationUrl(): string {
+	const fromEnv = import.meta.env.PUBLIC_ZEFFY_DONATION_URL;
+	if (typeof fromEnv === 'string' && fromEnv.trim()) return fromEnv.trim();
+	return ZEFFY_FALLBACK;
+}

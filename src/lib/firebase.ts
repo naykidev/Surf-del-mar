@@ -4,6 +4,7 @@
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import type { SiteConfigDoc } from './site-config-types';
 
 const firebaseConfig = {
   apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
@@ -79,6 +80,19 @@ export async function getImageOverrides(): Promise<Record<string, string> | null
     const snap = await getDoc(doc(db, 'content', 'imageOverrides'));
     const data = snap.data();
     return (data?.overrides as Record<string, string>) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Site-wide config: backgrounds, dynamic blocks, CMS pages (content/siteConfig). */
+export async function getSiteConfig(): Promise<SiteConfigDoc | null> {
+  if (!import.meta.env.PUBLIC_FIREBASE_PROJECT_ID) return null;
+  try {
+    const db = getFirestore(getFirebaseApp());
+    const snap = await getDoc(doc(db, 'content', 'siteConfig'));
+    if (!snap.exists()) return null;
+    return snap.data() as SiteConfigDoc;
   } catch {
     return null;
   }

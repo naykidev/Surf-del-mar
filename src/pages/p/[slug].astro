@@ -1,0 +1,64 @@
+---
+/**
+ * CMS-driven pages: content blocks stored in Firestore (content/siteConfig.dynamicBlocks["p-{slug}"]).
+ * Add slugs to Netlify env PUBLIC_CMS_PAGE_SLUGS (comma-separated) and redeploy to generate routes.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DynamicPageBlocks from '../../components/DynamicPageBlocks.astro';
+
+export function getStaticPaths() {
+	const raw = import.meta.env.PUBLIC_CMS_PAGE_SLUGS || 'info';
+	const slugs = raw
+		.split(',')
+		.map((s) => s.trim())
+		.filter(Boolean);
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const title = (slug || 'page')
+	.split('-')
+	.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+	.join(' ');
+const pageKey = `p-${slug}`;
+---
+
+<BaseLayout title={title} description={`${title} — Surf Del Mar`} pageKey={pageKey}>
+	<section class="cms-page-hero">
+		<div class="cms-page-inner">
+			<h1 class="cms-page-title">{title}</h1>
+			<p class="cms-page-lead">Use the dynamic content tools when logged in as admin to add text and images. Set <code>PUBLIC_CMS_PAGE_SLUGS</code> in Netlify to include this slug.</p>
+		</div>
+	</section>
+	<DynamicPageBlocks pageKey={pageKey} />
+</BaseLayout>
+
+<style>
+	.cms-page-hero {
+		padding: 4rem 1.5rem 2rem;
+		text-align: center;
+		background: linear-gradient(180deg, #dbeafe, var(--color-foam));
+	}
+	.cms-page-inner {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+	.cms-page-title {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		margin: 0 0 0.5rem;
+		color: var(--color-ink);
+	}
+	.cms-page-lead {
+		margin: 0;
+		color: var(--color-sepia);
+		font-size: 0.95rem;
+		line-height: 1.55;
+	}
+	.cms-page-lead code {
+		font-size: 0.8rem;
+		padding: 0.1rem 0.25rem;
+		background: rgba(255, 255, 255, 0.7);
+		border-radius: 4px;
+	}
+</style>

@@ -1,13 +1,18 @@
 ---
 import AdminLoginButton from '../components/AdminLoginButton.astro';
 import AdminBar from '../components/AdminBar.astro';
+import { HISTORICAL_SOCIETY_URL, getZeffyDonationUrl } from '../config/siteLinks';
 
 interface Props {
 	title: string;
 	description?: string;
+	/** For Firestore page background + dynamic blocks key; e.g. home, surfing-festival. Auto-derived from URL if omitted. */
+	pageKey?: string;
 }
 
-const { title, description = "Preserving and celebrating the history of Del Mar, California" } = Astro.props;
+const { title, description = "Preserving and celebrating the history of Del Mar, California", pageKey = '' } = Astro.props;
+
+const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 ---
 
 <!DOCTYPE html>
@@ -24,7 +29,7 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 		<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
 		<script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
 	</head>
-	<body>
+	<body data-page-key={pageKey}>
 		<AdminBar />
 		<div class="texture-overlay" aria-hidden="true"></div>
 		<div class="credits-bar" role="contentinfo">
@@ -33,7 +38,13 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 		<header>
 			<nav>
 				<div class="nav-brand">
-					<a href="/" class="logo">
+					<a
+						href={HISTORICAL_SOCIETY_URL}
+						class="logo"
+						target="_blank"
+						rel="noopener noreferrer"
+						title="Del Mar Historical Society"
+					>
 						<img src="/logo.png" alt="" class="logo-placeholder" width="48" height="48" />
 						<span class="logo-text">Del Mar Historical Society</span>
 					</a>
@@ -83,6 +94,9 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 								</a>
 							</div>
 						</li>
+						<li>
+							<a href={ZEFFY_DONATION_URL} class="nav-donate" target="_blank" rel="noopener noreferrer">Donate</a>
+						</li>
 					</ul>
 					<AdminLoginButton />
 				</div>
@@ -119,6 +133,7 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 								<span class="nav-sponsors-text">Sponsors</span>
 							</a>
 						</div>
+						<a href={ZEFFY_DONATION_URL} class="nav-donate nav-donate-drawer" target="_blank" rel="noopener noreferrer">Donate</a>
 					</div>
 					<div class="nav-drawer-admin">
 						<AdminLoginButton />
@@ -160,7 +175,17 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 						<circle cx="26" cy="20" r="2" fill="#2d5c2d" />
 					</svg>
 				</span>
-				<p>© {new Date().getFullYear()} Surf Del Mar. Preserving our coastal heritage.</p>
+				<p class="footer-copyline">
+					© {new Date().getFullYear()} Surf Del Mar. Preserving our coastal heritage.
+					<span class="footer-link-sep" aria-hidden="true"> · </span>
+					<a href={ZEFFY_DONATION_URL} class="footer-donate" target="_blank" rel="noopener noreferrer"
+						>Donate</a
+					>
+					<span class="footer-link-sep" aria-hidden="true"> · </span>
+					<a href={HISTORICAL_SOCIETY_URL} class="footer-dmhs" target="_blank" rel="noopener noreferrer"
+						>Del Mar Historical Society</a
+					>
+				</p>
 				<span class="footer-poppy footer-poppy-right" aria-hidden="true">
 					<svg class="poppy-svg poppy-svg-mirror" viewBox="0 0 52 48" xmlns="http://www.w3.org/2000/svg" width="44" height="40" fill="none">
 						<defs>
@@ -220,12 +245,36 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 			</div>
 		</div>
 
+		<div id="page-settings-modal" class="page-settings-modal" role="dialog" aria-labelledby="page-settings-title" aria-modal="true" hidden>
+			<div class="page-settings-overlay"></div>
+			<div class="page-settings-box">
+				<h2 id="page-settings-title" class="page-settings-title">Page background</h2>
+				<p class="page-settings-hint">Choose a preset or enter a hex color. Save applies to this page only.</p>
+				<div id="page-settings-presets" class="page-settings-presets"></div>
+				<label class="page-settings-custom-label">
+					Custom hex
+					<input type="text" id="page-settings-custom" class="page-settings-custom" placeholder="#e5f0f2" maxlength="7" />
+				</label>
+				<div class="page-settings-actions">
+					<button type="button" class="image-change-btn image-change-no" id="page-settings-close">Close</button>
+					<button type="button" class="image-change-btn image-change-yes" id="page-settings-save">Save</button>
+				</div>
+			</div>
+		</div>
+
 		<script>
 			import { initAdminImages } from '../lib/admin-images';
 			import { initEditableText } from '../lib/admin-editable-text';
 			import { getMaintenanceMode } from '../lib/firebase';
+			import { applyPageBackground, initPageSettingsModal, pathnameToPageKey } from '../lib/page-settings-client';
 			initAdminImages();
 			initEditableText();
+
+			const resolvedPageKey =
+				(document.body?.dataset.pageKey && document.body.dataset.pageKey.trim()) ||
+				pathnameToPageKey(window.location.pathname);
+			applyPageBackground(resolvedPageKey);
+			initPageSettingsModal(resolvedPageKey);
 			getMaintenanceMode().then((enabled) => {
 				if (enabled && window.location.pathname !== '/maintenance/') {
 					window.location.replace('/maintenance/');
@@ -550,6 +599,34 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 	nav a:hover {
 		opacity: 0.9;
 		color: var(--color-active);
+	}
+
+	.nav-donate {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.35rem 0.9rem;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--color-cream);
+		background: rgba(255, 255, 255, 0.14);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: 999px;
+		text-decoration: none;
+		transition: background 0.2s ease, opacity 0.2s;
+	}
+	.nav-donate:hover {
+		opacity: 1;
+		background: rgba(255, 255, 255, 0.26);
+		color: var(--color-cream);
+	}
+	.nav-donate-drawer {
+		display: block;
+		text-align: center;
+		margin-top: 0.5rem;
+		padding: 0.75rem;
+		border-radius: 10px;
 	}
 
 	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, and Sponsors */
@@ -899,6 +976,25 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 		margin: 0;
 	}
 
+	.footer-copyline {
+		line-height: 1.55;
+	}
+
+	.footer-donate,
+	.footer-dmhs {
+		color: var(--color-cream);
+		font-weight: 600;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.footer-donate:hover,
+	.footer-dmhs:hover,
+	.footer-donate:focus-visible,
+	.footer-dmhs:focus-visible {
+		color: var(--color-foam);
+	}
+
 	.footer-poppy {
 		display: inline-flex;
 		align-items: center;
@@ -1149,5 +1245,85 @@ const { title, description = "Preserving and celebrating the history of Del Mar,
 	}
 	.admin-toast[hidden] {
 		display: none !important;
+	}
+
+	.page-settings-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 10002;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+	}
+	.page-settings-modal[hidden] {
+		display: none !important;
+	}
+	.page-settings-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+	}
+	.page-settings-box {
+		position: relative;
+		background: var(--color-cream);
+		border-radius: 12px;
+		padding: 1.25rem 1.5rem;
+		max-width: 420px;
+		width: 100%;
+		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+	}
+	.page-settings-title {
+		margin: 0 0 0.5rem 0;
+		font-size: 1.15rem;
+		font-family: var(--font-display);
+		color: var(--color-ink);
+	}
+	.page-settings-hint {
+		margin: 0 0 1rem 0;
+		font-size: 0.85rem;
+		color: var(--color-sepia);
+		line-height: 1.45;
+	}
+	.page-settings-presets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+	.page-settings-preset {
+		min-width: 5rem;
+		min-height: 2.5rem;
+		padding: 0.35rem 0.5rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: 8px;
+		cursor: pointer;
+		color: var(--color-ink);
+	}
+	.page-settings-preset--default {
+		background: var(--color-cream) !important;
+	}
+	.page-settings-custom-label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		margin-bottom: 1rem;
+	}
+	.page-settings-custom {
+		padding: 0.5rem 0.65rem;
+		font-size: 1rem;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		border-radius: 8px;
+		font-family: inherit;
+	}
+	.page-settings-actions {
+		display: flex;
+		gap: 0.75rem;
+		justify-content: flex-end;
 	}
 </style>

@@ -4,6 +4,7 @@
 <div id="admin-bar" class="admin-bar" role="banner" aria-label="Admin toolbar" hidden>
 	<span class="admin-bar-label">You're editing</span>
 	<nav class="admin-bar-nav">
+		<button type="button" class="admin-bar-link admin-bar-btn" id="admin-page-settings-btn">Page settings</button>
 		<a href="/schedule/" class="admin-bar-link">Edit calendar</a>
 		<a href="/admin/memories/" class="admin-bar-link">Manage memories</a>
 		<a href="/admin/maintenance/" class="admin-bar-link">Maintenance mode</a>
@@ -61,6 +62,13 @@
 		align-items: center;
 		gap: 1rem;
 		flex-wrap: wrap;
+	}
+	.admin-bar-btn {
+		font-family: inherit;
+		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
 	}
 	.admin-bar-link {
 		color: var(--color-cream);

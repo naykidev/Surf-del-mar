@@ -1,0 +1,114 @@
+---
+interface Props {
+	/** Short id: home, surfing-festival, surfers-reunion, etc. */
+	pageKey: string;
+}
+const { pageKey } = Astro.props;
+---
+
+<div class="dynamic-page-blocks" data-dynamic-page={pageKey}>
+	<div class="dynamic-blocks-mount"></div>
+</div>
+
+<script>
+	import { initDynamicPageBlocks } from '../lib/dynamic-blocks-client';
+
+	document.querySelectorAll('[data-dynamic-page]').forEach((root) => {
+		const key = root.getAttribute('data-dynamic-page');
+		if (key) initDynamicPageBlocks(root as HTMLElement, key);
+	});
+</script>
+
+<style is:global>
+	.dynamic-page-blocks {
+		max-width: 900px;
+		margin: 0 auto 2rem;
+		padding: 0 1.5rem;
+	}
+	.dynamic-blocks-admin-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+		padding: 0.65rem 0.85rem;
+		margin-bottom: 1rem;
+		background: rgba(26, 46, 46, 0.06);
+		border: 1px dashed rgba(26, 46, 46, 0.2);
+		border-radius: 8px;
+		font-size: 0.8rem;
+	}
+	.dynamic-blocks-admin-label {
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--color-ink);
+		margin-right: 0.25rem;
+	}
+	.btn-dyn {
+		padding: 0.35rem 0.65rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border-radius: 6px;
+		border: 1px solid var(--color-sand-dark);
+		background: var(--color-cream);
+		cursor: pointer;
+	}
+	.btn-dyn:hover {
+		background: #fff;
+	}
+	.dynamic-blocks-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+	.dynamic-block {
+		position: relative;
+		padding: 1rem 1.25rem;
+		background: rgba(255, 255, 255, 0.65);
+		border-radius: 10px;
+		border: 1px solid rgba(26, 46, 46, 0.08);
+	}
+	.dynamic-block--align-left .dynamic-block-figure,
+	.dynamic-block--align-left .dynamic-block-text {
+		text-align: left;
+		margin-right: auto;
+	}
+	.dynamic-block--align-center .dynamic-block-figure,
+	.dynamic-block--align-center .dynamic-block-text {
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.dynamic-block--align-right .dynamic-block-figure,
+	.dynamic-block--align-right .dynamic-block-text {
+		text-align: right;
+		margin-left: auto;
+	}
+	.dynamic-block-figure {
+		margin: 0;
+		max-width: 100%;
+	}
+	.dynamic-block-figure img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+		border-radius: 8px;
+	}
+	.dynamic-block-text {
+		font-family: var(--font-body);
+		line-height: 1.65;
+		color: var(--color-ink);
+	}
+	.dynamic-block-delete {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		font-size: 0.7rem;
+		padding: 0.2rem 0.45rem;
+		border-radius: 4px;
+		border: 1px solid #b91c1c;
+		background: #fff;
+		color: #b91c1c;
+		cursor: pointer;
+	}
+</style>

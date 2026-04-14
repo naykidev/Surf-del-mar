@@ -11,15 +11,16 @@ public_folder: "/assets/images"
 locale: "en"
 
 collections:
+  # Renders on /schedule/ above the Firebase event grid (see schedule.astro). Not the grid itself.
   - name: "calendar"
-    label: "Calendar"
+    label: "Schedule page"
     files:
-      - name: "schedule"
-        label: "Festival Schedule"
+      - name: "schedule_intro"
+        label: "Intro text (above schedule)"
         file: "content/calendar.md"
         fields:
-          - { label: "Title", name: "title", widget: "string", default: "Festival Schedule" }
-          - { label: "Body", name: "body", widget: "markdown" }
+          - { label: "Title (optional heading)", name: "title", widget: "string", default: "Schedule page intro" }
+          - { label: "Intro", name: "body", widget: "markdown", hint: "Shown at the top of /schedule/. Event list/times use the schedule admin on that page." }
 
   - name: "photos"
     label: "Photos"

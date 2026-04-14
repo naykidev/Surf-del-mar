@@ -23,6 +23,10 @@ Runs at `localhost:4321`.
 
 Astro, coastal vintage design. Long-scroll event template with hero, reunion section, schedule, and sponsors.
 
+## Editing content (for organizers)
+
+See **[docs/CONTENT_EDITING.md](./docs/CONTENT_EDITING.md)** for Decap CMS vs inline editor vs schedule admin, Zeffy URL, and adding pages.
+
 ## Firebase + Netlify (permanent save)
 
 Schedule and image overrides are stored in **Firebase Firestore** only (no Storage) and written via **Netlify Functions**, so edits persist for everyone.

@@ -18,6 +18,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    match /content/siteConfig {
+      allow read: if true;
+      allow write: if false;
+    }
     // Shared memories: public read; writes only via server (Netlify function)
     match /sharedMemories/{id} {
       allow read: if true;

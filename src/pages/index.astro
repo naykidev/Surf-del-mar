@@ -1,8 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DynamicPageBlocks from '../components/DynamicPageBlocks.astro';
+import { getZeffyDonationUrl } from '../config/siteLinks';
+
+const zeffyDonateUrl = getZeffyDonationUrl();
 ---
 
-<BaseLayout title="Surf Del Mar" description="Celebrating the sport and the culture. Preserving the stories and the spirit. Del Mar Historical Society Surfing Festival.">
+<BaseLayout
+	title="Surf Del Mar"
+	description="Celebrating the sport and the culture. Preserving the stories and the spirit. Del Mar Historical Society Surfing Festival."
+	pageKey="home"
+>
 	<!-- Hero: full-screen with sunset/surfer background -->
 	<section class="hero-long" aria-label="Surf Del Mar Festival">
 		<img
@@ -73,6 +81,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					<p data-editable="home.features.5">Meet authors who have written about the sport and culture of surfing and have them sign your book at the Surfwriter's Book Fair</p>
 				</li>
 			</ul>
+		</div>
+	</section>
+
+	<DynamicPageBlocks pageKey="home" />
+
+	<!-- Support / donate (Zeffy); copy editable when logged in as admin -->
+	<section class="support-section" aria-labelledby="support-heading">
+		<div class="support-inner">
+			<h2 id="support-heading" class="support-heading" data-editable="home.support.heading">Support Surf Del Mar</h2>
+			<p class="support-text" data-editable="home.support.body">
+				Help us keep this festival and our coastal heritage programs going. Donations are processed securely through Zeffy.
+			</p>
+			<a
+				href={zeffyDonateUrl}
+				class="btn-support"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				Donate with Zeffy
+			</a>
 		</div>
 	</section>
 
@@ -365,6 +393,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		margin: 0;
 	}
 
+	/* --- Support / donate --- */
+	.support-section {
+		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-cream) 100%);
+		padding: 3.5rem 2rem;
+		text-align: center;
+		border-top: 1px solid rgba(26, 46, 46, 0.08);
+		border-bottom: 1px solid rgba(26, 46, 46, 0.06);
+	}
+
+	.support-inner {
+		max-width: 560px;
+		margin: 0 auto;
+	}
+
+	.support-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 4vw, 2.25rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 1rem 0;
+		line-height: 1.2;
+	}
+
+	.support-text {
+		font-family: var(--font-body);
+		font-size: 1.05rem;
+		line-height: 1.65;
+		color: var(--color-sepia);
+		margin: 0 0 1.5rem 0;
+	}
+
+	.btn-support {
+		display: inline-block;
+		padding: 0.95rem 2rem;
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--color-ink);
+		background: var(--color-cream);
+		border: 2px solid var(--color-sand-dark);
+		border-radius: 50px;
+		box-shadow: 0 2px 14px rgba(30, 122, 122, 0.2);
+		transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
+	}
+
+	.btn-support:hover {
+		transform: translateY(-2px);
+		background: #fff;
+		box-shadow: 0 6px 22px rgba(30, 122, 122, 0.28);
+	}
+
 	/* --- Final CTA --- */
 	.cta-section {
 		background: linear-gradient(180deg, var(--color-foam) 0%, var(--color-sand) 100%);
@@ -448,6 +530,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		}
 		.feature-item p {
 			font-size: 0.95rem;
+		}
+		.support-section {
+			padding: 2.5rem 1rem;
+		}
+		.support-text {
+			font-size: 1rem;
+		}
+		.btn-support {
+			min-height: 48px;
+			padding: 0.85rem 1.75rem;
+			font-size: 0.88rem;
 		}
 		.cta-section {
 			padding: 2.5rem 1rem;
