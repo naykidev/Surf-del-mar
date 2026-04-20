@@ -2,6 +2,7 @@
  * Client: render dynamic blocks for a page + admin add/remove/upload.
  */
 import { getSiteConfig } from './firebase';
+import { readResponseJson } from './read-response-json';
 import type { DynamicBlock, DynamicBlockAlign } from './site-config-types';
 
 const SAVE_URL = '/.netlify/functions/save-site-config';
@@ -40,7 +41,12 @@ async function saveBlocks(pageKey: string, blocks: DynamicBlock[]): Promise<bool
         patch: { dynamicBlocks: { [pageKey]: blocks } },
       }),
     });
-    const data = (await res.json()) as { ok?: boolean; error?: string };
+    const parsed = await readResponseJson<{ ok?: boolean; error?: string }>(res);
+    if (!parsed.ok) {
+      alert('Save failed: ' + parsed.message);
+      return false;
+    }
+    const data = parsed.data;
     if (res.ok && data.ok) {
       blockState[pageKey] = blocks;
       window.showAdminToast?.('Blocks saved.');
@@ -153,7 +159,12 @@ function attachAdminDelegates(container: HTMLElement, mount: HTMLElement, pageKe
                 contentType,
               }),
             });
-            const udata = (await up.json()) as { url?: string; error?: string };
+            const upParsed = await readResponseJson<{ url?: string; error?: string }>(up);
+            if (!upParsed.ok) {
+              alert('Upload failed: ' + upParsed.message);
+              return;
+            }
+            const udata = upParsed.data;
             if (!up.ok || !udata.url) {
               alert(udata.error || 'Image upload failed');
               return;

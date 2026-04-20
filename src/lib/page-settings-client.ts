@@ -2,6 +2,7 @@
  * Page background from Firestore siteConfig.pageBackgrounds[pageKey] + modal to edit (admin).
  */
 import { getSiteConfig } from './firebase';
+import { readResponseJson } from './read-response-json';
 
 const SAVE_URL = '/.netlify/functions/save-site-config';
 
@@ -50,19 +51,24 @@ export function initPageSettingsModal(pageKey: string): void {
 	const customInput = document.getElementById('page-settings-custom') as HTMLInputElement | null;
 	const presetWrap = document.getElementById('page-settings-presets');
 
-	if (!modal || !openBtn || !presetWrap) return;
+	if (!modal) return;
+	if (!openBtn) return;
+	if (!presetWrap) return;
+
+	/** Narrowed for nested callbacks (TS does not keep `modal` non-null inside closures). */
+	const modalRoot: HTMLElement = modal;
 
 	let selectedHex = '';
 
 	function open() {
-		modal.hidden = false;
+		modalRoot.hidden = false;
 		getSiteConfig().then((cfg) => {
 			selectedHex = cfg?.pageBackgrounds?.[pageKey] ?? '';
 			if (customInput) customInput.value = selectedHex.startsWith('#') ? selectedHex : '';
 		});
 	}
 	function close() {
-		modal.hidden = true;
+		modalRoot.hidden = true;
 	}
 
 	openBtn.addEventListener('click', () => {
@@ -70,7 +76,7 @@ export function initPageSettingsModal(pageKey: string): void {
 		open();
 	});
 	closeBtn?.addEventListener('click', close);
-	modal.querySelector('.page-settings-overlay')?.addEventListener('click', close);
+	modalRoot.querySelector('.page-settings-overlay')?.addEventListener('click', close);
 
 	presetWrap.innerHTML = '';
 	for (const pr of PRESETS) {
@@ -99,7 +105,12 @@ export function initPageSettingsModal(pageKey: string): void {
 					patch: { pageBackgrounds: { [pageKey]: hex } },
 				}),
 			});
-			const data = (await res.json()) as { ok?: boolean; error?: string };
+			const parsed = await readResponseJson<{ ok?: boolean; error?: string }>(res);
+			if (!parsed.ok) {
+				alert('Save failed: ' + parsed.message);
+				return;
+			}
+			const data = parsed.data;
 			if (res.ok && data.ok) {
 				document.body.style.backgroundColor = hex || '';
 				window.showAdminToast?.('Page background saved.');

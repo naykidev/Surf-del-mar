@@ -1,0 +1,455 @@
+---
+/**
+ * Admin island — CRUD for schedule time-blocks (matches ScheduleEvent shape).
+ * Usage: <ScheduleEditor initialEvents="[]" />
+ */
+export interface Props {
+	initialEvents?: string;
+	collection?: string;
+}
+
+const { initialEvents = '[]', collection = 'scheduleEvents' } = Astro.props;
+---
+
+<div id="schedule-editor" data-collection={collection} data-initial={initialEvents}>
+	<div id="se-list" class="se-list" aria-live="polite" aria-label="Schedule blocks"></div>
+
+	<form id="se-form" class="se-form" novalidate>
+		<h3 class="se-section">Add time block</h3>
+		<input type="hidden" id="se-edit-id" />
+
+		<div class="se-row3">
+			<div class="se-field">
+				<label for="se-date">Date</label>
+				<input type="date" id="se-date" value="2026-10-08" required />
+			</div>
+			<div class="se-field">
+				<label for="se-start">Start</label>
+				<input type="time" id="se-start" value="10:00" required />
+			</div>
+			<div class="se-field">
+				<label for="se-end">End</label>
+				<input type="time" id="se-end" value="11:00" required />
+			</div>
+		</div>
+
+		<div class="se-row2">
+			<div class="se-field">
+				<label for="se-title">Event title</label>
+				<input type="text" id="se-title" placeholder="Opening ceremony" required />
+			</div>
+			<div class="se-field">
+				<label for="se-venue">Venue</label>
+				<input type="text" id="se-venue" placeholder="Main Stage" />
+			</div>
+		</div>
+
+		<div class="se-actions">
+			<select id="se-cat">
+				<option value="General">General</option>
+				<option value="Music">Music</option>
+				<option value="Film">Film</option>
+				<option value="Symposium">Symposium</option>
+				<option value="Reunion">Reunion</option>
+				<option value="Exhibition">Exhibition</option>
+				<option value="Parade">Parade</option>
+				<option value="Reception">Reception</option>
+				<option value="Advocacy">Advocacy</option>
+				<option value="Other">Other</option>
+			</select>
+			<button type="submit" class="btn btn-primary" id="se-submit">+ Add block</button>
+			<button type="button" class="btn" id="se-cancel" hidden>Cancel edit</button>
+		</div>
+	</form>
+
+	<div class="se-toolbar">
+		<button type="button" class="btn" id="se-export">Export JSON</button>
+		<button type="button" class="btn btn-danger" id="se-clear">Clear all</button>
+		<span id="se-status" class="se-status" aria-live="polite"></span>
+	</div>
+</div>
+
+<script>
+	interface Block {
+		id: string;
+		date: string;
+		startTime: string;
+		endTime: string;
+		title: string;
+		venue: string;
+		category: string;
+		description: string;
+		advocacy: boolean;
+	}
+
+	function newBlockId() {
+		return `ev-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+	}
+
+	const root = document.getElementById('schedule-editor')!;
+	const list = document.getElementById('se-list')!;
+	const form = document.getElementById('se-form') as HTMLFormElement;
+	const editIdInput = document.getElementById('se-edit-id') as HTMLInputElement;
+	const dateIn = document.getElementById('se-date') as HTMLInputElement;
+	const startIn = document.getElementById('se-start') as HTMLInputElement;
+	const endIn = document.getElementById('se-end') as HTMLInputElement;
+	const titleIn = document.getElementById('se-title') as HTMLInputElement;
+	const venueIn = document.getElementById('se-venue') as HTMLInputElement;
+	const catSel = document.getElementById('se-cat') as HTMLSelectElement;
+	const submitBtn = document.getElementById('se-submit') as HTMLButtonElement;
+	const cancelBtn = document.getElementById('se-cancel') as HTMLButtonElement;
+	const statusEl = document.getElementById('se-status')!;
+
+	let blocks: Block[] = JSON.parse(root.dataset.initial ?? '[]');
+
+	function render() {
+		if (!blocks.length) {
+			list.innerHTML = '<p class="se-empty">No blocks yet.</p>';
+			return;
+		}
+
+		const byDate: Record<string, Block[]> = {};
+		blocks.forEach((b) => {
+			(byDate[b.date] ??= []).push(b);
+		});
+
+		list.innerHTML = Object.keys(byDate)
+			.sort()
+			.map(
+				(d) => `
+        <div class="se-date-head">${formatDate(d)}</div>
+        ${byDate[d]
+					.map(
+						(b) => `
+          <div class="se-block" data-id="${b.id}">
+            <span class="se-time">${b.startTime}–${b.endTime}</span>
+            <span class="se-info">
+              <strong>${esc(b.title)}</strong>
+              <span class="se-venue">${esc(b.venue)} · <em>${esc(b.category)}</em></span>
+            </span>
+            <div class="se-btns">
+              <button type="button" class="btn btn-sm" data-edit="${b.id}">Edit</button>
+              <button type="button" class="btn btn-sm btn-danger" data-remove="${b.id}">×</button>
+            </div>
+          </div>`
+					)
+					.join('')}
+      `
+			)
+			.join('');
+	}
+
+	function esc(s: string) {
+		return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+	}
+
+	function formatDate(iso: string) {
+		const [y, m, d] = iso.split('-').map(Number);
+		return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+			weekday: 'short',
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric',
+		});
+	}
+
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		const editId = editIdInput.value;
+
+		const block: Block = {
+			id: editId || newBlockId(),
+			date: dateIn.value || '2026-10-08',
+			startTime: startIn.value || '10:00',
+			endTime: endIn.value || '11:00',
+			title: titleIn.value.trim() || 'Untitled',
+			venue: venueIn.value.trim() || 'TBD',
+			category: catSel.value,
+			description: '',
+			advocacy: catSel.value === 'Advocacy',
+		};
+
+		if (editId) {
+			blocks = blocks.map((b) => (b.id === editId ? block : b));
+			setStatus('Block updated.');
+		} else {
+			blocks.push(block);
+			setStatus('Block added.');
+		}
+
+		resetForm();
+		render();
+		dispatchChange();
+	});
+
+	list.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+		const editId = target.dataset.edit;
+		const removeId = target.dataset.remove;
+
+		if (editId) {
+			const b = blocks.find((x) => x.id === editId);
+			if (!b) return;
+			dateIn.value = b.date;
+			startIn.value = b.startTime;
+			endIn.value = b.endTime;
+			titleIn.value = b.title;
+			venueIn.value = b.venue;
+			catSel.value = b.category;
+			editIdInput.value = b.id;
+			submitBtn.textContent = 'Save changes';
+			cancelBtn.hidden = false;
+			titleIn.focus();
+		}
+
+		if (removeId) {
+			blocks = blocks.filter((b) => b.id !== removeId);
+			setStatus('Block removed.');
+			render();
+			dispatchChange();
+		}
+	});
+
+	cancelBtn.addEventListener('click', resetForm);
+
+	document.getElementById('se-export')!.addEventListener('click', () => {
+		void navigator.clipboard.writeText(JSON.stringify(blocks, null, 2));
+		setStatus(`Copied ${blocks.length} events.`);
+	});
+
+	document.getElementById('se-clear')!.addEventListener('click', () => {
+		if (confirm('Remove all blocks?')) {
+			blocks = [];
+			render();
+			dispatchChange();
+		}
+	});
+
+	function resetForm() {
+		form.reset();
+		editIdInput.value = '';
+		dateIn.value = '2026-10-08';
+		startIn.value = '10:00';
+		endIn.value = '11:00';
+		submitBtn.textContent = '+ Add block';
+		cancelBtn.hidden = true;
+	}
+
+	function setStatus(msg: string) {
+		statusEl.textContent = msg;
+		setTimeout(() => (statusEl.textContent = ''), 3000);
+	}
+
+	function dispatchChange() {
+		root.dispatchEvent(new CustomEvent('schedule-change', { bubbles: true, detail: { blocks } }));
+	}
+
+	render();
+</script>
+
+<style>
+	#schedule-editor {
+		font-family: inherit;
+	}
+
+	.se-list {
+		margin-bottom: 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.se-empty {
+		font-size: 0.8rem;
+		color: var(--adm-muted);
+		padding: 0.5rem 0;
+	}
+
+	.se-date-head {
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--adm-muted);
+		margin: 0.75rem 0 0.25rem;
+	}
+
+	.se-block {
+		display: grid;
+		grid-template-columns: 7rem 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.6rem 0.75rem;
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+	}
+
+	.se-time {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-sepia);
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.se-info {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.se-info strong {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--color-ink);
+	}
+
+	.se-venue {
+		font-size: 0.7rem;
+		color: var(--adm-muted);
+	}
+
+	.se-btns {
+		display: flex;
+		gap: 6px;
+	}
+
+	.se-form {
+		background: var(--adm-surface);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		padding: 1rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.se-section {
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--adm-muted);
+		margin-bottom: 0.75rem;
+	}
+
+	.se-row3 {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.se-row2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.se-field {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.se-field label {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--color-sepia);
+	}
+
+	.se-actions {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.se-actions select {
+		flex: 1;
+		min-width: 8rem;
+	}
+
+	.se-toolbar {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.se-status {
+		font-size: 0.75rem;
+		color: var(--adm-success);
+		margin-left: auto;
+	}
+
+	.btn {
+		padding: 0.4rem 0.75rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		border: 1px solid var(--adm-border-strong);
+		border-radius: var(--adm-radius);
+		background: transparent;
+		color: var(--color-ink);
+		cursor: pointer;
+		font-family: inherit;
+		transition: background 0.15s;
+	}
+
+	.btn:hover {
+		background: var(--adm-surface-2);
+	}
+
+	.btn-sm {
+		padding: 0.25rem 0.55rem;
+		font-size: 0.72rem;
+	}
+
+	.btn-primary {
+		background: var(--color-ink);
+		color: var(--color-cream);
+		border-color: var(--color-ink);
+	}
+
+	.btn-primary:hover {
+		opacity: 0.88;
+	}
+
+	.btn-danger {
+		color: var(--adm-danger);
+		border-color: rgba(185, 28, 28, 0.35);
+	}
+
+	.btn-danger:hover {
+		background: var(--adm-danger-bg);
+	}
+
+	#schedule-editor :global(input),
+	#schedule-editor :global(select) {
+		width: 100%;
+		padding: 0.4rem 0.6rem;
+		font-size: 0.8rem;
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		background: var(--color-cream);
+		color: var(--color-ink);
+		font-family: inherit;
+		box-sizing: border-box;
+	}
+
+	#schedule-editor :global(input:focus),
+	#schedule-editor :global(select:focus) {
+		outline: none;
+		border-color: var(--color-accent);
+	}
+
+	@media (max-width: 520px) {
+		.se-row3,
+		.se-row2 {
+			grid-template-columns: 1fr;
+		}
+		.se-block {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,0 +1,622 @@
+---
+/**
+ * Admin island — add pages and elements with JSON schema output.
+ * Usage: <ContentBuilder apiEndpoint="/api/admin/pages" /> (scripts run on the client automatically.)
+ */
+export interface Props {
+	apiEndpoint?: string;
+	initialSchema?: string;
+}
+
+const { apiEndpoint = '/api/admin/pages', initialSchema = 'null' } = Astro.props;
+---
+
+<div id="content-builder" data-api={apiEndpoint} data-initial={initialSchema}>
+	<section class="cb-section" aria-labelledby="cb-page-head">
+		<h3 class="cb-head" id="cb-page-head">Add page</h3>
+		<div class="cb-row2">
+			<div class="cb-field">
+				<label for="cb-slug">Slug</label>
+				<input type="text" id="cb-slug" placeholder="e.g. about-us" pattern="[a-z0-9\-]+" />
+			</div>
+			<div class="cb-field">
+				<label for="cb-template">Template</label>
+				<select id="cb-template">
+					<option value="default">Default</option>
+					<option value="landing">Landing</option>
+					<option value="event">Event</option>
+					<option value="gallery">Gallery</option>
+					<option value="article">Article</option>
+				</select>
+			</div>
+		</div>
+		<div class="cb-field" style="margin-bottom:0.75rem">
+			<label for="cb-page-title">Page title</label>
+			<input type="text" id="cb-page-title" placeholder="Untitled" />
+		</div>
+		<div class="cb-field" style="margin-bottom:0.75rem">
+			<label for="cb-meta-desc">Meta description</label>
+			<input type="text" id="cb-meta-desc" placeholder="Short page description for SEO" />
+		</div>
+		<button type="button" class="btn btn-primary" id="cb-create-page">Create page</button>
+		<span id="cb-page-status" class="cb-status" aria-live="polite"></span>
+	</section>
+
+	<section class="cb-section" aria-labelledby="cb-el-head">
+		<h3 class="cb-head" id="cb-el-head">Add element</h3>
+		<div class="cb-element-grid" id="cb-el-grid" role="list" aria-label="Element types"></div>
+		<div id="cb-el-config" class="cb-config" hidden></div>
+		<div class="cb-actions" id="cb-el-actions" hidden>
+			<button type="button" class="btn btn-primary" id="cb-add-el">Add element</button>
+			<button type="button" class="btn" id="cb-cancel-el">Cancel</button>
+		</div>
+	</section>
+
+	<section id="cb-el-list-section" class="cb-section" hidden aria-labelledby="cb-list-head">
+		<h3 class="cb-head" id="cb-list-head">Elements <span id="cb-el-count" class="cb-badge">0</span></h3>
+		<div id="cb-el-list" class="cb-el-list"></div>
+		<button type="button" class="btn btn-sm btn-danger" id="cb-clear-els" style="margin-top:0.5rem">Clear elements</button>
+	</section>
+
+	<section class="cb-section" aria-labelledby="cb-json-head">
+		<h3 class="cb-head" id="cb-json-head">Schema output</h3>
+		<pre id="cb-json-out" class="cb-json">null</pre>
+		<div class="cb-actions" style="margin-top:0.5rem">
+			<button type="button" class="btn" id="cb-copy-json">Copy JSON</button>
+			<button type="button" class="btn" id="cb-dl-json">Download .json</button>
+		</div>
+	</section>
+</div>
+
+<script>
+	interface ElementConfig {
+		type: string;
+		id: string;
+		[key: string]: unknown;
+	}
+
+	interface PageSchema {
+		slug: string;
+		title: string;
+		template: string;
+		metaDescription: string;
+		elements: ElementConfig[];
+		createdAt: string;
+		updatedAt: string;
+	}
+
+	const root = document.getElementById('content-builder')!;
+	const apiEndpoint = root.dataset.api ?? '/api/admin/pages';
+	const statusEl = document.getElementById('cb-page-status')!;
+	const jsonOut = document.getElementById('cb-json-out')!;
+	const elGrid = document.getElementById('cb-el-grid')!;
+	const elConfig = document.getElementById('cb-el-config') as HTMLDivElement;
+	const elActions = document.getElementById('cb-el-actions') as HTMLDivElement;
+	const elListSection = document.getElementById('cb-el-list-section') as HTMLElement;
+	const elList = document.getElementById('cb-el-list')!;
+	const elCount = document.getElementById('cb-el-count')!;
+
+	let schema: PageSchema | null = JSON.parse(root.dataset.initial ?? 'null');
+	let selectedType = '';
+
+	const ELEMENT_TYPES = [
+		{
+			type: 'text',
+			label: 'Text',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor" opacity=".5"/><rect x="2" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>`,
+			defaults: { content: '', fontSize: 16, fontWeight: 400, color: '' },
+			fields: [
+				{ id: 'content', label: 'Content', type: 'textarea' },
+				{ id: 'fontSize', label: 'Font size (px)', type: 'number', min: 10, max: 96 },
+				{ id: 'color', label: 'Color', type: 'text', placeholder: 'e.g. #333 or var(--color-ink)' },
+			],
+		},
+		{
+			type: 'image',
+			label: 'Image',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.2" opacity=".6"/><circle cx="7" cy="8" r="1.5" fill="currentColor" opacity=".5"/><path d="M3 14l4-4 3 3 2-2 4 4" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" opacity=".6"/></svg>`,
+			defaults: { src: '', alt: '', width: '100%', height: 'auto', objectFit: 'cover' },
+			fields: [
+				{ id: 'src', label: 'Image src / path', type: 'text', placeholder: '/images/hero.jpg' },
+				{ id: 'alt', label: 'Alt text', type: 'text', placeholder: 'Describe the image' },
+				{ id: 'width', label: 'Width', type: 'text', placeholder: '100%' },
+				{ id: 'height', label: 'Height', type: 'text', placeholder: 'auto' },
+			],
+		},
+		{
+			type: 'svg',
+			label: 'SVG',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M5 10 L10 4 L15 10 L10 16Z" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".6"/></svg>`,
+			defaults: { markup: '', width: '100%', height: 'auto', position: 'static', zIndex: 0 },
+			fields: [
+				{ id: 'markup', label: 'SVG markup', type: 'textarea', placeholder: '<svg ...>...</svg>' },
+				{ id: 'width', label: 'Width', type: 'text', placeholder: '100%' },
+				{ id: 'position', label: 'Position', type: 'select', options: ['static', 'absolute', 'fixed'] },
+				{ id: 'zIndex', label: 'z-index', type: 'number', min: -10, max: 100 },
+			],
+		},
+		{
+			type: 'hero',
+			label: 'Hero',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="10" rx="2" fill="currentColor" opacity=".2"/><rect x="2" y="14" width="8" height="2" rx="1" fill="currentColor" opacity=".4"/><rect x="2" y="17" width="12" height="1.5" rx=".75" fill="currentColor" opacity=".25"/></svg>`,
+			defaults: { heading: '', subheading: '', ctaLabel: '', ctaHref: '/', backgroundImage: '' },
+			fields: [
+				{ id: 'heading', label: 'Heading', type: 'text', placeholder: 'Surf Del Mar 2026' },
+				{ id: 'subheading', label: 'Subheading', type: 'text', placeholder: 'Oct 8–11, Del Mar, CA' },
+				{ id: 'ctaLabel', label: 'CTA label', type: 'text', placeholder: 'Get tickets' },
+				{ id: 'ctaHref', label: 'CTA href', type: 'text', placeholder: '/tickets' },
+				{ id: 'backgroundImage', label: 'Background image', type: 'text', placeholder: '/images/hero-bg.jpg' },
+			],
+		},
+		{
+			type: 'grid',
+			label: 'Grid',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity=".35"/><rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity=".35"/><rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity=".35"/><rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity=".35"/></svg>`,
+			defaults: { columns: 3, gap: 16, items: [] },
+			fields: [
+				{ id: 'columns', label: 'Columns', type: 'number', min: 1, max: 12 },
+				{ id: 'gap', label: 'Gap (px)', type: 'number', min: 0, max: 96 },
+			],
+		},
+		{
+			type: 'cta',
+			label: 'CTA',
+			icon: `<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="3" y="6" width="14" height="8" rx="4" stroke="currentColor" stroke-width="1.2" opacity=".6"/><rect x="6" y="9" width="8" height="2" rx="1" fill="currentColor" opacity=".5"/></svg>`,
+			defaults: { label: 'Learn more', href: '/', style: 'primary', size: 'md' },
+			fields: [
+				{ id: 'label', label: 'Button label', type: 'text', placeholder: 'Learn more' },
+				{ id: 'href', label: 'href', type: 'text', placeholder: '/schedule' },
+				{ id: 'style', label: 'Style', type: 'select', options: ['primary', 'secondary', 'ghost', 'danger'] },
+				{ id: 'size', label: 'Size', type: 'select', options: ['sm', 'md', 'lg'] },
+			],
+		},
+	];
+
+	elGrid.innerHTML = ELEMENT_TYPES.map(
+		(t) => `
+    <button type="button" class="cb-el-type" data-type="${t.type}" role="listitem" aria-label="Add ${t.label} element">
+      ${t.icon}
+      <span class="cb-el-name">${t.label}</span>
+    </button>`
+	).join('');
+
+	elGrid.addEventListener('click', (e) => {
+		const btn = (e.target as HTMLElement).closest('.cb-el-type') as HTMLButtonElement | null;
+		if (!btn) return;
+		selectType(btn.dataset.type!);
+	});
+
+	function selectType(type: string) {
+		selectedType = type;
+		document.querySelectorAll('.cb-el-type').forEach((b) => b.classList.toggle('active', b.getAttribute('data-type') === type));
+		renderConfigPanel(type);
+		elActions.hidden = false;
+		elConfig.hidden = false;
+	}
+
+	function renderConfigPanel(type: string) {
+		const def = ELEMENT_TYPES.find((t) => t.type === type);
+		if (!def) return;
+
+		elConfig.innerHTML = `<div class="cb-config-inner">${def.fields
+			.map((f) => {
+				const val = (def.defaults as Record<string, unknown>)[f.id];
+				if (f.type === 'textarea') {
+					return `<div class="cb-field"><label for="el-${f.id}">${f.label}</label><textarea id="el-${f.id}" rows="3" placeholder="${f.placeholder ?? ''}">${val ?? ''}</textarea></div>`;
+				}
+				if (f.type === 'select') {
+					const opts = (f as { options: string[] }).options.map((o) => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('');
+					return `<div class="cb-field"><label for="el-${f.id}">${f.label}</label><select id="el-${f.id}">${opts}</select></div>`;
+				}
+				return `<div class="cb-field"><label for="el-${f.id}">${f.label}</label><input type="${f.type ?? 'text'}" id="el-${f.id}" value="${val ?? ''}" placeholder="${(f as { placeholder?: string }).placeholder ?? ''}" ${f.type === 'number' ? `min="${(f as { min: number }).min}" max="${(f as { max: number }).max}"` : ''} /></div>`;
+			})
+			.join('')}</div>`;
+	}
+
+	document.getElementById('cb-add-el')!.addEventListener('click', () => {
+		if (!selectedType) return;
+		const def = ELEMENT_TYPES.find((t) => t.type === selectedType);
+		if (!def) return;
+
+		const el: ElementConfig = { type: selectedType, id: `el-${nanoid(6)}` };
+		def.fields.forEach((f) => {
+			const input = document.getElementById(`el-${f.id}`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+			if (!input) return;
+			el[f.id] = f.type === 'number' ? Number(input.value) : input.value;
+		});
+
+		ensureSchema();
+		schema!.elements.push(el);
+		schema!.updatedAt = new Date().toISOString();
+		renderElementList();
+		renderJson();
+		resetElPanel();
+		dispatchChange();
+	});
+
+	document.getElementById('cb-cancel-el')!.addEventListener('click', resetElPanel);
+
+	function resetElPanel() {
+		selectedType = '';
+		elConfig.innerHTML = '';
+		elConfig.hidden = true;
+		elActions.hidden = true;
+		document.querySelectorAll('.cb-el-type').forEach((b) => b.classList.remove('active'));
+	}
+
+	function renderElementList() {
+		if (!schema?.elements.length) {
+			elListSection.hidden = true;
+			return;
+		}
+		elListSection.hidden = false;
+		elCount.textContent = String(schema.elements.length);
+		elList.innerHTML = schema.elements
+			.map(
+				(el, i) => `
+      <div class="cb-el-item">
+        <span class="cb-el-type-badge">${el.type}</span>
+        <span class="cb-el-id">${el.id}</span>
+        <button type="button" class="btn btn-sm btn-danger" data-remove="${i}">×</button>
+      </div>`
+			)
+			.join('');
+	}
+
+	elList.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+		const removeIdx = target.dataset.remove;
+		if (removeIdx !== undefined && schema) {
+			schema.elements.splice(+removeIdx, 1);
+			schema.updatedAt = new Date().toISOString();
+			renderElementList();
+			renderJson();
+			dispatchChange();
+		}
+	});
+
+	document.getElementById('cb-clear-els')!.addEventListener('click', () => {
+		if (schema && confirm('Remove all elements?')) {
+			schema.elements = [];
+			renderElementList();
+			renderJson();
+			dispatchChange();
+		}
+	});
+
+	document.getElementById('cb-create-page')!.addEventListener('click', async () => {
+		const slug = (document.getElementById('cb-slug') as HTMLInputElement).value.trim().replace(/[^a-z0-9\-]/gi, '-').toLowerCase() || 'new-page';
+		const title = (document.getElementById('cb-page-title') as HTMLInputElement).value.trim() || 'Untitled';
+		const template = (document.getElementById('cb-template') as HTMLSelectElement).value;
+		const metaDescription = (document.getElementById('cb-meta-desc') as HTMLInputElement).value.trim();
+
+		schema = {
+			slug,
+			title,
+			template,
+			metaDescription,
+			elements: schema?.elements ?? [],
+			createdAt: schema?.createdAt ?? new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		};
+
+		renderJson();
+		renderElementList();
+
+		try {
+			const res = await fetch(apiEndpoint, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(schema),
+			});
+
+			if (res.ok) {
+				setPageStatus(`Page "${slug}" created.`, false);
+			} else {
+				const err = await res.text().catch(() => res.statusText);
+				setPageStatus(`Error ${res.status}: ${err}`, true);
+			}
+		} catch {
+			setPageStatus(`Schema ready (no API response).`, false);
+		}
+
+		dispatchChange();
+	});
+
+	function renderJson() {
+		jsonOut.textContent = JSON.stringify(schema, null, 2);
+	}
+
+	document.getElementById('cb-copy-json')!.addEventListener('click', async () => {
+		try {
+			await navigator.clipboard.writeText(jsonOut.textContent ?? '');
+			setPageStatus('Copied!', false);
+		} catch {
+			setPageStatus('Copy failed.', true);
+		}
+	});
+
+	document.getElementById('cb-dl-json')!.addEventListener('click', () => {
+		if (!schema) return;
+		const blob = new Blob([JSON.stringify(schema, null, 2)], { type: 'application/json' });
+		const a = Object.assign(document.createElement('a'), {
+			href: URL.createObjectURL(blob),
+			download: `${schema.slug}.json`,
+		});
+		a.click();
+		URL.revokeObjectURL(a.href);
+	});
+
+	function ensureSchema() {
+		if (!schema) {
+			schema = {
+				slug: (document.getElementById('cb-slug') as HTMLInputElement).value.trim() || 'new-page',
+				title: (document.getElementById('cb-page-title') as HTMLInputElement).value.trim() || 'Untitled',
+				template: (document.getElementById('cb-template') as HTMLSelectElement).value,
+				metaDescription: '',
+				elements: [],
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+			};
+		}
+	}
+
+	function nanoid(n = 8) {
+		return Math.random().toString(36).slice(2, 2 + n);
+	}
+
+	function setPageStatus(msg: string, isError: boolean) {
+		statusEl.textContent = msg;
+		statusEl.style.color = isError ? 'var(--adm-danger)' : 'var(--adm-success)';
+		setTimeout(() => (statusEl.textContent = ''), 4000);
+	}
+
+	function dispatchChange() {
+		root.dispatchEvent(new CustomEvent('content-change', { bubbles: true, detail: { schema } }));
+	}
+
+	if (schema) {
+		renderJson();
+		renderElementList();
+	}
+</script>
+
+<style>
+	#content-builder {
+		font-family: inherit;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.cb-section {
+		padding: 1rem;
+		background: var(--adm-surface);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+	}
+
+	.cb-head {
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--adm-muted);
+		margin-bottom: 0.85rem;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.cb-badge {
+		background: rgba(26, 122, 122, 0.12);
+		color: var(--color-sand-dark);
+		font-size: 0.7rem;
+		padding: 2px 7px;
+		border-radius: 20px;
+		font-weight: 600;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	.cb-row2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.cb-field {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.cb-field label {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--color-sepia);
+	}
+
+	.cb-status {
+		font-size: 0.75rem;
+		margin-left: 1rem;
+		color: var(--adm-success);
+	}
+
+	.cb-element-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+		margin-bottom: 0.75rem;
+	}
+
+	.cb-el-type {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+		padding: 0.75rem 0.5rem;
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		cursor: pointer;
+		font-family: inherit;
+		color: var(--color-ink);
+		transition: border-color 0.15s, background 0.15s;
+	}
+
+	.cb-el-type:hover {
+		border-color: var(--adm-border-strong);
+		background: var(--adm-surface);
+	}
+
+	.cb-el-type.active {
+		border: 2px solid var(--color-accent);
+		background: var(--adm-surface);
+	}
+
+	.cb-el-name {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--color-sepia);
+	}
+
+	.cb-config {
+		margin-bottom: 0.75rem;
+	}
+
+	.cb-config-inner {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.6rem;
+		padding: 0.75rem;
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+	}
+
+	.cb-actions {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.cb-el-list {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.cb-el-item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 7px 10px;
+		background: var(--adm-surface-2);
+		border-radius: var(--adm-radius);
+		border: 1px solid var(--adm-border);
+	}
+
+	.cb-el-type-badge {
+		font-size: 0.7rem;
+		font-weight: 600;
+		background: rgba(26, 122, 122, 0.12);
+		color: var(--color-sand-dark);
+		padding: 2px 8px;
+		border-radius: 20px;
+	}
+
+	.cb-el-id {
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		color: var(--adm-muted);
+		flex: 1;
+	}
+
+	.cb-json {
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		padding: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		color: var(--color-sepia);
+		white-space: pre;
+		overflow-x: auto;
+		line-height: 1.6;
+		max-height: 280px;
+	}
+
+	.btn {
+		padding: 0.4rem 0.75rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		border: 1px solid var(--adm-border-strong);
+		border-radius: var(--adm-radius);
+		background: transparent;
+		color: var(--color-ink);
+		cursor: pointer;
+		font-family: inherit;
+		transition: background 0.15s;
+	}
+
+	.btn:hover {
+		background: var(--adm-surface-2);
+	}
+
+	.btn-sm {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.72rem;
+	}
+
+	.btn-primary {
+		background: var(--color-ink);
+		color: var(--color-cream);
+		border-color: var(--color-ink);
+	}
+
+	.btn-primary:hover {
+		opacity: 0.88;
+	}
+
+	.btn-danger {
+		color: var(--adm-danger);
+		border-color: rgba(185, 28, 28, 0.35);
+	}
+
+	.btn-danger:hover {
+		background: var(--adm-danger-bg);
+	}
+
+	.cb-section :global(input),
+	.cb-section :global(select),
+	.cb-section :global(textarea) {
+		width: 100%;
+		padding: 0.4rem 0.6rem;
+		font-size: 0.8rem;
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		background: var(--color-cream);
+		color: var(--color-ink);
+		font-family: inherit;
+		resize: vertical;
+		box-sizing: border-box;
+	}
+
+	.cb-section :global(input:focus),
+	.cb-section :global(select:focus),
+	.cb-section :global(textarea:focus) {
+		outline: none;
+		border-color: var(--color-accent);
+	}
+
+	@media (max-width: 520px) {
+		.cb-row2,
+		.cb-element-grid,
+		.cb-config-inner {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,0 +1,72 @@
+---
+/**
+ * Optional admin islands playground (Decap still uses /admin/).
+ * Astro `<script>` in each component runs on the client; do not use client:* on .astro files.
+ */
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ContentBuilder from '@/components/admin/ContentBuilder.astro';
+import ScheduleEditor from '@/components/admin/ScheduleEditor.astro';
+import StyleTool from '@/components/admin/StyleTool.astro';
+---
+
+<AdminLayout>
+	<main class="admin-tools">
+		<h1 class="admin-tools-title">Admin tools</h1>
+		<p class="admin-tools-lede">
+			Islands for prototyping. Wire <code>ContentBuilder</code> to a real API when you add one. <code>ScheduleEditor</code> emits
+			<code>schedule-change</code>; hook it to <code>save-schedule</code> if you replace the inline schedule page.
+		</p>
+
+		<section class="admin-tools-section">
+			<h2>Content builder</h2>
+			<ContentBuilder />
+		</section>
+
+		<section class="admin-tools-section">
+			<h2>Schedule editor</h2>
+			<ScheduleEditor initialEvents="[]" />
+		</section>
+
+		<section class="admin-tools-section">
+			<h2>Style tool</h2>
+			<StyleTool initialVars={[{ key: '--color-accent', val: '#2a9d9d' }]} />
+		</section>
+	</main>
+</AdminLayout>
+
+<style>
+	.admin-tools {
+		max-width: 52rem;
+		margin: 0 auto;
+	}
+	.admin-tools-title {
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		color: var(--color-ink);
+		margin: 0 0 0.5rem 0;
+	}
+	.admin-tools-lede {
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--color-sepia);
+		margin: 0 0 2rem 0;
+	}
+	.admin-tools-lede code {
+		font-family: var(--font-mono);
+		font-size: 0.85em;
+		background: var(--adm-surface-2);
+		padding: 0.1em 0.35em;
+		border-radius: 4px;
+	}
+	.admin-tools-section {
+		margin-bottom: 2.5rem;
+	}
+	.admin-tools-section h2 {
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		color: var(--color-ink);
+		margin: 0 0 0.75rem 0;
+		padding-bottom: 0.35rem;
+		border-bottom: 1px solid var(--adm-border);
+	}
+</style>

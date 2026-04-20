@@ -7,6 +7,37 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Admin | Surf Del Mar</title>
+		<!-- Tokens for admin islands (match BaseLayout where possible) -->
+		<style is:global>
+			:root {
+				--color-cream: #e5f0f2;
+				--color-sand: #cce4e8;
+				--color-foam: #b8dce4;
+				--color-sand-dark: #1a7a7a;
+				--color-sepia: #3d6b6b;
+				--color-ink: #1a2e2e;
+				--color-accent: #2a9d9d;
+				--font-display: Georgia, 'Times New Roman', serif;
+				--font-body: system-ui, -apple-system, sans-serif;
+				--font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+				--adm-radius: 10px;
+				--adm-surface: rgba(255, 255, 255, 0.88);
+				--adm-surface-2: rgba(255, 255, 255, 0.65);
+				--adm-border: rgba(26, 46, 46, 0.14);
+				--adm-border-strong: rgba(26, 46, 46, 0.24);
+				--adm-muted: rgba(61, 107, 107, 0.78);
+				--adm-success: #1d6b3a;
+				--adm-danger: #b91c1c;
+				--adm-danger-bg: rgba(185, 28, 28, 0.08);
+			}
+			body {
+				margin: 0;
+				padding: 1.25rem;
+				font-family: var(--font-body);
+				color: var(--color-ink);
+				background: var(--color-cream);
+			}
+		</style>
 		<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 		<script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 	</head>

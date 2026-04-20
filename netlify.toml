@@ -2,3 +2,10 @@
   command = "npm run build"
   publish = "dist"
   functions = "netlify/functions"
+
+# Netlify Dev proxies the Astro server and serves /.netlify/functions/*. Open the URL Netlify prints
+# (typically http://localhost:8888), not the bare Astro port, or saves will 404 locally.
+[dev]
+  command = "npm run dev:astro"
+  targetPort = 4321
+  port = 8888

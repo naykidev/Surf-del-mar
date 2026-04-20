@@ -1,0 +1,429 @@
+---
+/**
+ * Admin island — CSS variables: color picker + hex, injects a style tag into :root.
+ * Usage: <StyleTool initialVars={[{ key: '--color-accent', val: '#2a9d9d' }]} />
+ */
+export interface CSSVar {
+	key: string;
+	val: string;
+}
+
+export interface Props {
+	initialVars?: CSSVar[];
+}
+
+const { initialVars = [] } = Astro.props;
+---
+
+<div id="style-tool" data-initial={JSON.stringify(initialVars)}>
+	<div id="st-list" class="st-list" role="list" aria-label="CSS variables"></div>
+
+	<div class="st-add-row">
+		<input type="text" id="st-new-key" placeholder="--color-accent" class="st-mono" />
+		<input type="text" id="st-new-val" placeholder="#1a1a2e or 600px" />
+		<input type="color" id="st-new-picker" class="st-swatch" title="Color picker" />
+		<button type="button" class="btn btn-primary" id="st-add">+ Add</button>
+	</div>
+
+	<div id="st-preview" class="st-preview" aria-label="Color preview">
+		<span id="st-preview-label">Preview</span>
+	</div>
+
+	<pre id="st-output" class="st-output" aria-label="Generated CSS"></pre>
+
+	<div class="st-toolbar">
+		<button type="button" class="btn btn-primary" id="st-inject">Inject into :root</button>
+		<button type="button" class="btn" id="st-copy">Copy CSS</button>
+		<button type="button" class="btn" id="st-reset">Reset</button>
+		<span id="st-status" class="st-status" aria-live="polite"></span>
+	</div>
+</div>
+
+<script>
+	interface CSSVar {
+		key: string;
+		val: string;
+	}
+
+	const root = document.getElementById('style-tool')!;
+	const listEl = document.getElementById('st-list')!;
+	const newKey = document.getElementById('st-new-key') as HTMLInputElement;
+	const newVal = document.getElementById('st-new-val') as HTMLInputElement;
+	const newPicker = document.getElementById('st-new-picker') as HTMLInputElement;
+	const previewEl = document.getElementById('st-preview') as HTMLDivElement;
+	const previewLabel = document.getElementById('st-preview-label')!;
+	const outputEl = document.getElementById('st-output')!;
+	const statusEl = document.getElementById('st-status')!;
+
+	let vars: CSSVar[] = JSON.parse(root.dataset.initial ?? '[]');
+
+	newPicker.addEventListener('input', () => {
+		newVal.value = newPicker.value;
+	});
+
+	newVal.addEventListener('input', () => {
+		if (/^#[0-9a-f]{6}$/i.test(newVal.value)) {
+			newPicker.value = newVal.value;
+		}
+	});
+
+	document.getElementById('st-add')!.addEventListener('click', () => {
+		const k = newKey.value.trim();
+		const v = newVal.value.trim();
+		if (!k || !v) return;
+		const key = k.startsWith('--') ? k : `--${k}`;
+		const existing = vars.findIndex((x) => x.key === key);
+		if (existing >= 0) {
+			vars[existing].val = v;
+			setStatus('Variable updated.');
+		} else {
+			vars.push({ key, val: v });
+			setStatus('Variable added.');
+		}
+		newKey.value = '';
+		newVal.value = '';
+		render();
+		dispatchChange();
+	});
+
+	function render() {
+		if (!vars.length) {
+			listEl.innerHTML = '<p class="st-empty">No variables yet.</p>';
+			outputEl.textContent = '/* No variables yet */';
+			updatePreview();
+			return;
+		}
+
+		listEl.innerHTML = vars
+			.map(
+				(v, i) => `
+      <div class="st-row" role="listitem" data-index="${i}">
+        ${isColor(v.val) ? `<input type="color" class="st-swatch" value="${normalizeHex(v.val)}" data-picker="${i}" title="Color picker" />` : '<span class="st-no-swatch"></span>'}
+        <input type="text" class="st-mono st-key-input" value="${esc(v.key)}" data-key-idx="${i}" aria-label="Variable name" />
+        <input type="text" class="st-val-input" value="${esc(v.val)}" data-val-idx="${i}" aria-label="Variable value" />
+        <button type="button" class="btn btn-sm btn-danger" data-remove="${i}" aria-label="Remove">×</button>
+      </div>`
+			)
+			.join('');
+
+		generateOutput();
+		updatePreview();
+	}
+
+	listEl.addEventListener('input', (e) => {
+		const target = e.target as HTMLInputElement;
+
+		const pickerIdx = target.dataset.picker;
+		if (pickerIdx !== undefined) {
+			vars[+pickerIdx].val = target.value;
+			const row = target.closest('.st-row') as HTMLElement;
+			const valIn = row.querySelector('.st-val-input') as HTMLInputElement;
+			if (valIn) valIn.value = target.value;
+			generateOutput();
+			updatePreview();
+			return;
+		}
+
+		const keyIdx = target.dataset.keyIdx;
+		if (keyIdx !== undefined) {
+			vars[+keyIdx].key = target.value.trim() || `--var-${keyIdx}`;
+			generateOutput();
+			dispatchChange();
+		}
+
+		const valIdx = target.dataset.valIdx;
+		if (valIdx !== undefined) {
+			vars[+valIdx].val = target.value;
+			const row = target.closest('.st-row') as HTMLElement;
+			const picker = row.querySelector('.st-swatch') as HTMLInputElement | null;
+			if (picker && isColor(target.value)) {
+				picker.value = normalizeHex(target.value);
+			}
+			generateOutput();
+			updatePreview();
+			dispatchChange();
+		}
+	});
+
+	listEl.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+		const removeIdx = target.dataset.remove;
+		if (removeIdx !== undefined) {
+			vars.splice(+removeIdx, 1);
+			setStatus('Variable removed.');
+			render();
+			dispatchChange();
+		}
+	});
+
+	function generateOutput() {
+		outputEl.textContent = vars.length
+			? `:root {\n${vars.map((v) => `  ${v.key}: ${v.val};`).join('\n')}\n}`
+			: '/* No variables yet */';
+	}
+
+	function updatePreview() {
+		const first = vars.find((v) => isColor(v.val));
+		if (first) {
+			previewEl.style.background = first.val;
+			previewLabel.style.color = isLight(first.val) ? '#111' : '#fff';
+			previewLabel.textContent = `${first.key}: ${first.val}`;
+		} else {
+			previewEl.style.background = '';
+			previewLabel.textContent = 'Preview';
+			previewLabel.style.color = '';
+		}
+	}
+
+	document.getElementById('st-inject')!.addEventListener('click', () => {
+		let tag = document.getElementById('__st-injected') as HTMLStyleElement | null;
+		if (!tag) {
+			tag = document.createElement('style');
+			tag.id = '__st-injected';
+			document.head.appendChild(tag);
+		}
+		tag.textContent = `:root{${vars.map((v) => `${v.key}:${v.val}`).join(';')}}`;
+		setStatus(`Injected ${vars.length} variable${vars.length !== 1 ? 's' : ''}.`);
+		dispatchChange();
+	});
+
+	document.getElementById('st-copy')!.addEventListener('click', async () => {
+		try {
+			await navigator.clipboard.writeText(outputEl.textContent ?? '');
+			setStatus('Copied!');
+		} catch {
+			setStatus('Copy failed.');
+		}
+	});
+
+	document.getElementById('st-reset')!.addEventListener('click', () => {
+		if (confirm('Clear all CSS variables?')) {
+			vars = [];
+			render();
+			dispatchChange();
+		}
+	});
+
+	function isColor(v: string) {
+		return /^(#|rgb|hsl|oklch)/i.test(v.trim());
+	}
+
+	function normalizeHex(v: string): string {
+		const s = v.trim();
+		if (/^#[0-9a-f]{6}$/i.test(s)) return s;
+		if (/^#[0-9a-f]{3}$/i.test(s)) {
+			const [, r, g, b] = s;
+			return `#${r}${r}${g}${g}${b}${b}`;
+		}
+		return '#000000';
+	}
+
+	function isLight(hex: string): boolean {
+		const n = parseInt(hex.slice(1), 16);
+		const r = (n >> 16) & 255;
+		const g = (n >> 8) & 255;
+		const b = n & 255;
+		return 0.299 * r + 0.587 * g + 0.114 * b > 160;
+	}
+
+	function esc(s: string) {
+		return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+	}
+
+	function setStatus(msg: string) {
+		statusEl.textContent = msg;
+		setTimeout(() => (statusEl.textContent = ''), 3000);
+	}
+
+	function dispatchChange() {
+		root.dispatchEvent(new CustomEvent('style-change', { bubbles: true, detail: { vars } }));
+	}
+
+	render();
+</script>
+
+<style>
+	#style-tool {
+		font-family: inherit;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.st-list {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.st-empty {
+		font-size: 0.8rem;
+		color: var(--adm-muted);
+		padding: 0.25rem 0;
+	}
+
+	.st-row {
+		display: grid;
+		grid-template-columns: 36px 1fr 1fr auto;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.st-no-swatch {
+		width: 36px;
+		height: 36px;
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		background: var(--adm-surface-2);
+		display: block;
+	}
+
+	.st-swatch {
+		width: 36px;
+		height: 36px;
+		padding: 2px;
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		background: none;
+		cursor: pointer;
+		flex-shrink: 0;
+	}
+
+	.st-add-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr 36px auto;
+		align-items: center;
+		gap: 8px;
+		padding: 0.75rem;
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+	}
+
+	.st-preview {
+		height: 52px;
+		border-radius: var(--adm-radius);
+		border: 1px solid var(--adm-border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.2s;
+		background: var(--adm-surface-2);
+	}
+
+	#st-preview-label {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--color-sepia);
+		font-family: var(--font-mono);
+	}
+
+	.st-output {
+		background: var(--adm-surface-2);
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		padding: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--color-sepia);
+		white-space: pre;
+		overflow-x: auto;
+		line-height: 1.6;
+	}
+
+	.st-toolbar {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.st-status {
+		font-size: 0.75rem;
+		color: var(--adm-success);
+		margin-left: auto;
+	}
+
+	.st-mono {
+		font-family: var(--font-mono);
+		font-size: 0.75rem !important;
+	}
+
+	.btn {
+		padding: 0.4rem 0.75rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		border: 1px solid var(--adm-border-strong);
+		border-radius: var(--adm-radius);
+		background: transparent;
+		color: var(--color-ink);
+		cursor: pointer;
+		font-family: inherit;
+		transition: background 0.15s;
+	}
+
+	.btn:hover {
+		background: var(--adm-surface-2);
+	}
+
+	.btn-sm {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.72rem;
+	}
+
+	.btn-primary {
+		background: var(--color-ink);
+		color: var(--color-cream);
+		border-color: var(--color-ink);
+	}
+
+	.btn-primary:hover {
+		opacity: 0.88;
+	}
+
+	.btn-danger {
+		color: var(--adm-danger);
+		border-color: rgba(185, 28, 28, 0.35);
+	}
+
+	.btn-danger:hover {
+		background: var(--adm-danger-bg);
+	}
+
+	#style-tool :global(input[type='text']) {
+		width: 100%;
+		padding: 0.4rem 0.6rem;
+		font-size: 0.8rem;
+		border: 1px solid var(--adm-border);
+		border-radius: var(--adm-radius);
+		background: var(--color-cream);
+		color: var(--color-ink);
+		font-family: inherit;
+		box-sizing: border-box;
+	}
+
+	#style-tool :global(input[type='text']:focus) {
+		outline: none;
+		border-color: var(--color-accent);
+	}
+
+	@media (max-width: 520px) {
+		.st-row {
+			grid-template-columns: 36px 1fr;
+			grid-auto-flow: dense;
+		}
+		.st-row :global(.st-key-input) {
+			grid-column: 2;
+		}
+		.st-row :global(.st-val-input) {
+			grid-column: 2;
+		}
+		.st-row :global(.btn) {
+			grid-column: 2;
+			justify-self: start;
+		}
+		.st-add-row {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

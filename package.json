@@ -3,7 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "netlify dev",
+    "dev:astro": "astro dev",
     "dev:netlify": "netlify dev",
     "build": "astro build",
     "preview": "astro preview",
@@ -12,6 +13,10 @@
   "dependencies": {
     "astro": "^5.17.1",
     "firebase": "^11.0.2",
-    "firebase-admin": "^13.0.2"
+    "firebase-admin": "^13.0.2",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^24.11.1"
   }
 }
