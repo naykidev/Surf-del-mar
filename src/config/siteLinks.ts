@@ -4,7 +4,7 @@
  */
 export const HISTORICAL_SOCIETY_URL = 'https://delmarhistoricalsociety.org/';
 
-const ZEFFY_FALLBACK = 'https://www.zeffy.com/en-US/donation-form/help-keep-mhs-surf-going';
+const ZEFFY_FALLBACK = 'https://www.zeffy.com/en-US/ticketing/del-mar-surf-reunion';
 
 export function getZeffyDonationUrl(): string {
 	const fromEnv = import.meta.env.PUBLIC_ZEFFY_DONATION_URL;
