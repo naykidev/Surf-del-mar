@@ -95,7 +95,11 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 							</div>
 						</li>
 						<li>
-							<a href={ZEFFY_DONATION_URL} class="nav-donate" target="_blank" rel="noopener noreferrer">Donate</a>
+							<div class="collectors-container">
+								<a href="/collectors-items/" class="nav-collectors">
+									<span class="nav-collectors-text">Shop</span>
+								</a>
+							</div>
 						</li>
 					</ul>
 					<AdminLoginButton />
@@ -133,7 +137,11 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 								<span class="nav-sponsors-text">Sponsors</span>
 							</a>
 						</div>
-						<a href={ZEFFY_DONATION_URL} class="nav-donate nav-donate-drawer" target="_blank" rel="noopener noreferrer">Donate</a>
+						<div class="collectors-container">
+							<a href="/collectors-items/" class="nav-collectors">
+								<span class="nav-collectors-text">Shop</span>
+							</a>
+						</div>
 					</div>
 					<div class="nav-drawer-admin">
 						<AdminLoginButton />
@@ -531,7 +539,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-drawer-nav .surf-container,
 	.nav-drawer-nav .reunion-container,
 	.nav-drawer-nav .schedule-container,
-	.nav-drawer-nav .sponsors-container {
+	.nav-drawer-nav .sponsors-container,
+	.nav-drawer-nav .collectors-container {
 		width: 100%;
 		max-width: 200px;
 		display: flex;
@@ -540,7 +549,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-drawer-nav .nav-tower,
 	.nav-drawer-nav .nav-surfboard,
 	.nav-drawer-nav .nav-reunion,
-	.nav-drawer-nav .nav-sponsors {
+	.nav-drawer-nav .nav-sponsors,
+	.nav-drawer-nav .nav-collectors {
 		width: 100%;
 		justify-content: center;
 		text-align: center;
@@ -629,12 +639,13 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		border-radius: 10px;
 	}
 
-	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, and Sponsors */
+	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, Sponsors, and Shop */
 	.tower-container,
 	.surf-container,
 	.reunion-container,
 	.schedule-container,
-	.sponsors-container {
+	.sponsors-container,
+	.collectors-container {
 		position: relative;
 		display: flex;
 		align-items: flex-end;
@@ -645,7 +656,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.surf-container::after,
 	.reunion-container::after,
 	.schedule-container::after,
-	.sponsors-container::after {
+	.sponsors-container::after,
+	.collectors-container::after {
 		content: '';
 		position: absolute;
 		bottom: -2px;
@@ -664,7 +676,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.surf-container:hover::after,
 	.reunion-container:hover::after,
 	.schedule-container:hover::after,
-	.sponsors-container:hover::after {
+	.sponsors-container:hover::after,
+	.collectors-container:hover::after {
 		opacity: 1;
 	}
 
@@ -911,6 +924,81 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 			0 6px 18px rgba(0, 0, 0, 0.2),
 			inset 0 1px 0 rgba(255, 255, 255, 0.4);
 		border-bottom-color: #5c4813;
+	}
+
+	/* SHOPPING BAG - Thin Half-Circle Handle Design */
+	.nav-collectors {
+		margin-bottom: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem 0.5rem 0.5rem;
+		min-width: 100px;
+		min-height: 55px;
+		/* Transparent top zone (handle area) → solid pink bag body */
+		background: linear-gradient(to bottom, transparent 25%, #d81b60 25%);
+		color: #ffffff !important;
+		font-weight: 800;
+		text-transform: uppercase;
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-decoration: none;
+		position: relative;
+		z-index: 2;
+		transition: all 0.4s var(--ease-coastal);
+		animation: building-idle 6s var(--ease-coastal) infinite 0.4s;
+	}
+
+	/* Thin half-circle handle */
+	.nav-collectors::before {
+		content: '';
+		position: absolute;
+		top: 2px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 32px;
+		height: 24px;
+		border: 1.5px solid #ffffff;
+		border-bottom: none;
+		border-radius: 50% 50% 0 0;
+		pointer-events: none;
+		z-index: 1;
+		opacity: 0.8;
+	}
+
+	/* Horizontal bar connecting the two handle sides */
+	.nav-collectors::after {
+		content: '';
+		position: absolute;
+		top: 25%;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 32px;
+		height: 1.5px;
+		background: rgba(255, 255, 255, 0.8);
+		pointer-events: none;
+	}
+
+	.nav-collectors-text {
+		display: block;
+		position: relative;
+		z-index: 2;
+		transform: translateY(6px);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	}
+
+	.collectors-container:hover .nav-collectors {
+		transform: translateY(-6px);
+		animation: none;
+		background: linear-gradient(to bottom, transparent 25%, #e91e63 25%);
+		box-shadow: 0 10px 20px rgba(216, 27, 96, 0.3);
+	}
+
+	.collectors-container:hover .nav-collectors::before {
+		opacity: 1;
+		top: 0px;
+		border-width: 2px;
 	}
 
 	/* Surfboard nav button */

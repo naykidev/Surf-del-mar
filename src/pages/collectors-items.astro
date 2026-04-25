@@ -1,0 +1,401 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ScrollWaves from '../components/ScrollWaves.astro';
+import WaveSurfer from '../components/WaveSurfer.astro';
+import PirateShip from '../components/PirateShip.astro';
+import Lighthouse from '../components/Lighthouse.astro';
+---
+
+<BaseLayout
+	title="Collector's Items"
+	description="Surf Del Mar collector's posters and T-shirts featuring iconic artwork by legendary artist John Van Hamersveld."
+	pageKey="collectors-items"
+>
+	<section class="hero hero-sunset-bg">
+		<div class="hero-content hero-entrance">
+			<h1 class="hero-title">SURF DEL MAR COLLECTOR'S ITEMS</h1>
+			<p class="tagline hero-tagline">Iconic artwork by John Van Hamersveld — signed, numbered, and built to last.</p>
+		</div>
+	</section>
+	<div class="wave-wrap wave-hero hero-sunset-bg" id="collectors-wave-wrap">
+		<ScrollWaves variant="light" />
+		<WaveSurfer />
+		<PirateShip />
+		<Lighthouse toggleTargetId="collectors-wave-wrap" />
+	</div>
+
+	<section class="collectors-content">
+		<div class="container">
+
+			<div class="intro-split">
+				<figure class="poster-figure">
+					<div class="photo-frame photo-angled-right">
+						<img
+							src="/Poster.webp"
+							alt="Surf Del Mar collector's poster by John Van Hamersveld"
+							class="poster-img"
+							width="600"
+							height="800"
+						/>
+						<div class="tape-element"></div>
+					</div>
+				</figure>
+				<article class="intro-card event-card">
+					<p class="intro-text">
+						We're proud to offer posters and T-shirts featuring our iconic design created by the legendary artist <strong>John Van Hamersveld</strong>.
+					</p>
+					<p class="intro-text">
+						The posters come in two sizes, and are signed and numbered, making them special collector's items that will grow in value over the years.
+					</p>
+				</article>
+			</div>
+
+			<h2 class="section-heading">POSTERS</h2>
+
+			<div class="items-grid">
+				<article class="event-card item-card">
+					<div class="item-size">19&Prime; &times; 13&Prime;</div>
+					<div class="item-price">$75.00</div>
+					<p class="item-note">Plus Shipping and Handling</p>
+				</article>
+				<article class="event-card item-card">
+					<div class="item-size">24&Prime; &times; 18&Prime;</div>
+					<div class="item-price">$125.00</div>
+					<p class="item-note">Plus $7.00 Shipping and Handling</p>
+				</article>
+			</div>
+
+			<h2 class="section-heading">T-SHIRTS</h2>
+
+			<article class="event-card tshirt-card">
+				<p class="tshirt-desc">
+					T-Shirts are a beautiful shade of <strong>Sky Blue</strong> that matches the colors in the poster. They come in sizes M, L, XL and 2XL.
+				</p>
+				<div class="tshirt-price-row">
+					<span class="tshirt-price">$25.00 each</span>
+					<span class="tshirt-shipping">Plus $5.00 Shipping and Handling</span>
+				</div>
+			</article>
+
+			<h2 class="section-heading">HOW TO ORDER</h2>
+
+			<article class="event-card contact-card">
+				<p class="contact-intro">To order your posters and T-shirts, please contact:</p>
+				<div class="contact-block">
+					<p class="contact-name">James Gooding</p>
+					<a href="tel:6199773275" class="contact-link">619-977-3275</a>
+					<a href="mailto:Jamesgooding524@gmail.com" class="contact-link">Jamesgooding524@gmail.com</a>
+				</div>
+			</article>
+
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		color: var(--color-cream);
+		padding: 4rem 2rem;
+		text-align: center;
+	}
+
+	.wave-wrap {
+		position: relative;
+		overflow: visible;
+		min-height: 120px;
+	}
+
+	.wave-wrap :global(.wave-surfer-wrap) {
+		transition: opacity 0.4s ease, visibility 0.4s ease;
+	}
+	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	.hero-content {
+		max-width: 700px;
+		margin: 0 auto;
+	}
+
+	.hero-title {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 5vw, 3.75rem);
+		font-weight: 600;
+		color: var(--color-cream);
+		margin: 0 0 1rem;
+		line-height: 1.2;
+		animation: hero-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	.hero-tagline {
+		font-size: 1.2rem;
+		opacity: 0;
+		font-weight: 400;
+		animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+	}
+
+	@keyframes hero-fade-up {
+		from { opacity: 0; transform: translateY(30px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+
+	.collectors-content {
+		position: relative;
+		z-index: 1;
+		padding: 4rem 2rem;
+		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	}
+
+	.container {
+		max-width: 900px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	/* Intro split: poster left, text right */
+	.intro-split {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		align-items: start;
+		margin-bottom: 1rem;
+	}
+
+	@media (min-width: 680px) {
+		.intro-split {
+			grid-template-columns: 1fr 1.4fr;
+		}
+	}
+
+	.poster-figure {
+		display: flex;
+		justify-content: center;
+	}
+
+	.photo-frame {
+		position: relative;
+		display: inline-block;
+		padding: 10px;
+		background: #fff;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+		border-radius: 2px;
+	}
+
+	.poster-img {
+		width: 100%;
+		max-width: 260px;
+		height: auto;
+		display: block;
+		border: 1px solid rgba(0, 0, 0, 0.05);
+	}
+
+	.tape-element {
+		position: absolute;
+		top: -15px;
+		left: 50%;
+		transform: translateX(-50%) rotate(-2deg);
+		width: 100px;
+		height: 30px;
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(2px);
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		z-index: 2;
+	}
+
+	.photo-angled-right {
+		transform: rotate(2deg);
+		transition: transform 0.4s ease;
+	}
+
+	.photo-angled-right:hover {
+		transform: rotate(0deg) scale(1.02);
+	}
+
+	/* Shared card style */
+	.event-card {
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		padding: 1.5rem 1.5rem 1.5rem 1.25rem;
+		border-radius: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+		border-left: 6px solid var(--color-accent);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.event-card:hover {
+		transform: translateX(6px);
+		box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+	}
+
+	.intro-card {
+		align-self: center;
+	}
+
+	.intro-text {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		color: var(--color-ink);
+		line-height: 1.75;
+		margin-bottom: 1rem;
+	}
+
+	.intro-text:last-child {
+		margin-bottom: 0;
+	}
+
+	.section-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.4rem, 3vw, 1.85rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0.5rem 0 0;
+		line-height: 1.3;
+	}
+
+	/* Poster size cards */
+	.items-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.25rem;
+	}
+
+	@media (max-width: 500px) {
+		.items-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.item-card {
+		text-align: center;
+		padding: 1.75rem 1.25rem;
+	}
+
+	.item-size {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		margin-bottom: 0.5rem;
+	}
+
+	.item-price {
+		font-family: var(--font-body);
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: var(--color-accent);
+		margin-bottom: 0.35rem;
+	}
+
+	.item-note {
+		font-size: 0.875rem;
+		color: var(--color-sepia);
+		line-height: 1.4;
+		margin: 0;
+	}
+
+	/* T-shirt card */
+	.tshirt-card {
+		padding: 1.75rem 1.5rem 1.75rem 1.25rem;
+	}
+
+	.tshirt-desc {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		color: var(--color-ink);
+		line-height: 1.75;
+		margin-bottom: 1.25rem;
+	}
+
+	.tshirt-price-row {
+		display: flex;
+		align-items: baseline;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.tshirt-price {
+		font-size: 1.6rem;
+		font-weight: 700;
+		color: var(--color-accent);
+		font-family: var(--font-body);
+	}
+
+	.tshirt-shipping {
+		font-size: 0.9rem;
+		color: var(--color-sepia);
+	}
+
+	/* Contact card */
+	.contact-card {
+		padding: 1.75rem 1.5rem 1.75rem 1.25rem;
+	}
+
+	.contact-intro {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		color: var(--color-ink);
+		line-height: 1.7;
+		margin-bottom: 1.25rem;
+	}
+
+	.contact-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.contact-name {
+		font-family: var(--font-display);
+		font-size: 1.4rem;
+		font-weight: 600;
+		color: var(--color-ink);
+	}
+
+	.contact-link {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		color: var(--color-accent);
+		text-decoration: none;
+		font-weight: 600;
+		transition: color 0.2s;
+	}
+
+	.contact-link:hover {
+		color: var(--color-ink);
+		text-decoration: underline;
+	}
+
+	@media (max-width: 768px) {
+		.hero {
+			padding: 3rem 1rem;
+		}
+
+		.collectors-content {
+			padding: 2.5rem 1rem;
+		}
+
+		.intro-split {
+			gap: 1.5rem;
+		}
+
+		.poster-img {
+			max-width: 200px;
+		}
+
+		.tshirt-price-row {
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.event-card:hover {
+			transform: none;
+		}
+	}
+</style>
