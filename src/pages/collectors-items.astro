@@ -67,6 +67,33 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 			<h2 class="section-heading">T-SHIRTS</h2>
 
+			<div class="shirt-gallery">
+				<figure class="shirt-figure">
+					<div class="photo-frame photo-angled-left">
+						<img
+							src="/shirt1.jpeg"
+							alt="Surf Del Mar sky blue T-shirt — front"
+							class="shirt-img"
+							width="3024"
+							height="4032"
+						/>
+						<div class="tape-element"></div>
+					</div>
+				</figure>
+				<figure class="shirt-figure">
+					<div class="photo-frame photo-angled-right">
+						<img
+							src="/shirt2.jpeg"
+							alt="Surf Del Mar sky blue T-shirt — detail"
+							class="shirt-img"
+							width="4032"
+							height="3024"
+						/>
+						<div class="tape-element"></div>
+					</div>
+				</figure>
+			</div>
+
 			<article class="event-card tshirt-card">
 				<p class="tshirt-desc">
 					T-Shirts are a beautiful shade of <strong>Sky Blue</strong> that matches the colors in the poster. They come in sizes M, L, XL and 2XL.
@@ -214,6 +241,52 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.photo-angled-right:hover {
 		transform: rotate(0deg) scale(1.02);
+	}
+
+	.photo-angled-left {
+		transform: rotate(-2deg);
+		transition: transform 0.4s ease;
+	}
+
+	.photo-angled-left:hover {
+		transform: rotate(0deg) scale(1.02);
+	}
+
+	/* Shirt gallery */
+	.shirt-gallery {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		justify-items: center;
+		margin-bottom: 0.5rem;
+	}
+
+	.shirt-figure {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.shirt-img {
+		width: 100%;
+		max-width: 260px;
+		height: auto;
+		display: block;
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		image-orientation: from-image;
+	}
+
+	@media (max-width: 768px) {
+		.shirt-img {
+			max-width: 200px;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.shirt-gallery {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
 	}
 
 	/* Shared card style */
