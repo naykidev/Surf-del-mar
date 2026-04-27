@@ -72,20 +72,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 			</article>
 
 			<h2 class="reunion-subhead reunion-memories-heading">SHARED MEMORIES</h2>
-			<div id="shared-memories-container" class="shared-memories-container" aria-live="polite">
-				<p id="shared-memories-loading" class="shared-memories-msg">Loading…</p>
-			</div>
+		</div>
+
+		<!-- TikTok feed lives full-width outside the narrow container -->
+		<div id="shared-memories-container" class="shared-memories-container" aria-live="polite">
+			<p id="shared-memories-loading" class="shared-memories-msg">Loading…</p>
 		</div>
 	</section>
-
-	<!-- Lightbox for photo zoom -->
-	<div id="memory-lightbox" class="memory-lightbox" role="dialog" aria-modal="true" aria-label="View photo" hidden>
-		<div class="memory-lightbox-overlay" id="memory-lightbox-overlay"></div>
-		<div class="memory-lightbox-content">
-			<button type="button" class="memory-lightbox-close" id="memory-lightbox-close" aria-label="Close">×</button>
-			<img id="memory-lightbox-img" src="" alt="" class="memory-lightbox-img" />
-		</div>
-	</div>
 
 	<!-- Share memories modal -->
 	<div id="share-memories-modal" class="share-memories-modal" role="dialog" aria-labelledby="share-memories-title" aria-modal="true" hidden>
@@ -114,229 +107,324 @@ import Lighthouse from '../components/Lighthouse.astro';
 		import type { SharedMemory } from '../lib/firebase';
 
 		const SUBMIT_URL = '/.netlify/functions/submit-memory';
-		// Firestore doc limit 1MB; base64 is ~4/3 of binary so keep binary ≤ ~700KB
 		const MAX_IMAGE_SIZE = 700 * 1024;
-		const MAX_DIMENSION = 1200; // max width or height before upload
+		const MAX_DIMENSION = 1200;
 
-		const openBtn = document.getElementById('reunion-share-memories-btn');
-		const modal = document.getElementById('share-memories-modal');
-		const overlay = document.getElementById('share-memories-overlay');
-		const form = document.getElementById('share-memories-form');
-		const cancelBtn = document.getElementById('share-memories-cancel');
-		const fileInput = document.getElementById('memory-photo') as HTMLInputElement;
-		const errorEl = document.getElementById('share-memories-error');
-		const successEl = document.getElementById('share-memories-success');
-		const containerEl = document.getElementById('shared-memories-container');
-		const loadingEl = document.getElementById('shared-memories-loading');
-		const lightbox = document.getElementById('memory-lightbox');
-		const lightboxImg = document.getElementById('memory-lightbox-img') as HTMLImageElement;
-		const lightboxOverlay = document.getElementById('memory-lightbox-overlay');
-		const lightboxClose = document.getElementById('memory-lightbox-close');
+		// Share modal refs
+		const openBtn       = document.getElementById('reunion-share-memories-btn');
+		const shareModal    = document.getElementById('share-memories-modal');
+		const shareOverlay  = document.getElementById('share-memories-overlay');
+		const form          = document.getElementById('share-memories-form') as HTMLFormElement | null;
+		const cancelBtn     = document.getElementById('share-memories-cancel');
+		const fileInput     = document.getElementById('memory-photo') as HTMLInputElement;
+		const errorEl       = document.getElementById('share-memories-error');
+		const successEl     = document.getElementById('share-memories-success');
+		const containerEl   = document.getElementById('shared-memories-container');
+		const loadingEl     = document.getElementById('shared-memories-loading');
 
 		let memoriesList: SharedMemory[] = [];
-		let currentSlideIndex = 0;
+		let currentIndex = 0;
+		let isAnimating = false;
+		const likedSet = new Set<number>();
 
-		function openModal() {
-			if (modal) modal.hidden = false;
-			if (errorEl) { errorEl.hidden = true; errorEl.textContent = ''; }
-			if (successEl) successEl.hidden = true;
-			if (form) form.reset();
+		// ── Share modal ───────────────────────────────────────────
+		function openShareModal() {
+			if (shareModal)  shareModal.hidden = false;
+			if (errorEl)    { errorEl.hidden = true; errorEl.textContent = ''; }
+			if (successEl)    successEl.hidden = true;
+			if (form)         form.reset();
 		}
-		function closeModal() {
-			if (modal) modal.hidden = true;
-		}
-
-		function openLightbox(src: string, alt: string) {
-			if (lightboxImg) { lightboxImg.src = src; lightboxImg.alt = alt; }
-			if (lightbox) lightbox.hidden = false;
-		}
-		function closeLightbox() {
-			if (lightbox) lightbox.hidden = true;
+		function closeShareModal() {
+			if (shareModal) shareModal.hidden = true;
 		}
 
-		openBtn?.addEventListener('click', openModal);
-		overlay?.addEventListener('click', closeModal);
-		cancelBtn?.addEventListener('click', closeModal);
-		lightboxOverlay?.addEventListener('click', closeLightbox);
-		lightboxClose?.addEventListener('click', closeLightbox);
+		openBtn?.addEventListener('click', openShareModal);
+		shareOverlay?.addEventListener('click', closeShareModal);
+		cancelBtn?.addEventListener('click', closeShareModal);
+
+		// ── TikTok feed rendering ─────────────────────────────────
+		function escapeHtml(s: string) {
+			const d = document.createElement('div');
+			d.textContent = s;
+			return d.innerHTML;
+		}
+
+		function slideHTML(idx: number): string {
+			const m = memoriesList[idx];
+			const liked = likedSet.has(idx);
+			const total = memoriesList.length;
+			const heartFill  = liked ? '#fe2c55' : 'none';
+			const heartStroke = liked ? '#fe2c55' : '#fff';
+			return `
+<div class="tt-slide" data-index="${idx}">
+  <img class="tt-bg" src="${escapeHtml(m.imageUrl)}" alt="Shared memory ${idx + 1}" />
+  <div class="tt-gradient"></div>
+
+  <div class="tt-bottom">
+    <p class="tt-username">@surf_del_mar</p>
+    ${m.caption ? `<p class="tt-caption">${escapeHtml(m.caption)}</p>` : ''}
+    ${m.name    ? `<p class="tt-submitter">&#x2014; ${escapeHtml(m.name)}</p>` : ''}
+  </div>
+
+  <div class="tt-actions">
+    <div class="tt-avatar-wrap">
+      <div class="tt-avatar">🏄</div>
+    </div>
+
+    <button class="tt-btn tt-heart${liked ? ' tt-liked' : ''}" data-action="like" data-index="${idx}" aria-label="Like">
+      <div class="tt-btn-icon">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="${heartFill}" stroke="${heartStroke}" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <span class="tt-btn-label">${liked ? '1' : '0'}</span>
+    </button>
+
+    <button class="tt-btn tt-comment-btn" data-action="comment" aria-label="Share a memory">
+      <div class="tt-btn-icon">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <span class="tt-btn-label">Add</span>
+    </button>
+
+    <a class="tt-btn tt-save-btn" href="${escapeHtml(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Download photo">
+      <div class="tt-btn-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </div>
+      <span class="tt-btn-label">Save</span>
+    </a>
+  </div>
+
+  <div class="tt-counter">${idx + 1} / ${total}</div>
+</div>`;
+		}
+
+		function attachSlideListeners() {
+			const feed = document.getElementById('tt-feed');
+			if (!feed) return;
+
+			// Like button
+			feed.querySelectorAll('[data-action="like"]').forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const idx = parseInt((btn as HTMLElement).dataset.index || '0', 10);
+					if (likedSet.has(idx)) likedSet.delete(idx);
+					else likedSet.add(idx);
+					// Re-render just the heart state
+					const heartSvg = btn.querySelector('svg');
+					const label    = btn.querySelector('.tt-btn-label');
+					const liked    = likedSet.has(idx);
+					if (heartSvg) {
+						heartSvg.setAttribute('fill',   liked ? '#fe2c55' : 'none');
+						heartSvg.setAttribute('stroke', liked ? '#fe2c55' : '#fff');
+					}
+					if (label) label.textContent = liked ? '1' : '0';
+					btn.classList.toggle('tt-liked', liked);
+					// Bounce animation
+					btn.classList.remove('tt-like-pop');
+					void (btn as HTMLElement).offsetWidth;
+					btn.classList.add('tt-like-pop');
+				});
+			});
+
+			// Comment → open share modal
+			feed.querySelectorAll('[data-action="comment"]').forEach((btn) => {
+				btn.addEventListener('click', openShareModal);
+			});
+		}
+
+		function updateNavButtons() {
+			const upBtn   = document.getElementById('tt-up');
+			const downBtn = document.getElementById('tt-down');
+			if (upBtn)   (upBtn   as HTMLButtonElement).disabled = currentIndex === 0;
+			if (downBtn) (downBtn as HTMLButtonElement).disabled = currentIndex === memoriesList.length - 1;
+		}
+
+		function updateDots() {
+			document.querySelectorAll('.tt-dot').forEach((dot, i) => {
+				dot.classList.toggle('active', i === currentIndex);
+			});
+		}
+
+		async function goTo(newIdx: number, dir: 'up' | 'down') {
+			if (isAnimating) return;
+			if (newIdx < 0 || newIdx >= memoriesList.length) return;
+			isAnimating = true;
+
+			const stage = document.getElementById('tt-stage');
+			if (!stage) { isAnimating = false; return; }
+
+			// Build the incoming slide off-screen
+			const incoming = document.createElement('div');
+			incoming.innerHTML = slideHTML(newIdx);
+			const inSlide = incoming.firstElementChild as HTMLElement;
+			inSlide.style.position = 'absolute';
+			inSlide.style.inset = '0';
+			inSlide.style.transform = dir === 'up' ? 'translateY(100%)' : 'translateY(-100%)';
+			inSlide.style.transition = 'none';
+			stage.appendChild(inSlide);
+
+			// Force reflow so the starting transform is applied
+			inSlide.offsetHeight;
+
+			// Animate current slide out and new slide in
+			const currentSlide = stage.querySelector('.tt-slide:not(:last-child)') as HTMLElement | null;
+			inSlide.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+			inSlide.style.transform  = 'translateY(0)';
+			if (currentSlide) {
+				currentSlide.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+				currentSlide.style.transform  = dir === 'up' ? 'translateY(-100%)' : 'translateY(100%)';
+			}
+
+			await new Promise<void>((r) => setTimeout(r, 420));
+
+			// Swap content cleanly
+			stage.innerHTML = slideHTML(newIdx);
+			currentIndex = newIdx;
+			attachSlideListeners();
+			updateNavButtons();
+			updateDots();
+			isAnimating = false;
+		}
+
+		function renderTikTok() {
+			if (!containerEl) return;
+			const total = memoriesList.length;
+			const dots  = memoriesList.map((_, i) => `<div class="tt-dot${i === 0 ? ' active' : ''}"></div>`).join('');
+
+			containerEl.innerHTML = `
+<div class="tt-outer">
+  <div class="tt-phone-frame">
+    <div class="tt-feed" id="tt-feed">
+      <div class="tt-stage" id="tt-stage">
+        ${slideHTML(0)}
+      </div>
+
+      <div class="tt-nav-arrows">
+        <button class="tt-nav-btn" id="tt-up" aria-label="Previous memory" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button class="tt-nav-btn" id="tt-down" aria-label="Next memory" ${total <= 1 ? 'disabled' : ''}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+
+    ${total > 1 ? `<div class="tt-dots" aria-hidden="true">${dots}</div>` : ''}
+  </div>
+</div>`;
+
+			attachSlideListeners();
+
+			// Up/down buttons
+			document.getElementById('tt-up')?.addEventListener('click', () => goTo(currentIndex - 1, 'down'));
+			document.getElementById('tt-down')?.addEventListener('click', () => goTo(currentIndex + 1, 'up'));
+
+			// Touch swipe
+			let touchY = 0;
+			const feed = document.getElementById('tt-feed')!;
+			feed.addEventListener('touchstart', (e) => { touchY = e.changedTouches[0].clientY; }, { passive: true });
+			feed.addEventListener('touchend', (e) => {
+				const diff = touchY - e.changedTouches[0].clientY;
+				if (Math.abs(diff) > 40) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'up' : 'down');
+			}, { passive: true });
+
+			// Mouse wheel (throttled)
+			let wheelCooldown = false;
+			feed.addEventListener('wheel', (e) => {
+				e.preventDefault();
+				if (wheelCooldown) return;
+				wheelCooldown = true;
+				goTo(currentIndex + (e.deltaY > 0 ? 1 : -1), e.deltaY > 0 ? 'up' : 'down');
+				setTimeout(() => { wheelCooldown = false; }, 600);
+			}, { passive: false });
+
+			// Keyboard
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'ArrowDown') goTo(currentIndex + 1, 'up');
+				if (e.key === 'ArrowUp')   goTo(currentIndex - 1, 'down');
+			});
+		}
 
 		async function renderMemories() {
 			if (!containerEl) return;
-			if (loadingEl) loadingEl.textContent = 'Loading…';
 			const result = await getSharedMemories();
 			if (loadingEl) loadingEl.remove();
 			if (!result.ok) {
-				containerEl.innerHTML = `<p class="shared-memories-msg shared-memories-error">Couldn't load memories. ${escapeHtml(result.error)} Check Netlify env vars (PUBLIC_FIREBASE_*) and that Firestore rules are deployed.</p>`;
+				containerEl.innerHTML = `<p class="shared-memories-msg shared-memories-err">Couldn't load memories. ${escapeHtml(result.error)}</p>`;
 				return;
 			}
 			memoriesList = result.memories.filter((m) => m.imageUrl && m.imageUrl.startsWith('data:') && m.approved !== false);
 			if (memoriesList.length === 0) {
-				containerEl.innerHTML = '<p class="shared-memories-msg">No memories yet. Be the first to share! If you already submitted a photo, try sharing again—earlier submissions may not have been saved.</p>';
+				containerEl.innerHTML = '<p class="shared-memories-msg">No memories yet — be the first to share!</p>';
 				return;
 			}
-			currentSlideIndex = 0;
-			renderSlide();
+			currentIndex = 0;
+			renderTikTok();
 		}
 
-		function renderSlide() {
-			if (!containerEl || memoriesList.length === 0) return;
-			const m = memoriesList[currentSlideIndex];
-			const total = memoriesList.length;
-			const rot = (Math.random() * 4 - 2).toFixed(2);
-
-			containerEl.innerHTML = `
-				<div class="memories-grid-corkboard">
-					<div class="slideshow-inner">
-						<button type="button" class="slideshow-nav slideshow-prev" aria-label="Previous">‹</button>
-
-						<article class="polaroid-card fade-in-up" style="--polaroid-rotate: ${rot}deg">
-							<button type="button" class="polaroid-img-wrap" id="zoom-trigger">
-								<img src="${m.imageUrl}" alt="Memory" class="polaroid-img" />
-							</button>
-							<div class="polaroid-caption-well">
-								${m.caption ? `<p class="polaroid-caption">${escapeHtml(m.caption)}</p>` : ''}
-								${m.name ? `<p class="polaroid-name">— ${escapeHtml(m.name)}</p>` : ''}
-							</div>
-							<div class="polaroid-actions">
-								<a href="${m.imageUrl}" download="surf-del-mar-memory.jpg" class="polaroid-download-btn" id="download-memory-btn">Download memory</a>
-							</div>
-						</article>
-
-						<button type="button" class="slideshow-nav slideshow-next" aria-label="Next">›</button>
-					</div>
-					<div class="slideshow-pagination">${currentSlideIndex + 1} / ${total}</div>
-				</div>
-			`;
-
-			containerEl.querySelector('.slideshow-prev')?.addEventListener('click', () => {
-				currentSlideIndex = (currentSlideIndex - 1 + total) % total;
-				renderSlide();
-			});
-			containerEl.querySelector('.slideshow-next')?.addEventListener('click', () => {
-				currentSlideIndex = (currentSlideIndex + 1) % total;
-				renderSlide();
-			});
-			containerEl.querySelector('#zoom-trigger')?.addEventListener('click', () => {
-				openLightbox(m.imageUrl, m.caption || 'Shared memory');
-			});
-
-			const downloadBtn = containerEl.querySelector('#download-memory-btn');
-			if (downloadBtn && downloadBtn instanceof HTMLAnchorElement) {
-				downloadBtn.addEventListener('click', (e) => {
-					downloadBtn.setAttribute('download', `surf-del-mar-memory-${m.id || Date.now()}.jpg`);
-				});
-			}
-		}
-
-		function escapeHtml(s: string) {
-			const div = document.createElement('div');
-			div.textContent = s;
-			return div.innerHTML;
-		}
-
+		// ── Form submit ───────────────────────────────────────────
 		form?.addEventListener('submit', async (e) => {
 			e.preventDefault();
 			if (!errorEl || !successEl || !fileInput) return;
-			errorEl.hidden = true;
+			errorEl.hidden  = true;
 			successEl.hidden = true;
 			const file = fileInput.files?.[0];
-			if (!file) {
-				errorEl.textContent = 'Please choose a photo.';
-				errorEl.hidden = false;
-				return;
-			}
+			if (!file) { errorEl.textContent = 'Please choose a photo.'; errorEl.hidden = false; return; }
 			const caption = (document.getElementById('memory-caption') as HTMLTextAreaElement)?.value?.trim() || '';
-			const name = (document.getElementById('memory-name') as HTMLInputElement)?.value?.trim() || '';
+			const name    = (document.getElementById('memory-name')    as HTMLInputElement)?.value?.trim()    || '';
 			const submitBtn = document.getElementById('share-memories-submit') as HTMLButtonElement;
 			submitBtn.disabled = true;
 			try {
-				const { base64, contentType } = await compressImageForUpload(file, MAX_IMAGE_SIZE, MAX_DIMENSION);
-				if (!base64) {
-					errorEl.textContent = 'Photo is too large. We couldn\'t shrink it enough—try a smaller image.';
-					errorEl.hidden = false;
-					return;
-				}
-				const res = await fetch(SUBMIT_URL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						imageBase64: base64,
-						contentType,
-						caption,
-						name,
-					}),
-				});
+				const { base64, contentType } = await compressImage(file, MAX_IMAGE_SIZE, MAX_DIMENSION);
+				if (!base64) { errorEl.textContent = 'Photo too large — try a smaller image.'; errorEl.hidden = false; return; }
+				const res  = await fetch(SUBMIT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageBase64: base64, contentType, caption, name }) });
 				const data = await res.json().catch(() => ({}));
 				if (!res.ok) {
-					if (res.status === 404) {
-						errorEl.textContent = 'Submit isn\'t available here. Run "npm run dev:netlify" for local testing, or use the deployed site.';
-					} else {
-						errorEl.textContent = (data && data.error) ? String(data.error) : `Something went wrong (${res.status}). Please try again.`;
-					}
-					errorEl.hidden = false;
-					return;
+					errorEl.textContent = res.status === 404 ? 'Run "npm run dev:netlify" for local testing.' : ((data?.error) ? String(data.error) : `Error ${res.status}`);
+					errorEl.hidden = false; return;
 				}
 				successEl.hidden = false;
 				await renderMemories();
-				setTimeout(closeModal, 1500);
+				setTimeout(closeShareModal, 1500);
 			} catch (err) {
-				const msg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
-				errorEl.textContent = msg;
+				errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong.';
 				errorEl.hidden = false;
-			} finally {
-				submitBtn.disabled = false;
-			}
+			} finally { submitBtn.disabled = false; }
 		});
 
-		/** Resize/compress image to stay under maxSizeBytes; returns base64 + contentType or null if still too big. */
-		async function compressImageForUpload(file: File, maxSizeBytes: number, maxDim: number): Promise<{ base64: string; contentType: string } | { base64: null; contentType: string }> {
+		async function compressImage(file: File, maxBytes: number, maxDim: number) {
 			const contentType = 'image/jpeg';
 			if (!file.type.startsWith('image/')) return { base64: null, contentType };
-
-			const img = await loadImage(file);
-			const { width, height } = img;
-			const scale = Math.min(1, maxDim / Math.max(width, height));
-			const w = Math.round(width * scale);
-			const h = Math.round(height * scale);
-
-			const canvas = document.createElement('canvas');
-			canvas.width = w;
-			canvas.height = h;
-			const ctx = canvas.getContext('2d');
-			if (!ctx) return { base64: null, contentType };
-			ctx.drawImage(img, 0, 0, w, h);
-
+			const img   = await loadImg(file);
+			const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+			const canvas = Object.assign(document.createElement('canvas'), { width: Math.round(img.width * scale), height: Math.round(img.height * scale) });
+			canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
 			for (const q of [0.85, 0.7, 0.55, 0.4, 0.25]) {
-				const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', q));
-				if (!blob) continue;
-				if (blob.size <= maxSizeBytes) {
-					const base64 = await blobToBase64(blob);
-					return { base64, contentType };
-				}
+				const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', q));
+				if (blob && blob.size <= maxBytes) return { base64: await blobToB64(blob), contentType };
 			}
 			return { base64: null, contentType };
 		}
-
-		function loadImage(file: File): Promise<HTMLImageElement> {
-			return new Promise((resolve, reject) => {
-				const url = URL.createObjectURL(file);
-				const img = new Image();
-				img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-				img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+		function loadImg(file: File) {
+			return new Promise<HTMLImageElement>((res, rej) => {
+				const url = URL.createObjectURL(file), img = new Image();
+				img.onload  = () => { URL.revokeObjectURL(url); res(img); };
+				img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('load failed')); };
 				img.src = url;
 			});
 		}
-
-		function blobToBase64(blob: Blob): Promise<string> {
-			return new Promise((resolve, reject) => {
-				const reader = new FileReader();
-				reader.onload = () => {
-					const result = reader.result as string;
-					const base64 = result.split(',')[1];
-					resolve(base64 || '');
-				};
-				reader.onerror = reject;
-				reader.readAsDataURL(blob);
+		function blobToB64(blob: Blob) {
+			return new Promise<string>((res, rej) => {
+				const r = new FileReader();
+				r.onload  = () => res((r.result as string).split(',')[1] || '');
+				r.onerror = rej;
+				r.readAsDataURL(blob);
 			});
 		}
 
@@ -345,6 +433,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 </BaseLayout>
 
 <style>
+	/* ── Page base ─────────────────────────────────────────────── */
 	.hero {
 		color: var(--color-cream);
 		padding: 4rem 2rem;
@@ -356,20 +445,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 		overflow: visible;
 		min-height: 120px;
 	}
+	.wave-wrap :global(.wave-surfer-wrap) { transition: opacity 0.4s ease, visibility 0.4s ease; }
+	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) { opacity: 0; visibility: hidden; pointer-events: none; }
 
-	.wave-wrap :global(.wave-surfer-wrap) {
-		transition: opacity 0.4s ease, visibility 0.4s ease;
-	}
-	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) {
-		opacity: 0;
-		visibility: hidden;
-		pointer-events: none;
-	}
-
-	.hero-content {
-		max-width: 700px;
-		margin: 0 auto;
-	}
+	.hero-content { max-width: 700px; margin: 0 auto; }
 
 	.hero h1 {
 		font-family: var(--font-display);
@@ -379,42 +458,27 @@ import Lighthouse from '../components/Lighthouse.astro';
 		margin-bottom: 1rem;
 		line-height: 1.2;
 	}
-
-	.hero-title {
-		animation: hero-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-	}
-	.hero-tagline {
-		opacity: 0;
-		animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-	}
+	.hero-title  { animation: hero-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+	.hero-tagline { opacity: 0; animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
 	@keyframes hero-fade-up {
-		from {
-			opacity: 0;
-			transform: translateY(30px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
+		from { opacity: 0; transform: translateY(30px); }
+		to   { opacity: 1; transform: translateY(0); }
 	}
-
-	.tagline {
-		font-size: 1.25rem;
-		opacity: 0.95;
-		font-weight: 400;
-	}
+	.tagline { font-size: 1.25rem; opacity: 0.95; font-weight: 400; }
 
 	.reunion-content {
 		position: relative;
 		z-index: 1;
-		padding: 4rem 2rem;
+		padding: 4rem 2rem 0;
 		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
 		box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+		padding-bottom: 0;
 	}
 
 	.reunion-content .container {
 		max-width: 820px;
 		margin: 0 auto;
+		padding-bottom: 0;
 	}
 
 	.reunion-intro-grid {
@@ -424,56 +488,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 		align-items: center;
 		margin-bottom: 2.5rem;
 	}
-
 	@media (max-width: 768px) {
-		.reunion-intro-grid {
-			grid-template-columns: 1fr;
-			gap: 2rem;
-		}
-		.reunion-intro-image-col {
-			order: 1;
-		}
-		.reunion-intro-text-col {
-			order: 2;
-		}
+		.reunion-intro-grid { grid-template-columns: 1fr; gap: 2rem; }
+		.reunion-intro-image-col { order: 1; }
+		.reunion-intro-text-col  { order: 2; }
 	}
 
-	.reunion-surfers-wrap {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
+	.reunion-surfers-wrap { display: flex; justify-content: center; align-items: center; }
 	.reunion-surfers-img {
-		width: 100%;
-		max-width: 380px;
-		height: auto;
-		display: block;
+		width: 100%; max-width: 380px; height: auto; display: block;
 		border-radius: 6px;
 		box-shadow: 0 20px 50px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
 		transform: rotate(-2deg);
 		transition: transform 0.35s ease, box-shadow 0.35s ease;
 	}
+	.reunion-surfers-wrap:hover .reunion-surfers-img { transform: rotate(0deg); box-shadow: 0 24px 56px rgba(0,0,0,0.2); }
 
-	.reunion-surfers-wrap:hover .reunion-surfers-img {
-		transform: rotate(0deg);
-		box-shadow: 0 24px 56px rgba(0,0,0,0.2);
-	}
-
-	.reunion-intro-text-col .reunion-intro {
-		margin-top: 0;
-	}
-
-	.reunion-intro {
-		font-family: var(--font-body);
-		font-size: 1.0625rem;
-		color: var(--color-ink);
-		line-height: 1.75;
-		margin: 0 0 1rem 0;
-	}
-	.reunion-intro:last-of-type {
-		margin-bottom: 0;
-	}
+	.reunion-intro-text-col .reunion-intro { margin-top: 0; }
+	.reunion-intro { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1rem 0; }
+	.reunion-intro:last-of-type { margin-bottom: 0; }
 
 	.reunion-subhead {
 		font-family: var(--font-body);
@@ -485,35 +518,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 		margin: 2rem 0 0.75rem 0;
 		line-height: 1.4;
 	}
-
-	.reunion-lead {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		color: var(--color-ink);
-		line-height: 1.6;
-		margin: 0 0 0.75rem 0;
-	}
-
-	.reunion-list {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		color: var(--color-ink);
-		line-height: 1.75;
-		margin: 0 0 1.5rem 0;
-		padding-left: 1.5rem;
-		list-style: disc;
-	}
-	.reunion-list li {
-		margin-bottom: 0.35rem;
-	}
-
-	.reunion-body {
-		font-family: var(--font-body);
-		font-size: 1.0625rem;
-		color: var(--color-ink);
-		line-height: 1.75;
-		margin: 0;
-	}
+	.reunion-lead { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.6; margin: 0 0 0.75rem 0; }
+	.reunion-list { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1.5rem 0; padding-left: 1.5rem; list-style: disc; }
+	.reunion-list li { margin-bottom: 0.35rem; }
+	.reunion-body  { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0; }
 
 	.event-card {
 		background: rgba(184, 220, 228, 0.5);
@@ -521,39 +529,15 @@ import Lighthouse from '../components/Lighthouse.astro';
 		-webkit-backdrop-filter: blur(10px);
 		padding: 1.5rem 1.5rem 1.5rem 1.25rem;
 		border-radius: 12px;
-		border: 1px solid rgba(255, 255, 255, 0.5);
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+		border: 1px solid rgba(255,255,255,0.5);
+		box-shadow: 0 4px 20px rgba(0,0,0,0.04);
 		border-left: 6px solid var(--color-accent);
 		transition: transform 0.3s ease, box-shadow 0.3s ease;
 		margin-bottom: 1.25rem;
 	}
-
-	.event-card:hover {
-		transform: translateX(10px);
-		box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
-	}
-
-	.event-card-intro {
-		margin-bottom: 1.5rem;
-	}
-
-	.event-card h3,
-	.event-card h2 {
-		font-family: var(--font-display);
-		font-size: 1.2rem;
-		font-weight: 600;
-		color: var(--color-ink);
-		margin: 0 0 0.6rem 0;
-		line-height: 1.3;
-	}
-
-	.event-card p {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		color: var(--color-ink);
-		line-height: 1.7;
-		margin: 0;
-	}
+	.event-card:hover { transform: translateX(10px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+	.event-card h3, .event-card h2 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--color-ink); margin: 0 0 0.6rem 0; line-height: 1.3; }
+	.event-card p  { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.7; margin: 0; }
 
 	.event-card-cta {
 		text-align: center;
@@ -561,25 +545,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 		background: rgba(26, 95, 122, 0.08);
 		margin-top: 2rem;
 	}
-
-	.reunion-cta-heading {
-		font-family: var(--font-body) !important;
-		font-size: clamp(0.95rem, 2.2vw, 1.1rem) !important;
-		font-weight: 700 !important;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--color-ink);
-		line-height: 1.45;
-		margin: 0 0 0.75rem 0 !important;
-	}
-
-	.reunion-cta-body {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		color: var(--color-ink);
-		line-height: 1.7;
-		margin: 0 0 1.25rem 0;
-	}
+	.reunion-cta-heading { font-family: var(--font-body) !important; font-size: clamp(0.95rem, 2.2vw, 1.1rem) !important; font-weight: 700 !important; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink); line-height: 1.45; margin: 0 0 0.75rem 0 !important; }
+	.reunion-cta-body    { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.7; margin: 0 0 1.25rem 0; }
 
 	.reunion-share-btn {
 		display: inline-block;
@@ -588,438 +555,343 @@ import Lighthouse from '../components/Lighthouse.astro';
 		font-weight: 600;
 		color: var(--wave-deep);
 		background: transparent;
-		text-decoration: none;
 		padding: 0.5rem 1.25rem;
 		border: 2px solid var(--wave-mid);
 		border-radius: 50px;
 		cursor: pointer;
 		transition: background 0.25s ease, color 0.25s ease;
 	}
+	.reunion-share-btn:hover { background: var(--wave-deep); color: var(--color-cream); }
 
-	.reunion-share-btn:hover {
-		background: var(--wave-deep);
-		color: var(--color-cream);
-	}
+	.reunion-memories-heading { margin-top: 3rem; }
 
-	@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
-
-	.reunion-memories-heading {
-		margin-top: 3rem;
-	}
-
-	/* Shared Memories: styles must be :global() so they apply to JS-injected HTML */
-	:global(.shared-memories-container) {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin-top: 1rem;
+	/* ── Shared Memories container ─────────────────────────────── */
+	.shared-memories-container {
 		width: 100%;
+		margin-top: 1.5rem;
 	}
 
-	:global(.shared-memories-msg) {
+	.shared-memories-msg {
 		font-family: var(--font-body);
 		color: var(--color-sepia);
 		font-style: italic;
+		text-align: center;
+		padding: 2rem;
 		margin: 0;
 	}
+	.shared-memories-err { font-style: normal; color: #b91c1c; }
 
-	:global(.shared-memories-error) {
-		font-style: normal;
-		color: var(--color-ink);
-		max-width: 48ch;
-	}
+	/* ── TikTok feed — all dynamic HTML uses :global() ─────────── */
 
-	:global(.memories-grid-corkboard) {
-		position: relative;
+	:global(.tt-outer) {
 		width: 100%;
-		min-height: 600px;
-		background-color: #f4f1ea;
-		background-image:
-			repeating-linear-gradient(0deg, transparent 0px, transparent 1px, rgba(0,0,0,0.02) 1px, rgba(0,0,0,0.02) 2px),
-			repeating-linear-gradient(90deg, transparent 0px, transparent 1px, rgba(0,0,0,0.02) 1px, rgba(0,0,0,0.02) 2px);
-		background-size: 12px 12px, 12px 12px;
-		padding: 3rem 1rem 4rem;
-		border-radius: 12px;
-		border: 1px solid rgba(0,0,0,0.06);
-		box-shadow: inset 0 0 60px rgba(0,0,0,0.03), 0 4px 20px rgba(0,0,0,0.08);
-		overflow: visible;
-	}
-
-	:global(.slideshow-inner) {
+		background: #000;
 		display: flex;
-		align-items: center;
 		justify-content: center;
-		gap: 2.5rem;
-		max-width: 960px;
-		margin: 0 auto;
-		padding: 2rem 1rem;
-		position: relative;
+		align-items: flex-start;
+		padding: 2rem 1rem 3rem;
 	}
 
-	:global(.polaroid-card) {
-		position: relative;
-		background: #fff;
-		padding: 1.5rem;
-		box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.15);
-		border-radius: 2px;
+	:global(.tt-phone-frame) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
 		width: 100%;
 		max-width: 400px;
-		margin: 0 auto;
-		transform: rotate(var(--polaroid-rotate, -1deg));
-		transition: transform 0.35s ease;
 	}
 
-	:global(.polaroid-card:hover) {
-		transform: rotate(var(--polaroid-rotate, -1deg)) scale(1.02);
-	}
-
-	:global(.polaroid-img-wrap) {
+	:global(.tt-feed) {
+		position: relative;
 		width: 100%;
-		aspect-ratio: 1 / 1;
+		height: min(720px, 82vh);
+		border-radius: 16px;
 		overflow: hidden;
-		background: #222;
-		border: none;
-		display: block;
-		cursor: zoom-in;
-		padding: 0;
-		margin: 0;
+		background: #111;
+		box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
+		touch-action: pan-x;
 	}
 
-	:global(.polaroid-img) {
+	:global(.tt-stage) {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+	}
+
+	:global(.tt-slide) {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: flex-end;
+	}
+
+	:global(.tt-bg) {
+		position: absolute;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		filter: sepia(8%) contrast(105%);
 	}
 
-	:global(.polaroid-caption-well) {
-		margin-top: 1.25rem;
-		padding: 1rem 1rem;
-		background: #fdfcf9;
-		border-top: 2px dashed rgba(0,0,0,0.2);
-		border-radius: 0 0 2px 2px;
-		min-height: 80px;
+	:global(.tt-gradient) {
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(to top,  rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 65%),
+			linear-gradient(to right, rgba(0,0,0,0.35) 0%, transparent 55%);
+		pointer-events: none;
+	}
+
+	/* Bottom info (username, caption) */
+	:global(.tt-bottom) {
+		position: absolute;
+		bottom: 1.25rem;
+		left: 1rem;
+		right: 5.5rem;
+		z-index: 3;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		gap: 0.25rem;
 	}
 
-	:global(.polaroid-caption) {
-		font-family: 'Kalam', cursive;
-		font-size: 1.2rem;
+	:global(.tt-username) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.9375rem;
+		font-weight: 700;
+		color: #fff;
+		margin: 0;
+		text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+	}
+
+	:global(.tt-caption) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.875rem;
+		color: rgba(255,255,255,0.92);
 		line-height: 1.4;
-		color: #333;
-		text-align: center;
+		margin: 0;
+		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	:global(.tt-submitter) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8rem;
+		color: rgba(255,255,255,0.7);
 		margin: 0;
 	}
 
-	:global(.polaroid-name) {
-		font-family: 'Kalam', cursive;
-		font-size: 0.8rem;
-		font-weight: 600;
-		color: var(--wave-deep);
-		margin-top: 0.5rem;
-		margin-bottom: 0;
-		text-align: center;
-	}
-
-	:global(.polaroid-actions) {
+	/* Right action bar */
+	:global(.tt-actions) {
+		position: absolute;
+		bottom: 1rem;
+		right: 0.75rem;
+		z-index: 4;
 		display: flex;
-		justify-content: center;
-		margin-top: 1rem;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
 	}
 
-	:global(.polaroid-download-btn) {
-		display: inline-block;
-		font-family: var(--font-body);
-		font-size: 0.85rem;
-		font-weight: 600;
-		color: var(--wave-deep);
-		background: transparent;
-		border: 2px solid var(--wave-mid);
-		border-radius: 50px;
-		padding: 0.4rem 1rem;
-		text-decoration: none;
-		transition: background 0.2s ease, color 0.2s ease;
+	:global(.tt-avatar-wrap) {
+		margin-bottom: 0.5rem;
 	}
 
-	:global(.polaroid-download-btn:hover) {
-		background: var(--wave-deep);
-		color: var(--color-cream);
-		border-color: var(--wave-deep);
-	}
-
-	:global(.polaroid-card.fade-in-up) {
-		animation: polaroid-fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-	}
-
-	@keyframes polaroid-fade-in-up {
-		from {
-			opacity: 0;
-			transform: translateY(12px) scale(0.98) rotate(0deg);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0) scale(1) rotate(var(--polaroid-rotate, -1deg));
-		}
-	}
-
-	:global(.slideshow-nav) {
-		width: 72px;
-		height: 72px;
+	:global(.tt-avatar) {
+		width: 48px;
+		height: 48px;
 		border-radius: 50%;
-		background: var(--color-foam);
+		border: 2px solid #fff;
+		background: linear-gradient(135deg, #fe2c55 0%, #ff6b35 50%, #ffd700 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.4rem;
+		box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+	}
+
+	:global(.tt-btn) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.3rem;
+		background: transparent;
 		border: none;
-		box-shadow: 0 6px 20px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-		font-size: 2.5rem;
-		line-height: 1;
-		color: var(--wave-deep);
+		cursor: pointer;
+		padding: 0;
+		text-decoration: none;
+		color: #fff;
+	}
+
+	:global(.tt-btn-icon) {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: rgba(255,255,255,0.15);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.2s ease, transform 0.2s ease;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+	}
+
+	:global(.tt-btn:hover .tt-btn-icon) {
+		background: rgba(255,255,255,0.25);
+		transform: scale(1.1);
+	}
+
+	:global(.tt-btn-label) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: #fff;
+		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	}
+
+	:global(.tt-heart.tt-liked .tt-btn-icon) {
+		background: rgba(254, 44, 85, 0.25);
+	}
+
+	:global(.tt-like-pop) {
+		animation: tt-pop 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+	}
+
+	@keyframes tt-pop {
+		0%   { transform: scale(1); }
+		30%  { transform: scale(1.4); }
+		60%  { transform: scale(0.9); }
+		100% { transform: scale(1); }
+	}
+
+	/* Counter badge */
+	:global(.tt-counter) {
+		position: absolute;
+		top: 0.85rem;
+		left: 50%;
+		transform: translateX(-50%);
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: rgba(255,255,255,0.8);
+		background: rgba(0,0,0,0.35);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		padding: 0.2rem 0.65rem;
+		border-radius: 20px;
+		letter-spacing: 0.04em;
+		pointer-events: none;
+		z-index: 5;
+	}
+
+	/* Up / down nav buttons */
+	:global(.tt-nav-arrows) {
+		position: absolute;
+		top: 50%;
+		right: 0;
+		transform: translateY(-50%);
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding-right: 0.5rem;
+		z-index: 6;
+	}
+
+	:global(.tt-nav-btn) {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: rgba(255,255,255,0.18);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		border: 1px solid rgba(255,255,255,0.2);
+		color: #fff;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: transform 0.2s ease, color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-		z-index: 10;
-		flex-shrink: 0;
-		padding: 0;
+		transition: background 0.2s ease, opacity 0.2s ease;
 	}
 
-	:global(.slideshow-nav:hover:not(:disabled)) {
-		transform: scale(1.1);
-		background: var(--wave-deep);
-		color: #fff;
-		box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+	:global(.tt-nav-btn:hover:not(:disabled)) {
+		background: rgba(255,255,255,0.35);
 	}
 
-	:global(.slideshow-nav:disabled) {
-		opacity: 0.35;
+	:global(.tt-nav-btn:disabled) {
+		opacity: 0.2;
 		cursor: not-allowed;
 	}
 
-	:global(.slideshow-pagination) {
-		position: absolute;
-		bottom: 1rem;
-		right: 1.25rem;
-		font-family: 'Kalam', cursive;
-		font-size: 0.95rem;
-		font-weight: 600;
-		color: var(--color-sepia);
-		opacity: 0.9;
-	}
-
-	:global(.slideshow-pagination .current) {
-		color: var(--wave-deep);
-	}
-
-	/* Lightbox */
-	.memory-lightbox {
-		position: fixed;
-		inset: 0;
-		z-index: 10000;
+	/* Progress dots */
+	:global(.tt-dots) {
 		display: flex;
-		align-items: center;
+		gap: 5px;
 		justify-content: center;
-		padding: 2rem;
-		background: rgba(0, 0, 0, 0.85);
+		flex-wrap: wrap;
+		max-width: 200px;
 	}
 
-	.memory-lightbox[hidden] {
-		display: none;
-	}
-
-	.memory-lightbox-overlay {
-		position: absolute;
-		inset: 0;
-		cursor: pointer;
-	}
-
-	.memory-lightbox-content {
-		position: relative;
-		max-width: 90vw;
-		max-height: 90vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.memory-lightbox-img {
-		max-width: 100%;
-		max-height: 85vh;
-		width: auto;
-		height: auto;
-		object-fit: contain;
-		box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-		border-radius: 4px;
-	}
-
-	.memory-lightbox-close {
-		position: absolute;
-		top: -2.5rem;
-		right: 0;
-		width: 2.5rem;
-		height: 2.5rem;
-		border: none;
+	:global(.tt-dot) {
+		width: 6px;
+		height: 6px;
 		border-radius: 50%;
-		background: var(--color-cream);
-		color: var(--color-ink);
-		font-size: 1.5rem;
-		line-height: 1;
-		cursor: pointer;
-		transition: background 0.2s ease, color 0.2s ease;
+		background: rgba(255,255,255,0.3);
+		transition: background 0.25s ease, transform 0.25s ease;
 	}
 
-	.memory-lightbox-close:hover {
-		background: var(--wave-deep);
-		color: var(--color-cream);
+	:global(.tt-dot.active) {
+		background: #fff;
+		transform: scale(1.3);
 	}
 
-	/* Share memories modal */
+	/* ── Share memories modal ──────────────────────────────────── */
 	.share-memories-modal {
-		position: fixed;
-		inset: 0;
-		z-index: 9999;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 1rem;
+		position: fixed; inset: 0; z-index: 9999;
+		display: flex; align-items: center; justify-content: center; padding: 1rem;
 	}
-
-	.share-memories-modal[hidden] {
-		display: none;
-	}
-
-	.share-memories-overlay {
-		position: absolute;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.5);
-	}
-
+	.share-memories-modal[hidden] { display: none; }
+	.share-memories-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
 	.share-memories-box {
-		position: relative;
-		background: var(--color-cream);
-		border-radius: 12px;
-		padding: 1.5rem 1.75rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-		min-width: 280px;
-		max-width: 420px;
-		width: 100%;
+		position: relative; background: var(--color-cream); border-radius: 12px;
+		padding: 1.5rem 1.75rem; box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+		min-width: 280px; max-width: 420px; width: 100%;
 	}
-
-	.share-memories-title {
-		font-family: var(--font-display);
-		font-size: 1.35rem;
-		font-weight: 600;
-		color: var(--color-ink);
-		margin: 0 0 1.25rem 0;
-	}
-
-	.share-memories-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.share-memories-label {
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 600;
-		color: var(--color-ink);
-	}
-
+	.share-memories-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--color-ink); margin: 0 0 1.25rem 0; }
+	.share-memories-form  { display: flex; flex-direction: column; gap: 0.75rem; }
+	.share-memories-label { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--color-ink); }
 	.share-memories-file,
 	.share-memories-input,
 	.share-memories-textarea {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		padding: 0.5rem 0.75rem;
-		border: 1px solid var(--color-sand-dark);
-		border-radius: 6px;
-		background: var(--color-foam);
+		font-family: var(--font-body); font-size: 1rem;
+		padding: 0.5rem 0.75rem; border: 1px solid var(--color-sand-dark);
+		border-radius: 6px; background: var(--color-foam);
 	}
-
-	.share-memories-textarea {
-		resize: vertical;
-		min-height: 4rem;
-	}
-
-	.share-memories-error {
-		font-size: 0.9rem;
-		color: #b91c1c;
-		margin: 0;
-	}
-
-	.share-memories-success {
-		font-size: 0.9rem;
-		color: #15803d;
-		margin: 0;
-	}
-
-	.share-memories-actions {
-		display: flex;
-		gap: 0.75rem;
-		justify-content: flex-end;
-		margin-top: 0.5rem;
-	}
-
+	.share-memories-textarea { resize: vertical; min-height: 4rem; }
+	.share-memories-error   { font-size: 0.9rem; color: #b91c1c; margin: 0; }
+	.share-memories-success { font-size: 0.9rem; color: #15803d; margin: 0; }
+	.share-memories-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem; }
 	.share-memories-btn {
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 600;
-		padding: 0.5rem 1.25rem;
-		border-radius: 6px;
-		cursor: pointer;
-		border: 1px solid transparent;
-		transition: background 0.2s ease;
+		font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+		padding: 0.5rem 1.25rem; border-radius: 6px; cursor: pointer;
+		border: 1px solid transparent; transition: background 0.2s ease;
 	}
+	.share-memories-cancel  { background: transparent; color: var(--color-ink); border-color: var(--color-sand-dark); }
+	.share-memories-submit  { background: var(--wave-deep); color: var(--color-cream); }
+	.share-memories-submit:hover:not(:disabled) { background: var(--wave-mid); }
+	.share-memories-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 
-	.share-memories-cancel {
-		background: transparent;
-		color: var(--color-ink);
-		border-color: var(--color-sand-dark);
-	}
-
-	.share-memories-submit {
-		background: var(--wave-deep);
-		color: var(--color-cream);
-	}
-
-	.share-memories-submit:hover:not(:disabled) {
-		background: var(--wave-mid);
-	}
-
-	.share-memories-submit:disabled {
-		opacity: 0.7;
-		cursor: not-allowed;
-	}
-
+	/* ── Responsive ────────────────────────────────────────────── */
 	@media (max-width: 768px) {
-		.hero {
-			padding: 3rem 1rem;
-		}
-		.hero .hero-title {
-			font-size: clamp(1.75rem, 6vw, 2.25rem);
-		}
-		.reunion-content {
-			padding: 2.5rem 1rem;
-		}
-		.reunion-intro-grid {
-			gap: 1.5rem;
-		}
-		.reunion-surfers-img {
-			max-width: 100%;
-		}
-		.memories-section {
-			padding: 2rem 1rem;
-		}
-		.share-memories-form input,
-		.share-memories-form textarea {
-			min-height: 48px;
-		}
+		.hero            { padding: 3rem 1rem; }
+		.hero .hero-title { font-size: clamp(1.75rem, 6vw, 2.25rem); }
+		.reunion-content { padding: 2.5rem 1rem 0; }
+		.reunion-intro-grid { gap: 1.5rem; }
+		.reunion-surfers-img { max-width: 100%; }
 		.share-memories-cancel,
-		.share-memories-submit {
-			min-height: 48px;
-			padding: 0.85rem 1.25rem;
-		}
+		.share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
 	}
 </style>
