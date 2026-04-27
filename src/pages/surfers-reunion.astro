@@ -102,15 +102,15 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		import { getSharedMemories, getMemoryComments } from '../lib/firebase';
+		import { getSharedMemories, getMemoryComments, likeMemory } from '../lib/firebase';
 		import type { SharedMemory, MemoryComment } from '../lib/firebase';
 
 		const SUBMIT_URL      = '/.netlify/functions/submit-memory';
 		const COMMENT_URL     = '/.netlify/functions/add-comment';
-		const LIKE_URL        = '/.netlify/functions/like-memory';
 		const MAX_IMAGE_SIZE  = 700 * 1024;
 		const MAX_DIMENSION   = 1200;
 		const LIKED_LS_KEY    = 'sdm_liked_v2';
+		const FP_LS_KEY       = 'sdm_fp';
 
 		// Share modal refs
 		const openBtn      = document.getElementById('reunion-share-memories-btn');
@@ -134,6 +134,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 		const commentsCache = new Map<string, MemoryComment[]>();
 
 		// ── localStorage helpers ──────────────────────────────────
+		function getFingerprint(): string {
+			try {
+				let fp = localStorage.getItem(FP_LS_KEY);
+				if (!fp) { fp = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem(FP_LS_KEY, fp); }
+				return fp;
+			} catch { return ''; }
+		}
 		function getLocalLiked(): Set<string> {
 			try { return new Set(JSON.parse(localStorage.getItem(LIKED_LS_KEY) || '[]')); } catch { return new Set(); }
 		}
@@ -194,6 +201,12 @@ import Lighthouse from '../components/Lighthouse.astro';
         </svg>
         <span class="tt-like-count">${count}</span>
       </button>
+      <button class="tt-comment-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Toggle comments">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="tt-comment-btn-count" id="tt-cmt-btn-count-${esc(m.id)}">…</span>
+      </button>
       <a class="tt-dl-btn" href="${esc(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Download photo">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -204,23 +217,25 @@ import Lighthouse from '../components/Lighthouse.astro';
       </a>
     </div>
 
-    <div class="tt-comments-section">
-      <p class="tt-comments-heading">
-        Comments <span class="tt-comment-count" id="tt-comment-count-${esc(m.id)}"></span>
-      </p>
+    <div class="tt-comments-section" id="tt-comments-section-${esc(m.id)}">
+      <div class="tt-comments-header">
+        <p class="tt-comments-heading">
+          Comments <span class="tt-comment-count" id="tt-comment-count-${esc(m.id)}"></span>
+        </p>
+        <button class="tt-comments-close" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Close comments">&#x2715;</button>
+      </div>
       <div class="tt-comments-list" id="tt-comments-list-${esc(m.id)}">
         <p class="tt-comment-placeholder">Loading…</p>
       </div>
+      <form class="tt-comment-form" id="tt-comment-form" data-memory-id="${esc(m.id)}" novalidate>
+        <input type="text" class="tt-name-input" id="tt-cmt-name" placeholder="Your name (optional)" maxlength="100" autocomplete="name" />
+        <div class="tt-cmt-row">
+          <input type="text" class="tt-cmt-input" id="tt-cmt-text" placeholder="Add a comment…" maxlength="500" />
+          <button type="submit" class="tt-cmt-post">Post</button>
+        </div>
+        <p class="tt-cmt-error" id="tt-cmt-error" hidden></p>
+      </form>
     </div>
-
-    <form class="tt-comment-form" id="tt-comment-form" data-memory-id="${esc(m.id)}" novalidate>
-      <input type="text" class="tt-name-input" id="tt-cmt-name" placeholder="Your name (optional)" maxlength="100" autocomplete="name" />
-      <div class="tt-cmt-row">
-        <input type="text" class="tt-cmt-input" id="tt-cmt-text" placeholder="Add a comment…" maxlength="500" />
-        <button type="submit" class="tt-cmt-post">Post</button>
-      </div>
-      <p class="tt-cmt-error" id="tt-cmt-error" hidden></p>
-    </form>
   </div>
 </div>`;
 		}
@@ -240,8 +255,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 		function renderCommentsList(memoryId: string, listEl: Element, countEl: Element | null) {
 			const comments = commentsCache.get(memoryId) || [];
-			if (countEl) countEl.textContent = `(${comments.length})`;
-			if (comments.length === 0) {
+			const n = comments.length;
+			if (countEl) countEl.textContent = `(${n})`;
+			// Sync button count
+			const btnCount = document.getElementById(`tt-cmt-btn-count-${memoryId}`);
+			if (btnCount) btnCount.textContent = String(n);
+			if (n === 0) {
 				listEl.innerHTML = '<p class="tt-comment-placeholder">No comments yet — be the first!</p>';
 				return;
 			}
@@ -252,6 +271,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 				</div>
 			`).join('');
 			listEl.scrollTop = listEl.scrollHeight;
+		}
+
+		function toggleComments(memoryId: string) {
+			const section = document.getElementById(`tt-comments-section-${memoryId}`);
+			if (!section) return;
+			section.hidden = !section.hidden;
+			if (!section.hidden) loadAndRenderComments(memoryId);
 		}
 
 		// ── Likes ─────────────────────────────────────────────────
@@ -278,16 +304,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			setLikeUI(btn, state.count, true);
 
 			try {
-				const res = await fetch(LIKE_URL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ memoryId }),
-				});
-				const data = await res.json().catch(() => ({}));
-				if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-				state.count = data.likes ?? state.count;
-				likesMap.set(memoryId, state);
-				setLikeUI(btn, state.count, true);
+				await likeMemory(memoryId, getFingerprint());
 			} catch (err) {
 				// Revert on failure
 				console.error('[SDM] like failed:', err);
@@ -307,6 +324,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 			// Like
 			card.querySelectorAll('[data-action="like"]').forEach((btn) => {
 				btn.addEventListener('click', () => handleLike((btn as HTMLElement).dataset.memoryId!, btn as HTMLElement));
+			});
+
+			// Toggle comments (both the bubble button and the ✕ close button)
+			card.querySelectorAll('[data-action="toggle-comments"]').forEach((btn) => {
+				btn.addEventListener('click', () => toggleComments((btn as HTMLElement).dataset.memoryId!));
 			});
 
 			// Comment form
@@ -787,6 +809,27 @@ ${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`
 	}
 	:global(.tt-dl-btn:hover) { background: rgba(26,95,122,0.08); border-color: var(--wave-deep); }
 
+	:global(.tt-comment-btn) {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		background: transparent;
+		border: 1px solid rgba(0,0,0,0.12);
+		border-radius: 20px;
+		padding: 0.3rem 0.75rem;
+		cursor: pointer;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		transition: background 0.2s, border-color 0.2s, color 0.2s;
+	}
+	:global(.tt-comment-btn:hover) {
+		background: rgba(26,95,122,0.08);
+		border-color: var(--wave-deep);
+		color: var(--wave-deep);
+	}
+
 	/* Comments section */
 	:global(.tt-comments-section) {
 		flex: 1;
@@ -794,6 +837,17 @@ ${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`
 		flex-direction: column;
 		min-height: 0;
 		overflow: hidden;
+		border-top: 1px solid rgba(0,0,0,0.07);
+	}
+	:global(.tt-comments-section[hidden]) { display: none !important; }
+
+	:global(.tt-comments-header) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 1rem 0.4rem;
+		border-bottom: 1px solid rgba(0,0,0,0.06);
+		flex-shrink: 0;
 	}
 
 	:global(.tt-comments-heading) {
@@ -804,9 +858,22 @@ ${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`
 		letter-spacing: 0.07em;
 		color: var(--color-sepia);
 		margin: 0;
-		padding: 0.6rem 1rem 0.4rem;
-		border-bottom: 1px solid rgba(0,0,0,0.06);
-		flex-shrink: 0;
+	}
+
+	:global(.tt-comments-close) {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.8rem;
+		color: var(--color-sepia);
+		padding: 0.15rem 0.4rem;
+		border-radius: 4px;
+		line-height: 1;
+		transition: background 0.2s, color 0.2s;
+	}
+	:global(.tt-comments-close:hover) {
+		background: rgba(0,0,0,0.07);
+		color: var(--color-ink);
 	}
 
 	:global(.tt-comment-count) { font-weight: 400; }
@@ -991,6 +1058,8 @@ ${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`
 
 		/* Hide name field on mobile to save vertical space */
 		:global(.tt-name-input) { display: none; }
+
+		:global(.tt-comment-form) { padding: 0.5rem 0.6rem; }
 
 		/* Overlay arrows on top of the image panel */
 		:global(.tt-arrow) {
