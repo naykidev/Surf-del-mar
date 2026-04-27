@@ -9,8 +9,18 @@ function getAdmin() {
   return admin;
 }
 
-// Public: increment like count for a shared memory. No auth.
-exports.handler = async (event, context) => {
+function getClientIp(headers) {
+  // Netlify sets x-nf-client-connection-ip to the real client IP
+  return (
+    headers['x-nf-client-connection-ip'] ||
+    headers['client-ip'] ||
+    (headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    'unknown'
+  );
+}
+
+// Public: increment like count for a shared memory, deduplicated by IP.
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -20,14 +30,15 @@ exports.handler = async (event, context) => {
   } catch {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
-  const memoryId = body.memoryId;
-  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.trim().slice(0, 128) : null;
+  const { memoryId } = body;
   if (!memoryId || typeof memoryId !== 'string') {
     return { statusCode: 400, body: JSON.stringify({ error: 'memoryId required' }) };
   }
+
+  const ip = getClientIp(event.headers);
+
   try {
-    const app = getAdmin();
-    const db = app.firestore();
+    const db = getAdmin().firestore();
     const ref = db.collection('sharedMemories').doc(memoryId);
     const snap = await ref.get();
     if (!snap.exists) {
@@ -35,20 +46,21 @@ exports.handler = async (event, context) => {
     }
     const data = snap.data();
     const current = data.likes ?? 0;
-    const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-    if (fingerprint && likedBy.includes(fingerprint)) {
+    const likedByIp = Array.isArray(data.likedByIp) ? data.likedByIp : [];
+
+    if (ip !== 'unknown' && likedByIp.includes(ip)) {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ likes: current, alreadyLiked: true }),
       };
     }
+
     const next = current + 1;
-    const update = { likes: next };
-    if (fingerprint) {
-      update.likedBy = admin.firestore.FieldValue.arrayUnion(fingerprint);
-    }
-    await ref.update(update);
+    await ref.update({
+      likes: next,
+      likedByIp: admin.firestore.FieldValue.arrayUnion(ip),
+    });
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
