@@ -306,7 +306,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 			applyPageBackground(resolvedPageKey);
 			initPageSettingsModal(resolvedPageKey);
 			getMaintenanceMode().then((enabled) => {
-				if (enabled && window.location.pathname !== '/maintenance/') {
+				const isAdmin = sessionStorage.getItem('admin') === 'true';
+				if (enabled && !isAdmin && window.location.pathname !== '/maintenance/') {
 					window.location.replace('/maintenance/');
 				}
 			});

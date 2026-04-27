@@ -290,8 +290,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 				state.count = likes;
 				likesMap.set(memoryId, state);
 				setLikeUI(btn, likes, true);
-			} catch {
+			} catch (err) {
 				// Revert on failure
+				console.error('[SDM] likeMemory failed:', err);
 				state.count = prevCount;
 				state.liked = false;
 				likesMap.set(memoryId, state);
