@@ -1,0 +1,296 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ScrollWaves from '../components/ScrollWaves.astro';
+import WaveSurfer from '../components/WaveSurfer.astro';
+import PirateShip from '../components/PirateShip.astro';
+import Lighthouse from '../components/Lighthouse.astro';
+---
+
+<BaseLayout
+	title="Faces of the Festival"
+	description="Meet the surfers, artists, storytellers, and community members who make Surf Del Mar come alive."
+	pageKey="faces-of-festival"
+>
+	<section class="hero hero-sunset-bg">
+		<div class="hero-content hero-entrance">
+			<h1 class="hero-title">FACES OF THE FESTIVAL</h1>
+			<p class="tagline hero-tagline">The surfers, artists, and storytellers who make Surf Del Mar come alive.</p>
+		</div>
+	</section>
+	<div class="wave-wrap wave-hero hero-sunset-bg" id="faces-wave-wrap">
+		<ScrollWaves variant="light" />
+		<WaveSurfer />
+		<PirateShip />
+		<Lighthouse toggleTargetId="faces-wave-wrap" />
+	</div>
+
+	<section class="faces-content">
+		<div class="container">
+
+			<p class="faces-intro">
+				Surf Del Mar brings together a remarkable community of surfers, historians, artists, and ocean lovers. Here are some of the extraordinary people you'll meet at this year's festival.
+			</p>
+
+			<div class="bios-grid">
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<div class="bio-photo-placeholder" aria-hidden="true"></div>
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Name</h2>
+						<p class="bio-role">Role / Event</p>
+						<p class="bio-text">Bio description goes here. Tell us about this person's connection to Del Mar surfing history and what they'll be sharing at the festival.</p>
+					</div>
+				</article>
+
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		color: var(--color-cream);
+		padding: 4rem 2rem;
+		text-align: center;
+	}
+
+	.wave-wrap {
+		position: relative;
+		overflow: visible;
+		min-height: 120px;
+	}
+
+	.wave-wrap :global(.wave-surfer-wrap) {
+		transition: opacity 0.4s ease, visibility 0.4s ease;
+	}
+	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	.hero-content {
+		max-width: 700px;
+		margin: 0 auto;
+	}
+
+	.hero-title {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 5vw, 3.75rem);
+		font-weight: 600;
+		color: var(--color-cream);
+		margin: 0 0 1rem;
+		line-height: 1.2;
+		animation: hero-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	.hero-tagline {
+		font-size: 1.2rem;
+		opacity: 0;
+		font-weight: 400;
+		animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+	}
+
+	@keyframes hero-fade-up {
+		from { opacity: 0; transform: translateY(30px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+
+	.faces-content {
+		position: relative;
+		z-index: 1;
+		padding: 4rem 2rem;
+		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	}
+
+	.container {
+		max-width: 960px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.faces-intro {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		color: var(--color-ink);
+		line-height: 1.75;
+		max-width: 720px;
+	}
+
+	.bios-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+	}
+
+	@media (max-width: 780px) {
+		.bios-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.bios-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.event-card {
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border-radius: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+		border-top: 6px solid var(--color-accent);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		overflow: hidden;
+	}
+
+	.event-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+	}
+
+	.bio-card {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.bio-photo-wrap {
+		width: 100%;
+		aspect-ratio: 1 / 1;
+		overflow: hidden;
+		background: var(--color-foam);
+	}
+
+	.bio-photo-placeholder {
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(135deg, var(--color-sand) 0%, var(--color-foam) 50%, var(--color-sand) 100%);
+		position: relative;
+	}
+
+	.bio-photo-placeholder::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(circle 40% at 50% 38%, rgba(255,255,255,0.25) 0%, transparent 60%),
+			radial-gradient(ellipse 55% 30% at 50% 78%, rgba(184,220,228,0.4) 0%, transparent 70%);
+	}
+
+	.bio-photo-wrap img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.bio-body {
+		padding: 1.25rem 1.25rem 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		flex: 1;
+	}
+
+	.bio-name {
+		font-family: var(--font-display);
+		font-size: 1.35rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0;
+		line-height: 1.2;
+	}
+
+	.bio-role {
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.09em;
+		color: var(--color-accent);
+		margin: 0;
+	}
+
+	.bio-text {
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		color: var(--color-ink);
+		line-height: 1.65;
+		margin: 0.35rem 0 0;
+	}
+
+	@media (max-width: 768px) {
+		.hero {
+			padding: 3rem 1rem;
+		}
+		.faces-content {
+			padding: 2.5rem 1rem;
+		}
+		.event-card:hover {
+			transform: none;
+		}
+	}
+</style>
