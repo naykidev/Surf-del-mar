@@ -74,7 +74,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 			<h2 class="reunion-subhead reunion-memories-heading">SHARED MEMORIES</h2>
 		</div>
 
-		<!-- TikTok feed lives full-width outside the narrow container -->
 		<div id="shared-memories-container" class="shared-memories-container" aria-live="polite">
 			<p id="shared-memories-loading" class="shared-memories-msg">Loading…</p>
 		</div>
@@ -103,251 +102,344 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		import { getSharedMemories } from '../lib/firebase';
-		import type { SharedMemory } from '../lib/firebase';
+		import { getSharedMemories, getMemoryComments } from '../lib/firebase';
+		import type { SharedMemory, MemoryComment } from '../lib/firebase';
 
-		const SUBMIT_URL = '/.netlify/functions/submit-memory';
-		const MAX_IMAGE_SIZE = 700 * 1024;
-		const MAX_DIMENSION = 1200;
+		const SUBMIT_URL      = '/.netlify/functions/submit-memory';
+		const LIKE_URL        = '/.netlify/functions/like-memory';
+		const COMMENT_URL     = '/.netlify/functions/add-comment';
+		const MAX_IMAGE_SIZE  = 700 * 1024;
+		const MAX_DIMENSION   = 1200;
+		const LIKED_LS_KEY    = 'sdm_liked_v2';
+		const FP_LS_KEY       = 'sdm_fp';
 
 		// Share modal refs
-		const openBtn       = document.getElementById('reunion-share-memories-btn');
-		const shareModal    = document.getElementById('share-memories-modal');
-		const shareOverlay  = document.getElementById('share-memories-overlay');
-		const form          = document.getElementById('share-memories-form') as HTMLFormElement | null;
-		const cancelBtn     = document.getElementById('share-memories-cancel');
-		const fileInput     = document.getElementById('memory-photo') as HTMLInputElement;
-		const errorEl       = document.getElementById('share-memories-error');
-		const successEl     = document.getElementById('share-memories-success');
-		const containerEl   = document.getElementById('shared-memories-container');
-		const loadingEl     = document.getElementById('shared-memories-loading');
+		const openBtn      = document.getElementById('reunion-share-memories-btn');
+		const shareModal   = document.getElementById('share-memories-modal');
+		const shareOverlay = document.getElementById('share-memories-overlay');
+		const form         = document.getElementById('share-memories-form') as HTMLFormElement | null;
+		const cancelBtn    = document.getElementById('share-memories-cancel');
+		const fileInput    = document.getElementById('memory-photo') as HTMLInputElement;
+		const errorEl      = document.getElementById('share-memories-error');
+		const successEl    = document.getElementById('share-memories-success');
+		const containerEl  = document.getElementById('shared-memories-container');
+		const loadingEl    = document.getElementById('shared-memories-loading');
 
 		let memoriesList: SharedMemory[] = [];
 		let currentIndex = 0;
-		let isAnimating = false;
-		const likedSet = new Set<number>();
+		let isAnimating  = false;
+
+		// Per-memory likes state (count + whether user has liked)
+		const likesMap = new Map<string, { count: number; liked: boolean }>();
+		// Per-memory comments cache
+		const commentsCache = new Map<string, MemoryComment[]>();
+
+		// ── localStorage helpers ──────────────────────────────────
+		function getFingerprint(): string {
+			try {
+				let fp = localStorage.getItem(FP_LS_KEY);
+				if (!fp) { fp = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem(FP_LS_KEY, fp); }
+				return fp;
+			} catch { return ''; }
+		}
+		function getLocalLiked(): Set<string> {
+			try { return new Set(JSON.parse(localStorage.getItem(LIKED_LS_KEY) || '[]')); } catch { return new Set(); }
+		}
+		function addLocalLiked(memoryId: string) {
+			try { const s = getLocalLiked(); s.add(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
+		}
 
 		// ── Share modal ───────────────────────────────────────────
 		function openShareModal() {
 			if (shareModal)  shareModal.hidden = false;
 			if (errorEl)    { errorEl.hidden = true; errorEl.textContent = ''; }
-			if (successEl)    successEl.hidden = true;
-			if (form)         form.reset();
+			if (successEl)   successEl.hidden = true;
+			if (form)        form.reset();
 		}
-		function closeShareModal() {
-			if (shareModal) shareModal.hidden = true;
-		}
+		function closeShareModal() { if (shareModal) shareModal.hidden = true; }
 
 		openBtn?.addEventListener('click', openShareModal);
 		shareOverlay?.addEventListener('click', closeShareModal);
 		cancelBtn?.addEventListener('click', closeShareModal);
 
-		// ── TikTok feed rendering ─────────────────────────────────
-		function escapeHtml(s: string) {
+		// ── HTML helpers ──────────────────────────────────────────
+		function esc(s: string): string {
 			const d = document.createElement('div');
 			d.textContent = s;
 			return d.innerHTML;
 		}
 
 		function slideHTML(idx: number): string {
-			const m = memoriesList[idx];
-			const liked = likedSet.has(idx);
+			const m     = memoriesList[idx];
 			const total = memoriesList.length;
-			const heartFill  = liked ? '#fe2c55' : 'none';
-			const heartStroke = liked ? '#fe2c55' : '#fff';
+			const localLiked = getLocalLiked();
+			const liked = localLiked.has(m.id);
+			const count = likesMap.get(m.id)?.count ?? m.likes ?? 0;
+
 			return `
-<div class="tt-slide" data-index="${idx}">
-  <img class="tt-bg" src="${escapeHtml(m.imageUrl)}" alt="Shared memory ${idx + 1}" />
-  <div class="tt-gradient"></div>
-
-  <div class="tt-bottom">
-    <p class="tt-username">@surf_del_mar</p>
-    ${m.caption ? `<p class="tt-caption">${escapeHtml(m.caption)}</p>` : ''}
-    ${m.name    ? `<p class="tt-submitter">&#x2014; ${escapeHtml(m.name)}</p>` : ''}
+<div class="tt-slide" data-index="${idx}" data-memory-id="${esc(m.id)}">
+  <div class="tt-image-panel">
+    <img class="tt-photo" src="${esc(m.imageUrl)}" alt="Shared memory ${idx + 1} of ${total}" />
+    <div class="tt-img-counter">${idx + 1} / ${total}</div>
   </div>
-
-  <div class="tt-actions">
-    <div class="tt-avatar-wrap">
-      <div class="tt-avatar">🏄</div>
+  <div class="tt-content-panel">
+    <div class="tt-post-header">
+      <div class="tt-post-avatar" aria-hidden="true">🏄</div>
+      <div class="tt-post-meta">
+        <p class="tt-post-username">@surf_del_mar</p>
+        ${m.caption ? `<p class="tt-post-caption">${esc(m.caption)}</p>` : ''}
+        ${m.name    ? `<p class="tt-post-by">&#x2014; ${esc(m.name)}</p>` : ''}
+      </div>
     </div>
 
-    <button class="tt-btn tt-heart${liked ? ' tt-liked' : ''}" data-action="like" data-index="${idx}" aria-label="Like">
-      <div class="tt-btn-icon">
-        <svg viewBox="0 0 24 24" width="32" height="32" fill="${heartFill}" stroke="${heartStroke}" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+    <div class="tt-actions-row">
+      <button class="tt-like-btn${liked ? ' tt-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like this memory">
+        <svg viewBox="0 0 24 24" width="18" height="18"
+             fill="${liked ? '#fe2c55' : 'none'}"
+             stroke="${liked ? '#fe2c55' : 'currentColor'}"
+             stroke-width="1.5">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
-      </div>
-      <span class="tt-btn-label">${liked ? '1' : '0'}</span>
-    </button>
-
-    <button class="tt-btn tt-comment-btn" data-action="comment" aria-label="Share a memory">
-      <div class="tt-btn-icon">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </div>
-      <span class="tt-btn-label">Add</span>
-    </button>
-
-    <a class="tt-btn tt-save-btn" href="${escapeHtml(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Download photo">
-      <div class="tt-btn-icon">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+        <span class="tt-like-count">${count}</span>
+      </button>
+      <a class="tt-dl-btn" href="${esc(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Download photo">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
-      </div>
-      <span class="tt-btn-label">Save</span>
-    </a>
-  </div>
+        Save
+      </a>
+    </div>
 
-  <div class="tt-counter">${idx + 1} / ${total}</div>
+    <div class="tt-comments-section">
+      <p class="tt-comments-heading">
+        Comments <span class="tt-comment-count" id="tt-comment-count-${esc(m.id)}"></span>
+      </p>
+      <div class="tt-comments-list" id="tt-comments-list-${esc(m.id)}">
+        <p class="tt-comment-placeholder">Loading…</p>
+      </div>
+    </div>
+
+    <form class="tt-comment-form" id="tt-comment-form" data-memory-id="${esc(m.id)}" novalidate>
+      <input type="text" class="tt-name-input" id="tt-cmt-name" placeholder="Your name (optional)" maxlength="100" autocomplete="name" />
+      <div class="tt-cmt-row">
+        <input type="text" class="tt-cmt-input" id="tt-cmt-text" placeholder="Add a comment…" maxlength="500" />
+        <button type="submit" class="tt-cmt-post">Post</button>
+      </div>
+      <p class="tt-cmt-error" id="tt-cmt-error" hidden></p>
+    </form>
+  </div>
 </div>`;
 		}
 
-		function attachSlideListeners() {
-			const feed = document.getElementById('tt-feed');
-			if (!feed) return;
+		// ── Comments ──────────────────────────────────────────────
+		async function loadAndRenderComments(memoryId: string) {
+			const listEl  = document.getElementById(`tt-comments-list-${memoryId}`);
+			const countEl = document.getElementById(`tt-comment-count-${memoryId}`);
+			if (!listEl) return;
 
-			// Like button
-			feed.querySelectorAll('[data-action="like"]').forEach((btn) => {
-				btn.addEventListener('click', () => {
-					const idx = parseInt((btn as HTMLElement).dataset.index || '0', 10);
-					if (likedSet.has(idx)) likedSet.delete(idx);
-					else likedSet.add(idx);
-					// Re-render just the heart state
-					const heartSvg = btn.querySelector('svg');
-					const label    = btn.querySelector('.tt-btn-label');
-					const liked    = likedSet.has(idx);
-					if (heartSvg) {
-						heartSvg.setAttribute('fill',   liked ? '#fe2c55' : 'none');
-						heartSvg.setAttribute('stroke', liked ? '#fe2c55' : '#fff');
-					}
-					if (label) label.textContent = liked ? '1' : '0';
-					btn.classList.toggle('tt-liked', liked);
-					// Bounce animation
-					btn.classList.remove('tt-like-pop');
-					void (btn as HTMLElement).offsetWidth;
-					btn.classList.add('tt-like-pop');
-				});
-			});
-
-			// Comment → open share modal
-			feed.querySelectorAll('[data-action="comment"]').forEach((btn) => {
-				btn.addEventListener('click', openShareModal);
-			});
+			if (!commentsCache.has(memoryId)) {
+				const comments = await getMemoryComments(memoryId);
+				commentsCache.set(memoryId, comments);
+			}
+			renderCommentsList(memoryId, listEl, countEl);
 		}
 
+		function renderCommentsList(memoryId: string, listEl: Element, countEl: Element | null) {
+			const comments = commentsCache.get(memoryId) || [];
+			if (countEl) countEl.textContent = `(${comments.length})`;
+			if (comments.length === 0) {
+				listEl.innerHTML = '<p class="tt-comment-placeholder">No comments yet — be the first!</p>';
+				return;
+			}
+			listEl.innerHTML = comments.map(c => `
+				<div class="tt-comment">
+					<span class="tt-cmt-name">${c.name ? esc(c.name) : 'Anonymous'}</span>
+					<span class="tt-cmt-text">${esc(c.text)}</span>
+				</div>
+			`).join('');
+			listEl.scrollTop = listEl.scrollHeight;
+		}
+
+		// ── Likes ─────────────────────────────────────────────────
+		async function handleLike(memoryId: string, btn: HTMLElement) {
+			const localLiked = getLocalLiked();
+			if (localLiked.has(memoryId)) return;
+
+			const state = likesMap.get(memoryId) ?? { count: memoriesList.find(m => m.id === memoryId)?.likes ?? 0, liked: false };
+			state.count += 1;
+			state.liked  = true;
+			likesMap.set(memoryId, state);
+			addLocalLiked(memoryId);
+
+			// Update button UI immediately
+			const svg   = btn.querySelector('svg');
+			const count = btn.querySelector('.tt-like-count');
+			if (svg)   { svg.setAttribute('fill', '#fe2c55'); svg.setAttribute('stroke', '#fe2c55'); }
+			if (count) count.textContent = String(state.count);
+			btn.classList.add('tt-liked');
+			btn.classList.remove('tt-like-pop');
+			void btn.offsetWidth;
+			btn.classList.add('tt-like-pop');
+
+			// Persist (fire-and-forget)
+			fetch(LIKE_URL, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ memoryId, fingerprint: getFingerprint() }),
+			}).catch(() => {});
+		}
+
+		// ── Attach event listeners to current slide ───────────────
+		function attachSlideListeners() {
+			const card = document.getElementById('tt-card');
+			if (!card) return;
+
+			// Like
+			card.querySelectorAll('[data-action="like"]').forEach((btn) => {
+				btn.addEventListener('click', () => handleLike((btn as HTMLElement).dataset.memoryId!, btn as HTMLElement));
+			});
+
+			// Comment form
+			const commentForm = document.getElementById('tt-comment-form') as HTMLFormElement | null;
+			commentForm?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const memId  = commentForm.dataset.memoryId!;
+				const textEl = document.getElementById('tt-cmt-text') as HTMLInputElement;
+				const nameEl = document.getElementById('tt-cmt-name') as HTMLInputElement;
+				const errEl  = document.getElementById('tt-cmt-error');
+				const text   = textEl.value.trim();
+				const name   = nameEl.value.trim();
+				if (!text) { textEl.focus(); return; }
+
+				const postBtn = commentForm.querySelector('.tt-cmt-post') as HTMLButtonElement;
+				postBtn.disabled = true;
+				postBtn.textContent = '…';
+				if (errEl) errEl.hidden = true;
+
+				try {
+					const res = await fetch(COMMENT_URL, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ memoryId: memId, text, name }),
+					});
+					if (!res.ok) throw new Error('Post failed');
+
+					// Optimistically add to cache and re-render
+					const cached = commentsCache.get(memId) ?? [];
+					cached.push({ id: Date.now().toString(), text, name, submittedAt: null });
+					commentsCache.set(memId, cached);
+					const listEl  = document.getElementById(`tt-comments-list-${memId}`);
+					const countEl = document.getElementById(`tt-comment-count-${memId}`);
+					if (listEl) renderCommentsList(memId, listEl, countEl);
+					textEl.value = '';
+				} catch {
+					if (errEl) { errEl.textContent = 'Failed to post. Try again.'; errEl.hidden = false; }
+				} finally {
+					postBtn.disabled = false;
+					postBtn.textContent = 'Post';
+				}
+			});
+
+			// Touch swipe on image panel (left/right)
+			const imgPanel = card.querySelector('.tt-image-panel');
+			if (imgPanel) {
+				let touchX = 0;
+				imgPanel.addEventListener('touchstart', (e) => { touchX = (e as TouchEvent).changedTouches[0].clientX; }, { passive: true });
+				imgPanel.addEventListener('touchend', (e) => {
+					const diff = touchX - (e as TouchEvent).changedTouches[0].clientX;
+					if (Math.abs(diff) > 40) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'left' : 'right');
+				}, { passive: true });
+			}
+		}
+
+		// ── Navigation ────────────────────────────────────────────
 		function updateNavButtons() {
-			const upBtn   = document.getElementById('tt-up');
-			const downBtn = document.getElementById('tt-down');
-			if (upBtn)   (upBtn   as HTMLButtonElement).disabled = currentIndex === 0;
-			if (downBtn) (downBtn as HTMLButtonElement).disabled = currentIndex === memoriesList.length - 1;
+			const prev = document.getElementById('tt-prev') as HTMLButtonElement | null;
+			const next = document.getElementById('tt-next') as HTMLButtonElement | null;
+			if (prev) prev.disabled = currentIndex === 0;
+			if (next) next.disabled = currentIndex === memoriesList.length - 1;
 		}
 
 		function updateDots() {
-			document.querySelectorAll('.tt-dot').forEach((dot, i) => {
-				dot.classList.toggle('active', i === currentIndex);
-			});
+			document.querySelectorAll('.tt-dot').forEach((d, i) => d.classList.toggle('active', i === currentIndex));
 		}
 
-		async function goTo(newIdx: number, dir: 'up' | 'down') {
-			if (isAnimating) return;
-			if (newIdx < 0 || newIdx >= memoriesList.length) return;
+		async function goTo(newIdx: number, dir: 'left' | 'right') {
+			if (isAnimating || newIdx < 0 || newIdx >= memoriesList.length) return;
 			isAnimating = true;
 
 			const stage = document.getElementById('tt-stage');
 			if (!stage) { isAnimating = false; return; }
 
-			// Build the incoming slide off-screen
-			const incoming = document.createElement('div');
-			incoming.innerHTML = slideHTML(newIdx);
-			const inSlide = incoming.firstElementChild as HTMLElement;
-			inSlide.style.position = 'absolute';
-			inSlide.style.inset = '0';
-			inSlide.style.transform = dir === 'up' ? 'translateY(100%)' : 'translateY(-100%)';
-			inSlide.style.transition = 'none';
+			// Build incoming slide off-screen
+			const tmp = document.createElement('div');
+			tmp.innerHTML = slideHTML(newIdx).trim();
+			const inSlide = tmp.firstElementChild as HTMLElement;
+			Object.assign(inSlide.style, {
+				position: 'absolute', inset: '0',
+				transform: dir === 'left' ? 'translateX(100%)' : 'translateX(-100%)',
+				transition: 'none',
+			});
 			stage.appendChild(inSlide);
+			inSlide.offsetHeight; // force reflow
 
-			// Force reflow so the starting transform is applied
-			inSlide.offsetHeight;
-
-			// Animate current slide out and new slide in
-			const currentSlide = stage.querySelector('.tt-slide:not(:last-child)') as HTMLElement | null;
-			inSlide.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-			inSlide.style.transform  = 'translateY(0)';
-			if (currentSlide) {
-				currentSlide.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-				currentSlide.style.transform  = dir === 'up' ? 'translateY(-100%)' : 'translateY(100%)';
+			const outSlide = stage.querySelector('.tt-slide:not(:last-child)') as HTMLElement | null;
+			const tx = dir === 'left' ? '-100%' : '100%';
+			inSlide.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+			inSlide.style.transform  = 'translateX(0)';
+			if (outSlide) {
+				outSlide.style.transition = inSlide.style.transition;
+				outSlide.style.transform  = `translateX(${tx})`;
 			}
 
-			await new Promise<void>((r) => setTimeout(r, 420));
+			await new Promise<void>((r) => setTimeout(r, 370));
 
-			// Swap content cleanly
-			stage.innerHTML = slideHTML(newIdx);
+			stage.innerHTML = slideHTML(newIdx).trim();
 			currentIndex = newIdx;
 			attachSlideListeners();
 			updateNavButtons();
 			updateDots();
+			loadAndRenderComments(memoriesList[newIdx].id);
 			isAnimating = false;
 		}
 
-		function renderTikTok() {
+		// ── Render feed ───────────────────────────────────────────
+		function renderFeed() {
 			if (!containerEl) return;
 			const total = memoriesList.length;
 			const dots  = memoriesList.map((_, i) => `<div class="tt-dot${i === 0 ? ' active' : ''}"></div>`).join('');
 
 			containerEl.innerHTML = `
 <div class="tt-outer">
-  <div class="tt-phone-frame">
-    <div class="tt-feed" id="tt-feed">
-      <div class="tt-stage" id="tt-stage">
-        ${slideHTML(0)}
-      </div>
+  <button class="tt-arrow tt-prev" id="tt-prev" aria-label="Previous memory" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
 
-      <div class="tt-nav-arrows">
-        <button class="tt-nav-btn" id="tt-up" aria-label="Previous memory" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="18 15 12 9 6 15"/></svg>
-        </button>
-        <button class="tt-nav-btn" id="tt-down" aria-label="Next memory" ${total <= 1 ? 'disabled' : ''}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-      </div>
+  <div class="tt-card" id="tt-card">
+    <div class="tt-stage" id="tt-stage">
+      ${slideHTML(0).trim()}
     </div>
-
-    ${total > 1 ? `<div class="tt-dots" aria-hidden="true">${dots}</div>` : ''}
   </div>
-</div>`;
+
+  <button class="tt-arrow tt-next" id="tt-next" aria-label="Next memory" ${total <= 1 ? 'disabled' : ''}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`;
 
 			attachSlideListeners();
+			loadAndRenderComments(memoriesList[0].id);
 
-			// Up/down buttons
-			document.getElementById('tt-up')?.addEventListener('click', () => goTo(currentIndex - 1, 'down'));
-			document.getElementById('tt-down')?.addEventListener('click', () => goTo(currentIndex + 1, 'up'));
+			document.getElementById('tt-prev')?.addEventListener('click', () => goTo(currentIndex - 1, 'right'));
+			document.getElementById('tt-next')?.addEventListener('click', () => goTo(currentIndex + 1, 'left'));
 
-			// Touch swipe
-			let touchY = 0;
-			const feed = document.getElementById('tt-feed')!;
-			feed.addEventListener('touchstart', (e) => { touchY = e.changedTouches[0].clientY; }, { passive: true });
-			feed.addEventListener('touchend', (e) => {
-				const diff = touchY - e.changedTouches[0].clientY;
-				if (Math.abs(diff) > 40) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'up' : 'down');
-			}, { passive: true });
-
-			// Mouse wheel (throttled)
-			let wheelCooldown = false;
-			feed.addEventListener('wheel', (e) => {
-				e.preventDefault();
-				if (wheelCooldown) return;
-				wheelCooldown = true;
-				goTo(currentIndex + (e.deltaY > 0 ? 1 : -1), e.deltaY > 0 ? 'up' : 'down');
-				setTimeout(() => { wheelCooldown = false; }, 600);
-			}, { passive: false });
-
-			// Keyboard
+			// Keyboard (only when not focused on an input)
 			document.addEventListener('keydown', (e) => {
-				if (e.key === 'ArrowDown') goTo(currentIndex + 1, 'up');
-				if (e.key === 'ArrowUp')   goTo(currentIndex - 1, 'down');
+				if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
+				if (e.key === 'ArrowRight') goTo(currentIndex + 1, 'left');
+				if (e.key === 'ArrowLeft')  goTo(currentIndex - 1, 'right');
 			});
 		}
 
@@ -356,7 +448,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			const result = await getSharedMemories();
 			if (loadingEl) loadingEl.remove();
 			if (!result.ok) {
-				containerEl.innerHTML = `<p class="shared-memories-msg shared-memories-err">Couldn't load memories. ${escapeHtml(result.error)}</p>`;
+				containerEl.innerHTML = `<p class="shared-memories-msg shared-memories-err">Couldn't load memories. ${esc(result.error)}</p>`;
 				return;
 			}
 			memoriesList = result.memories.filter((m) => m.imageUrl && m.imageUrl.startsWith('data:') && m.approved !== false);
@@ -364,11 +456,16 @@ import Lighthouse from '../components/Lighthouse.astro';
 				containerEl.innerHTML = '<p class="shared-memories-msg">No memories yet — be the first to share!</p>';
 				return;
 			}
+			// Seed likes state from Firestore data + localStorage
+			const localLiked = getLocalLiked();
+			for (const m of memoriesList) {
+				likesMap.set(m.id, { count: m.likes ?? 0, liked: localLiked.has(m.id) });
+			}
 			currentIndex = 0;
-			renderTikTok();
+			renderFeed();
 		}
 
-		// ── Form submit ───────────────────────────────────────────
+		// ── Submit new memory form ────────────────────────────────
 		form?.addEventListener('submit', async (e) => {
 			e.preventDefault();
 			if (!errorEl || !successEl || !fileInput) return;
@@ -401,31 +498,28 @@ import Lighthouse from '../components/Lighthouse.astro';
 		async function compressImage(file: File, maxBytes: number, maxDim: number) {
 			const contentType = 'image/jpeg';
 			if (!file.type.startsWith('image/')) return { base64: null, contentType };
-			const img   = await loadImg(file);
-			const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+			const img = await new Promise<HTMLImageElement>((res, rej) => {
+				const url = URL.createObjectURL(file), i = new Image();
+				i.onload  = () => { URL.revokeObjectURL(url); res(i); };
+				i.onerror = () => { URL.revokeObjectURL(url); rej(new Error('load')); };
+				i.src = url;
+			});
+			const scale  = Math.min(1, maxDim / Math.max(img.width, img.height));
 			const canvas = Object.assign(document.createElement('canvas'), { width: Math.round(img.width * scale), height: Math.round(img.height * scale) });
 			canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
 			for (const q of [0.85, 0.7, 0.55, 0.4, 0.25]) {
 				const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', q));
-				if (blob && blob.size <= maxBytes) return { base64: await blobToB64(blob), contentType };
+				if (blob && blob.size <= maxBytes) {
+					const base64 = await new Promise<string>((res, rej) => {
+						const reader = new FileReader();
+						reader.onload  = () => res((reader.result as string).split(',')[1] || '');
+						reader.onerror = rej;
+						reader.readAsDataURL(blob);
+					});
+					return { base64, contentType };
+				}
 			}
 			return { base64: null, contentType };
-		}
-		function loadImg(file: File) {
-			return new Promise<HTMLImageElement>((res, rej) => {
-				const url = URL.createObjectURL(file), img = new Image();
-				img.onload  = () => { URL.revokeObjectURL(url); res(img); };
-				img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('load failed')); };
-				img.src = url;
-			});
-		}
-		function blobToB64(blob: Blob) {
-			return new Promise<string>((res, rej) => {
-				const r = new FileReader();
-				r.onload  = () => res((r.result as string).split(',')[1] || '');
-				r.onerror = rej;
-				r.readAsDataURL(blob);
-			});
 		}
 
 		renderMemories();
@@ -434,60 +528,26 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 <style>
 	/* ── Page base ─────────────────────────────────────────────── */
-	.hero {
-		color: var(--color-cream);
-		padding: 4rem 2rem;
-		text-align: center;
-	}
-
-	.wave-wrap {
-		position: relative;
-		overflow: visible;
-		min-height: 120px;
-	}
+	.hero { color: var(--color-cream); padding: 4rem 2rem; text-align: center; }
+	.wave-wrap { position: relative; overflow: visible; min-height: 120px; }
 	.wave-wrap :global(.wave-surfer-wrap) { transition: opacity 0.4s ease, visibility 0.4s ease; }
 	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) { opacity: 0; visibility: hidden; pointer-events: none; }
-
 	.hero-content { max-width: 700px; margin: 0 auto; }
-
-	.hero h1 {
-		font-family: var(--font-display);
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 600;
-		letter-spacing: 0.02em;
-		margin-bottom: 1rem;
-		line-height: 1.2;
-	}
-	.hero-title  { animation: hero-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-	.hero-tagline { opacity: 0; animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
-	@keyframes hero-fade-up {
-		from { opacity: 0; transform: translateY(30px); }
-		to   { opacity: 1; transform: translateY(0); }
-	}
+	.hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 600; letter-spacing: 0.02em; margin-bottom: 1rem; line-height: 1.2; }
+	.hero-title   { animation: hero-fade-up 1s cubic-bezier(0.22,1,0.36,1) forwards; }
+	.hero-tagline { opacity: 0; animation: hero-fade-up 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s forwards; }
+	@keyframes hero-fade-up { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
 	.tagline { font-size: 1.25rem; opacity: 0.95; font-weight: 400; }
 
 	.reunion-content {
-		position: relative;
-		z-index: 1;
-		padding: 4rem 2rem 0;
+		position: relative; z-index: 1;
+		padding: 4rem 2rem 3rem;
 		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
 		box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-		padding-bottom: 0;
 	}
+	.reunion-content .container { max-width: 820px; margin: 0 auto; }
 
-	.reunion-content .container {
-		max-width: 820px;
-		margin: 0 auto;
-		padding-bottom: 0;
-	}
-
-	.reunion-intro-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 3rem;
-		align-items: center;
-		margin-bottom: 2.5rem;
-	}
+	.reunion-intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 2.5rem; }
 	@media (max-width: 768px) {
 		.reunion-intro-grid { grid-template-columns: 1fr; gap: 2rem; }
 		.reunion-intro-image-col { order: 1; }
@@ -496,120 +556,64 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.reunion-surfers-wrap { display: flex; justify-content: center; align-items: center; }
 	.reunion-surfers-img {
-		width: 100%; max-width: 380px; height: auto; display: block;
-		border-radius: 6px;
+		width: 100%; max-width: 380px; height: auto; display: block; border-radius: 6px;
 		box-shadow: 0 20px 50px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
-		transform: rotate(-2deg);
-		transition: transform 0.35s ease, box-shadow 0.35s ease;
+		transform: rotate(-2deg); transition: transform 0.35s ease, box-shadow 0.35s ease;
 	}
 	.reunion-surfers-wrap:hover .reunion-surfers-img { transform: rotate(0deg); box-shadow: 0 24px 56px rgba(0,0,0,0.2); }
 
 	.reunion-intro-text-col .reunion-intro { margin-top: 0; }
-	.reunion-intro { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1rem 0; }
+	.reunion-intro   { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1rem; }
 	.reunion-intro:last-of-type { margin-bottom: 0; }
-
-	.reunion-subhead {
-		font-family: var(--font-body);
-		font-size: clamp(1rem, 2.5vw, 1.2rem);
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--color-ink);
-		margin: 2rem 0 0.75rem 0;
-		line-height: 1.4;
-	}
-	.reunion-lead { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.6; margin: 0 0 0.75rem 0; }
-	.reunion-list { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1.5rem 0; padding-left: 1.5rem; list-style: disc; }
+	.reunion-subhead { font-family: var(--font-body); font-size: clamp(1rem,2.5vw,1.2rem); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink); margin: 2rem 0 0.75rem; line-height: 1.4; }
+	.reunion-lead    { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.6; margin: 0 0 0.75rem; }
+	.reunion-list    { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1.5rem; padding-left: 1.5rem; list-style: disc; }
 	.reunion-list li { margin-bottom: 0.35rem; }
-	.reunion-body  { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0; }
+	.reunion-body    { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0; }
 
 	.event-card {
-		background: rgba(184, 220, 228, 0.5);
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-		padding: 1.5rem 1.5rem 1.5rem 1.25rem;
-		border-radius: 12px;
-		border: 1px solid rgba(255,255,255,0.5);
-		box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-		border-left: 6px solid var(--color-accent);
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
-		margin-bottom: 1.25rem;
+		background: rgba(184,220,228,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+		padding: 1.5rem 1.5rem 1.5rem 1.25rem; border-radius: 12px;
+		border: 1px solid rgba(255,255,255,0.5); border-left: 6px solid var(--color-accent);
+		box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; margin-bottom: 1.25rem;
 	}
 	.event-card:hover { transform: translateX(10px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-	.event-card h3, .event-card h2 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--color-ink); margin: 0 0 0.6rem 0; line-height: 1.3; }
+	.event-card h3, .event-card h2 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--color-ink); margin: 0 0 0.6rem; line-height: 1.3; }
 	.event-card p  { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.7; margin: 0; }
+	.event-card-cta { text-align: center; border-left-color: var(--wave-deep); background: rgba(26,95,122,0.08); margin-top: 2rem; }
+	.reunion-cta-heading { font-family: var(--font-body) !important; font-size: clamp(0.95rem,2.2vw,1.1rem) !important; font-weight: 700 !important; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink); line-height: 1.45; margin: 0 0 0.75rem !important; }
+	.reunion-cta-body    { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.7; margin: 0 0 1.25rem; }
 
-	.event-card-cta {
-		text-align: center;
-		border-left-color: var(--wave-deep);
-		background: rgba(26, 95, 122, 0.08);
-		margin-top: 2rem;
-	}
-	.reunion-cta-heading { font-family: var(--font-body) !important; font-size: clamp(0.95rem, 2.2vw, 1.1rem) !important; font-weight: 700 !important; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink); line-height: 1.45; margin: 0 0 0.75rem 0 !important; }
-	.reunion-cta-body    { font-family: var(--font-body); font-size: 1rem; color: var(--color-ink); line-height: 1.7; margin: 0 0 1.25rem 0; }
-
-	.reunion-share-btn {
-		display: inline-block;
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 600;
-		color: var(--wave-deep);
-		background: transparent;
-		padding: 0.5rem 1.25rem;
-		border: 2px solid var(--wave-mid);
-		border-radius: 50px;
-		cursor: pointer;
-		transition: background 0.25s ease, color 0.25s ease;
-	}
+	.reunion-share-btn { display: inline-block; font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--wave-deep); background: transparent; padding: 0.5rem 1.25rem; border: 2px solid var(--wave-mid); border-radius: 50px; cursor: pointer; transition: background 0.25s ease, color 0.25s ease; }
 	.reunion-share-btn:hover { background: var(--wave-deep); color: var(--color-cream); }
-
 	.reunion-memories-heading { margin-top: 3rem; }
 
-	/* ── Shared Memories container ─────────────────────────────── */
-	.shared-memories-container {
-		width: 100%;
-		margin-top: 1.5rem;
-	}
-
-	.shared-memories-msg {
-		font-family: var(--font-body);
-		color: var(--color-sepia);
-		font-style: italic;
-		text-align: center;
-		padding: 2rem;
-		margin: 0;
-	}
+	.shared-memories-container { width: 100%; margin-top: 1.5rem; }
+	.shared-memories-msg { font-family: var(--font-body); color: var(--color-sepia); font-style: italic; text-align: center; padding: 2rem; margin: 0; }
 	.shared-memories-err { font-style: normal; color: #b91c1c; }
 
-	/* ── TikTok feed — all dynamic HTML uses :global() ─────────── */
+	/* ── Feed layout (no black background, rectangular) ─────────── */
 
 	:global(.tt-outer) {
-		width: 100%;
-		background: #000;
 		display: flex;
-		justify-content: center;
-		align-items: flex-start;
-		padding: 2rem 1rem 3rem;
-	}
-
-	:global(.tt-phone-frame) {
-		display: flex;
-		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
-		width: 100%;
-		max-width: 400px;
+		gap: 0.75rem;
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 0 1rem;
 	}
 
-	:global(.tt-feed) {
+	:global(.tt-card) {
+		flex: 1;
 		position: relative;
-		width: 100%;
-		height: min(720px, 82vh);
-		border-radius: 16px;
+		height: 520px;
 		overflow: hidden;
-		background: #111;
-		box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
-		touch-action: pan-x;
+		background: rgba(255,255,255,0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255,255,255,0.7);
+		border-top: 4px solid var(--color-accent);
+		box-shadow: 0 8px 32px rgba(0,0,0,0.1);
 	}
 
 	:global(.tt-stage) {
@@ -622,276 +626,367 @@ import Lighthouse from '../components/Lighthouse.astro';
 		position: absolute;
 		inset: 0;
 		display: flex;
-		align-items: flex-end;
 	}
 
-	:global(.tt-bg) {
-		position: absolute;
-		inset: 0;
+	/* Image panel */
+	:global(.tt-image-panel) {
+		flex: 0 0 55%;
+		position: relative;
+		overflow: hidden;
+		background: #1a1a1a;
+	}
+
+	:global(.tt-photo) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
 	}
 
-	:global(.tt-gradient) {
+	:global(.tt-img-counter) {
 		position: absolute;
-		inset: 0;
-		background:
-			linear-gradient(to top,  rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 65%),
-			linear-gradient(to right, rgba(0,0,0,0.35) 0%, transparent 55%);
-		pointer-events: none;
+		bottom: 0.75rem;
+		left: 0.75rem;
+		background: rgba(0,0,0,0.5);
+		color: #fff;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.75rem;
+		font-weight: 600;
+		padding: 0.2rem 0.6rem;
+		border-radius: 20px;
+		letter-spacing: 0.04em;
 	}
 
-	/* Bottom info (username, caption) */
-	:global(.tt-bottom) {
-		position: absolute;
-		bottom: 1.25rem;
-		left: 1rem;
-		right: 5.5rem;
-		z-index: 3;
+	/* Content panel */
+	:global(.tt-content-panel) {
+		flex: 0 0 45%;
 		display: flex;
 		flex-direction: column;
-		gap: 0.25rem;
+		overflow: hidden;
+		border-left: 1px solid rgba(0,0,0,0.07);
 	}
 
-	:global(.tt-username) {
+	:global(.tt-post-header) {
+		display: flex;
+		gap: 0.75rem;
+		align-items: flex-start;
+		padding: 1rem 1rem 0.75rem;
+		border-bottom: 1px solid rgba(0,0,0,0.07);
+		flex-shrink: 0;
+	}
+
+	:global(.tt-post-avatar) {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--color-accent) 0%, var(--wave-deep) 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.1rem;
+		flex-shrink: 0;
+	}
+
+	:global(.tt-post-meta) { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+
+	:global(.tt-post-username) {
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		font-size: 0.9375rem;
+		font-size: 0.8125rem;
 		font-weight: 700;
-		color: #fff;
+		color: var(--color-ink);
 		margin: 0;
-		text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 	}
 
-	:global(.tt-caption) {
+	:global(.tt-post-caption) {
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		font-size: 0.875rem;
-		color: rgba(255,255,255,0.92);
-		line-height: 1.4;
+		font-size: 0.8125rem;
+		color: var(--color-ink);
+		line-height: 1.45;
 		margin: 0;
-		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
 
-	:global(.tt-submitter) {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		font-size: 0.8rem;
-		color: rgba(255,255,255,0.7);
+	:global(.tt-post-by) {
+		font-size: 0.75rem;
+		color: var(--color-sepia);
 		margin: 0;
 	}
 
-	/* Right action bar */
-	:global(.tt-actions) {
-		position: absolute;
-		bottom: 1rem;
-		right: 0.75rem;
-		z-index: 4;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1.5rem;
-	}
-
-	:global(.tt-avatar-wrap) {
-		margin-bottom: 0.5rem;
-	}
-
-	:global(.tt-avatar) {
-		width: 48px;
-		height: 48px;
-		border-radius: 50%;
-		border: 2px solid #fff;
-		background: linear-gradient(135deg, #fe2c55 0%, #ff6b35 50%, #ffd700 100%);
+	/* Actions row */
+	:global(.tt-actions-row) {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		font-size: 1.4rem;
-		box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+		gap: 0.75rem;
+		padding: 0.6rem 1rem;
+		border-bottom: 1px solid rgba(0,0,0,0.07);
+		flex-shrink: 0;
 	}
 
-	:global(.tt-btn) {
+	:global(.tt-like-btn) {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		gap: 0.3rem;
+		gap: 0.4rem;
 		background: transparent;
-		border: none;
+		border: 1px solid rgba(0,0,0,0.12);
+		border-radius: 20px;
+		padding: 0.3rem 0.75rem;
 		cursor: pointer;
-		padding: 0;
-		text-decoration: none;
-		color: #fff;
-	}
-
-	:global(.tt-btn-icon) {
-		width: 48px;
-		height: 48px;
-		border-radius: 50%;
-		background: rgba(255,255,255,0.15);
-		backdrop-filter: blur(4px);
-		-webkit-backdrop-filter: blur(4px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: background 0.2s ease, transform 0.2s ease;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-	}
-
-	:global(.tt-btn:hover .tt-btn-icon) {
-		background: rgba(255,255,255,0.25);
-		transform: scale(1.1);
-	}
-
-	:global(.tt-btn-label) {
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		font-size: 0.72rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
-		color: #fff;
-		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		color: var(--color-ink);
+		transition: background 0.2s, border-color 0.2s, color 0.2s;
 	}
 
-	:global(.tt-heart.tt-liked .tt-btn-icon) {
-		background: rgba(254, 44, 85, 0.25);
+	:global(.tt-like-btn:hover) {
+		background: rgba(254,44,85,0.08);
+		border-color: #fe2c55;
+		color: #fe2c55;
+	}
+
+	:global(.tt-like-btn.tt-liked) {
+		background: rgba(254,44,85,0.1);
+		border-color: #fe2c55;
+		color: #fe2c55;
 	}
 
 	:global(.tt-like-pop) {
-		animation: tt-pop 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+		animation: tt-pop 0.35s cubic-bezier(0.36,0.07,0.19,0.97);
 	}
-
 	@keyframes tt-pop {
-		0%   { transform: scale(1); }
-		30%  { transform: scale(1.4); }
-		60%  { transform: scale(0.9); }
-		100% { transform: scale(1); }
+		0%  { transform: scale(1); }
+		35% { transform: scale(1.3); }
+		65% { transform: scale(0.9); }
+		100%{ transform: scale(1); }
 	}
 
-	/* Counter badge */
-	:global(.tt-counter) {
-		position: absolute;
-		top: 0.85rem;
-		left: 50%;
-		transform: translateX(-50%);
+	:global(.tt-dl-btn) {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--wave-deep);
+		text-decoration: none;
+		border: 1px solid rgba(0,0,0,0.12);
+		border-radius: 20px;
+		padding: 0.3rem 0.75rem;
+		transition: background 0.2s, border-color 0.2s;
+	}
+	:global(.tt-dl-btn:hover) { background: rgba(26,95,122,0.08); border-color: var(--wave-deep); }
+
+	/* Comments section */
+	:global(.tt-comments-section) {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	:global(.tt-comments-heading) {
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 		font-size: 0.75rem;
-		font-weight: 600;
-		color: rgba(255,255,255,0.8);
-		background: rgba(0,0,0,0.35);
-		backdrop-filter: blur(4px);
-		-webkit-backdrop-filter: blur(4px);
-		padding: 0.2rem 0.65rem;
-		border-radius: 20px;
-		letter-spacing: 0.04em;
-		pointer-events: none;
-		z-index: 5;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--color-sepia);
+		margin: 0;
+		padding: 0.6rem 1rem 0.4rem;
+		border-bottom: 1px solid rgba(0,0,0,0.06);
+		flex-shrink: 0;
 	}
 
-	/* Up / down nav buttons */
-	:global(.tt-nav-arrows) {
-		position: absolute;
-		top: 50%;
-		right: 0;
-		transform: translateY(-50%);
+	:global(.tt-comment-count) { font-weight: 400; }
+
+	:global(.tt-comments-list) {
+		flex: 1;
+		overflow-y: auto;
+		padding: 0.5rem 1rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		padding-right: 0.5rem;
-		z-index: 6;
+		scroll-behavior: smooth;
 	}
 
-	:global(.tt-nav-btn) {
-		width: 32px;
-		height: 32px;
+	:global(.tt-comment-placeholder) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		color: var(--color-sepia);
+		font-style: italic;
+		margin: 0;
+		padding: 0.5rem 0;
+	}
+
+	:global(.tt-comment) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		display: flex;
+		gap: 0.4rem;
+		flex-wrap: wrap;
+	}
+
+	:global(.tt-cmt-name) {
+		font-weight: 700;
+		color: var(--color-ink);
+		flex-shrink: 0;
+	}
+
+	:global(.tt-cmt-text) {
+		color: var(--color-ink);
+	}
+
+	/* Comment form */
+	:global(.tt-comment-form) {
+		border-top: 1px solid rgba(0,0,0,0.08);
+		padding: 0.6rem 0.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		flex-shrink: 0;
+		background: rgba(255,255,255,0.6);
+	}
+
+	:global(.tt-name-input),
+	:global(.tt-cmt-input) {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		border: 1px solid rgba(0,0,0,0.15);
+		border-radius: 20px;
+		padding: 0.35rem 0.75rem;
+		background: #fff;
+		color: var(--color-ink);
+		outline: none;
+		width: 100%;
+		transition: border-color 0.2s;
+	}
+
+	:global(.tt-name-input):focus,
+	:global(.tt-cmt-input):focus { border-color: var(--color-accent); }
+
+	:global(.tt-cmt-row) {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	:global(.tt-cmt-input) { flex: 1; }
+
+	:global(.tt-cmt-post) {
+		flex-shrink: 0;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		color: var(--wave-deep);
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0 0.5rem;
+		transition: color 0.2s;
+	}
+	:global(.tt-cmt-post:hover:not(:disabled)) { color: var(--color-accent); }
+	:global(.tt-cmt-post:disabled) { opacity: 0.5; cursor: not-allowed; }
+
+	:global(.tt-cmt-error) {
+		font-size: 0.75rem;
+		color: #b91c1c;
+		margin: 0;
+		padding: 0 0.25rem;
+	}
+
+	/* Nav arrows */
+	:global(.tt-arrow) {
+		flex-shrink: 0;
+		width: 40px;
+		height: 40px;
 		border-radius: 50%;
-		background: rgba(255,255,255,0.18);
-		backdrop-filter: blur(4px);
-		-webkit-backdrop-filter: blur(4px);
-		border: 1px solid rgba(255,255,255,0.2);
-		color: #fff;
+		background: rgba(184,220,228,0.8);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		border: 1px solid rgba(255,255,255,0.6);
+		color: var(--color-ink);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: background 0.2s ease, opacity 0.2s ease;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		transition: background 0.2s, transform 0.15s;
 	}
+	:global(.tt-arrow:hover:not(:disabled)) { background: rgba(184,220,228,1); transform: scale(1.08); }
+	:global(.tt-arrow:disabled) { opacity: 0.25; cursor: not-allowed; }
 
-	:global(.tt-nav-btn:hover:not(:disabled)) {
-		background: rgba(255,255,255,0.35);
-	}
-
-	:global(.tt-nav-btn:disabled) {
-		opacity: 0.2;
-		cursor: not-allowed;
-	}
-
-	/* Progress dots */
-	:global(.tt-dots) {
+	/* Dots */
+	:global(.tt-dots-row) {
 		display: flex;
-		gap: 5px;
 		justify-content: center;
+		gap: 6px;
+		margin-top: 0.75rem;
 		flex-wrap: wrap;
-		max-width: 200px;
+		max-width: 860px;
+		margin-left: auto;
+		margin-right: auto;
+		padding: 0 1rem;
 	}
 
 	:global(.tt-dot) {
-		width: 6px;
-		height: 6px;
+		width: 7px;
+		height: 7px;
 		border-radius: 50%;
-		background: rgba(255,255,255,0.3);
-		transition: background 0.25s ease, transform 0.25s ease;
+		background: rgba(0,0,0,0.18);
+		transition: background 0.25s, transform 0.25s;
 	}
+	:global(.tt-dot.active) { background: var(--color-accent); transform: scale(1.35); }
 
-	:global(.tt-dot.active) {
-		background: #fff;
-		transform: scale(1.3);
+	/* Mobile: stack vertically */
+	@media (max-width: 640px) {
+		:global(.tt-outer) { gap: 0.5rem; padding: 0 0.5rem; }
+
+		:global(.tt-card) { height: auto; }
+
+		:global(.tt-slide) { flex-direction: column; }
+
+		:global(.tt-image-panel) { flex: 0 0 260px; }
+
+		:global(.tt-content-panel) {
+			flex: 1 1 auto;
+			border-left: none;
+			border-top: 1px solid rgba(0,0,0,0.07);
+		}
+
+		:global(.tt-comments-list) { max-height: 180px; }
+
+		:global(.tt-arrow) { width: 34px; height: 34px; }
 	}
 
 	/* ── Share memories modal ──────────────────────────────────── */
-	.share-memories-modal {
-		position: fixed; inset: 0; z-index: 9999;
-		display: flex; align-items: center; justify-content: center; padding: 1rem;
-	}
+	.share-memories-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 	.share-memories-modal[hidden] { display: none; }
 	.share-memories-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
-	.share-memories-box {
-		position: relative; background: var(--color-cream); border-radius: 12px;
-		padding: 1.5rem 1.75rem; box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-		min-width: 280px; max-width: 420px; width: 100%;
-	}
-	.share-memories-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--color-ink); margin: 0 0 1.25rem 0; }
-	.share-memories-form  { display: flex; flex-direction: column; gap: 0.75rem; }
-	.share-memories-label { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--color-ink); }
-	.share-memories-file,
-	.share-memories-input,
-	.share-memories-textarea {
-		font-family: var(--font-body); font-size: 1rem;
-		padding: 0.5rem 0.75rem; border: 1px solid var(--color-sand-dark);
-		border-radius: 6px; background: var(--color-foam);
-	}
+	.share-memories-box { position: relative; background: var(--color-cream); border-radius: 12px; padding: 1.5rem 1.75rem; box-shadow: 0 12px 40px rgba(0,0,0,0.2); min-width: 280px; max-width: 420px; width: 100%; }
+	.share-memories-title  { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--color-ink); margin: 0 0 1.25rem; }
+	.share-memories-form   { display: flex; flex-direction: column; gap: 0.75rem; }
+	.share-memories-label  { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--color-ink); }
+	.share-memories-file, .share-memories-input, .share-memories-textarea { font-family: var(--font-body); font-size: 1rem; padding: 0.5rem 0.75rem; border: 1px solid var(--color-sand-dark); border-radius: 6px; background: var(--color-foam); }
 	.share-memories-textarea { resize: vertical; min-height: 4rem; }
 	.share-memories-error   { font-size: 0.9rem; color: #b91c1c; margin: 0; }
 	.share-memories-success { font-size: 0.9rem; color: #15803d; margin: 0; }
 	.share-memories-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem; }
-	.share-memories-btn {
-		font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
-		padding: 0.5rem 1.25rem; border-radius: 6px; cursor: pointer;
-		border: 1px solid transparent; transition: background 0.2s ease;
-	}
+	.share-memories-btn { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; padding: 0.5rem 1.25rem; border-radius: 6px; cursor: pointer; border: 1px solid transparent; transition: background 0.2s ease; }
 	.share-memories-cancel  { background: transparent; color: var(--color-ink); border-color: var(--color-sand-dark); }
 	.share-memories-submit  { background: var(--wave-deep); color: var(--color-cream); }
 	.share-memories-submit:hover:not(:disabled) { background: var(--wave-mid); }
 	.share-memories-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 
-	/* ── Responsive ────────────────────────────────────────────── */
 	@media (max-width: 768px) {
-		.hero            { padding: 3rem 1rem; }
+		.hero { padding: 3rem 1rem; }
 		.hero .hero-title { font-size: clamp(1.75rem, 6vw, 2.25rem); }
-		.reunion-content { padding: 2.5rem 1rem 0; }
+		.reunion-content { padding: 2.5rem 1rem 2rem; }
 		.reunion-intro-grid { gap: 1.5rem; }
 		.reunion-surfers-img { max-width: 100%; }
-		.share-memories-cancel,
-		.share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
+		.share-memories-cancel, .share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
 	}
 </style>

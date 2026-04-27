@@ -3,7 +3,7 @@
  * Set PUBLIC_FIREBASE_* in .env and Netlify for this to work.
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 import type { SiteConfigDoc } from './site-config-types';
 
 const firebaseConfig = {
@@ -120,6 +120,31 @@ export interface SharedMemory {
   likes: number;
   /** If false, hidden from public; missing or true = shown */
   approved?: boolean;
+}
+
+export interface MemoryComment {
+  id: string;
+  text: string;
+  name: string;
+  submittedAt: { seconds: number } | null;
+}
+
+export async function getMemoryComments(memoryId: string): Promise<MemoryComment[]> {
+  if (!import.meta.env.PUBLIC_FIREBASE_PROJECT_ID) return [];
+  try {
+    const db = getFirestore(getFirebaseApp());
+    const col = collection(db, 'sharedMemories', memoryId, 'comments');
+    const snap = await getDocs(query(col, orderBy('submittedAt', 'asc')));
+    return snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        text: String(data.text ?? ''),
+        name: String(data.name ?? ''),
+        submittedAt: data.submittedAt ?? null,
+      };
+    });
+  } catch { return []; }
 }
 
 export type GetSharedMemoriesResult =
