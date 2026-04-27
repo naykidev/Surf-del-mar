@@ -1,7 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow anyone to read schedule and image overrides (public site content)
     match /content/schedule {
       allow read: if true;
       allow write: if false;
@@ -22,8 +21,19 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
-    // Shared memories: public read; writes only via server (Netlify function)
+
+    // Shared memories: public read.
+    // Clients may only update likes/likedBy (increment likes by exactly 1).
+    // Create/delete requires admin SDK (Netlify functions).
     match /sharedMemories/{id} {
+      allow read: if true;
+      allow create, delete: if false;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy'])
+                    && request.resource.data.likes == resource.data.likes + 1;
+    }
+
+    // Comments subcollection: public read; writes via Netlify function only.
+    match /sharedMemories/{id}/comments/{commentId} {
       allow read: if true;
       allow write: if false;
     }

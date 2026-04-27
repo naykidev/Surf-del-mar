@@ -102,11 +102,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		import { getSharedMemories, getMemoryComments } from '../lib/firebase';
+		import { getSharedMemories, getMemoryComments, likeMemory } from '../lib/firebase';
 		import type { SharedMemory, MemoryComment } from '../lib/firebase';
 
 		const SUBMIT_URL      = '/.netlify/functions/submit-memory';
-		const LIKE_URL        = '/.netlify/functions/like-memory';
 		const COMMENT_URL     = '/.netlify/functions/add-comment';
 		const MAX_IMAGE_SIZE  = 700 * 1024;
 		const MAX_DIMENSION   = 1200;
@@ -263,32 +262,42 @@ import Lighthouse from '../components/Lighthouse.astro';
 		}
 
 		// ── Likes ─────────────────────────────────────────────────
+		function setLikeUI(btn: HTMLElement, count: number, liked: boolean) {
+			const svg     = btn.querySelector('svg');
+			const countEl = btn.querySelector('.tt-like-count');
+			if (svg)     { svg.setAttribute('fill', liked ? '#fe2c55' : 'none'); svg.setAttribute('stroke', liked ? '#fe2c55' : 'currentColor'); }
+			if (countEl)   countEl.textContent = String(count);
+			btn.classList.toggle('tt-liked', liked);
+			if (liked) { btn.classList.remove('tt-like-pop'); void btn.offsetWidth; btn.classList.add('tt-like-pop'); }
+		}
+
 		async function handleLike(memoryId: string, btn: HTMLElement) {
 			const localLiked = getLocalLiked();
 			if (localLiked.has(memoryId)) return;
 
-			const state = likesMap.get(memoryId) ?? { count: memoriesList.find(m => m.id === memoryId)?.likes ?? 0, liked: false };
+			// Optimistic update
+			const state    = likesMap.get(memoryId) ?? { count: memoriesList.find(m => m.id === memoryId)?.likes ?? 0, liked: false };
+			const prevCount = state.count;
 			state.count += 1;
 			state.liked  = true;
 			likesMap.set(memoryId, state);
 			addLocalLiked(memoryId);
+			setLikeUI(btn, state.count, true);
 
-			// Update button UI immediately
-			const svg   = btn.querySelector('svg');
-			const count = btn.querySelector('.tt-like-count');
-			if (svg)   { svg.setAttribute('fill', '#fe2c55'); svg.setAttribute('stroke', '#fe2c55'); }
-			if (count) count.textContent = String(state.count);
-			btn.classList.add('tt-liked');
-			btn.classList.remove('tt-like-pop');
-			void btn.offsetWidth;
-			btn.classList.add('tt-like-pop');
-
-			// Persist (fire-and-forget)
-			fetch(LIKE_URL, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ memoryId, fingerprint: getFingerprint() }),
-			}).catch(() => {});
+			try {
+				const { likes } = await likeMemory(memoryId, getFingerprint());
+				// Sync to server-confirmed count
+				state.count = likes;
+				likesMap.set(memoryId, state);
+				setLikeUI(btn, likes, true);
+			} catch {
+				// Revert on failure
+				state.count = prevCount;
+				state.liked = false;
+				likesMap.set(memoryId, state);
+				try { const s = getLocalLiked(); s.delete(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
+				setLikeUI(btn, prevCount, false);
+			}
 		}
 
 		// ── Attach event listeners to current slide ───────────────

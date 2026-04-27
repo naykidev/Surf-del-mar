@@ -3,7 +3,7 @@
  * Set PUBLIC_FIREBASE_* in .env and Netlify for this to work.
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, runTransaction } from 'firebase/firestore';
 import type { SiteConfigDoc } from './site-config-types';
 
 const firebaseConfig = {
@@ -120,6 +120,31 @@ export interface SharedMemory {
   likes: number;
   /** If false, hidden from public; missing or true = shown */
   approved?: boolean;
+}
+
+/** Atomically increment likes for a memory. Uses a transaction so concurrent clicks stay accurate. */
+export async function likeMemory(
+  memoryId: string,
+  fingerprint: string,
+): Promise<{ likes: number; alreadyLiked: boolean }> {
+  if (!import.meta.env.PUBLIC_FIREBASE_PROJECT_ID) throw new Error('Firebase not configured');
+  const db = getFirestore(getFirebaseApp());
+  const ref = doc(db, 'sharedMemories', memoryId);
+  return runTransaction(db, async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists()) throw new Error('Memory not found');
+    const data = snap.data();
+    const likedBy: string[] = Array.isArray(data.likedBy) ? data.likedBy : [];
+    if (fingerprint && likedBy.includes(fingerprint)) {
+      return { likes: Number(data.likes ?? 0), alreadyLiked: true };
+    }
+    const newLikes = Number(data.likes ?? 0) + 1;
+    tx.update(ref, {
+      likes: newLikes,
+      ...(fingerprint ? { likedBy: [...likedBy, fingerprint] } : {}),
+    });
+    return { likes: newLikes, alreadyLiked: false };
+  });
 }
 
 export interface MemoryComment {
