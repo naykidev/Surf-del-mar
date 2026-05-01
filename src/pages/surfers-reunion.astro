@@ -176,65 +176,63 @@ import Lighthouse from '../components/Lighthouse.astro';
 			const count = likesMap.get(m.id)?.count ?? m.likes ?? 0;
 
 			return `
-<div class="ig-post" data-index="${idx}" data-memory-id="${esc(m.id)}">
-  <div class="ig-post-header">
-    <div class="ig-avatar" aria-hidden="true">🏄</div>
-    <span class="ig-username">surf_del_mar</span>
-    ${total > 1 ? `<span class="ig-header-counter">${idx + 1} / ${total}</span>` : ''}
+<div class="reel-slide" data-index="${idx}" data-memory-id="${esc(m.id)}">
+  <img class="reel-photo" src="${esc(m.imageUrl)}" alt="Shared memory ${idx + 1} of ${total}" />
+  <div class="reel-gradient" aria-hidden="true"></div>
+  <div class="reel-dbl-heart" id="reel-heart-${esc(m.id)}" aria-hidden="true">❤️</div>
+
+  <div class="reel-info">
+    <p class="reel-username">🏄 <strong>surf_del_mar</strong></p>
+    ${m.caption ? `<p class="reel-caption">${esc(m.caption)}</p>` : ''}
+    ${m.name    ? `<p class="reel-by">&#x2014; ${esc(m.name)}</p>` : ''}
+    <p class="reel-swipe-hint" aria-hidden="true">↑ swipe for next</p>
   </div>
 
-  <div class="ig-photo-wrap">
-    <img class="ig-photo" src="${esc(m.imageUrl)}" alt="Shared memory ${idx + 1} of ${total}" />
-    ${total > 1 && idx > 0         ? `<button class="ig-nav ig-nav-prev" id="ig-nav-prev" aria-label="Previous">&#8249;</button>` : ''}
-    ${total > 1 && idx < total - 1 ? `<button class="ig-nav ig-nav-next" id="ig-nav-next" aria-label="Next">&#8250;</button>` : ''}
-  </div>
-
-  <div class="ig-actions">
-    <div class="ig-actions-left">
-      <button class="ig-like-btn${liked ? ' ig-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="${liked ? '#e0245e' : 'none'}" stroke="${liked ? '#e0245e' : '#262626'}" stroke-width="1.75">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
-      <button class="ig-comment-icon-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Comment">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#262626" stroke-width="1.75">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </button>
-    </div>
-    <a class="ig-save-btn" href="${esc(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Save photo">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#262626" stroke-width="1.75">
-        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v13a2 2 0 0 1-2 2z"/>
-        <polyline points="17 21 17 13 7 13 7 21"/>
-        <polyline points="7 3 7 8 15 8"/>
+  <div class="reel-sidebar">
+    <button class="reel-like-btn${liked ? ' reel-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="${liked ? '#e0245e' : 'none'}" stroke="${liked ? '#e0245e' : '#fff'}" stroke-width="1.75">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
       </svg>
+      <span id="ig-like-count-${esc(m.id)}">${count}</span>
+    </button>
+    <button class="reel-cmt-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Comments">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.75">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span id="reel-cmt-count-${esc(m.id)}">…</span>
+    </button>
+    <a class="reel-save-btn" href="${esc(m.imageUrl)}" download="surf-del-mar-memory-${idx + 1}.jpg" aria-label="Save photo">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.75">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span>Save</span>
     </a>
+    ${total > 1 ? `<div class="reel-counter">${idx + 1}<span>/${total}</span></div>` : ''}
   </div>
 
-  <div class="ig-likes"><strong><span id="ig-like-count-${esc(m.id)}">${count}</span> likes</strong></div>
-
-  ${m.caption || m.name ? `<div class="ig-caption"><strong class="ig-cap-user">surf_del_mar</strong>${m.caption ? ` <span class="ig-cap-text">${esc(m.caption)}</span>` : ''}${m.name ? `<span class="ig-cap-by">&#x2014;&nbsp;${esc(m.name)}</span>` : ''}</div>` : ''}
-
-  <button class="ig-view-comments-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" id="ig-view-comments-${esc(m.id)}">View comments</button>
-
-  <div class="ig-comments-section" id="tt-comments-section-${esc(m.id)}" hidden>
-    <div class="ig-comments-header">
-      <span class="ig-comments-label">Comments <span class="tt-comment-count" id="tt-comment-count-${esc(m.id)}"></span></span>
-      <button class="ig-comments-close" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Close comments">&#x2715;</button>
-    </div>
-    <div class="tt-comments-list" id="tt-comments-list-${esc(m.id)}">
-      <p class="tt-comment-placeholder">Loading…</p>
+  <div class="reel-comments-panel" id="tt-comments-section-${esc(m.id)}">
+    <button class="reel-cmts-backdrop" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Close comments"></button>
+    <div class="reel-cmts-sheet">
+      <div class="reel-cmts-handle" aria-hidden="true"></div>
+      <div class="reel-cmts-header">
+        <span class="reel-cmts-title">Comments <span class="tt-comment-count" id="tt-comment-count-${esc(m.id)}"></span></span>
+        <button class="reel-cmts-close" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="tt-comments-list" id="tt-comments-list-${esc(m.id)}">
+        <p class="tt-comment-placeholder">Loading…</p>
+      </div>
+      <form class="reel-cmt-form" id="tt-comment-form" data-memory-id="${esc(m.id)}" novalidate>
+        <div class="reel-cmt-row">
+          <input type="text" id="tt-cmt-text" class="reel-cmt-input" placeholder="Add a comment…" maxlength="500" />
+          <button type="submit" class="ig-cmt-post">Post</button>
+        </div>
+        <input type="text" id="tt-cmt-name" class="reel-name-input" placeholder="Your name (optional)" maxlength="100" autocomplete="name" />
+        <p id="tt-cmt-error" class="reel-cmt-error" hidden></p>
+      </form>
     </div>
   </div>
-
-  <form class="ig-comment-form" id="tt-comment-form" data-memory-id="${esc(m.id)}" novalidate>
-    <div class="ig-cmt-row">
-      <input type="text" class="ig-cmt-input" id="tt-cmt-text" placeholder="Add a comment…" maxlength="500" />
-      <button type="submit" class="ig-cmt-post">Post</button>
-    </div>
-    <input type="text" class="ig-name-input" id="tt-cmt-name" placeholder="Your name (optional)" maxlength="100" autocomplete="name" />
-    <p class="ig-cmt-error" id="tt-cmt-error" hidden></p>
-  </form>
 </div>`;
 		}
 
@@ -255,8 +253,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 			const comments = commentsCache.get(memoryId) || [];
 			const n = comments.length;
 			if (countEl) countEl.textContent = `(${n})`;
-			const viewBtn = document.getElementById(`ig-view-comments-${memoryId}`);
-			if (viewBtn) viewBtn.textContent = n > 0 ? `View all ${n} comment${n !== 1 ? 's' : ''}` : 'Be the first to comment!';
+			const sidebarCount = document.getElementById(`reel-cmt-count-${memoryId}`);
+			if (sidebarCount) sidebarCount.textContent = String(n);
 			if (n === 0) {
 				listEl.innerHTML = '<p class="tt-comment-placeholder">No comments yet — be the first!</p>';
 				return;
@@ -273,15 +271,16 @@ import Lighthouse from '../components/Lighthouse.astro';
 		function toggleComments(memoryId: string) {
 			const section = document.getElementById(`tt-comments-section-${memoryId}`);
 			if (!section) return;
-			section.hidden = !section.hidden;
-			if (!section.hidden) loadAndRenderComments(memoryId);
+			const opening = !section.classList.contains('open');
+			section.classList.toggle('open');
+			if (opening) loadAndRenderComments(memoryId);
 		}
 
 		// ── Likes ─────────────────────────────────────────────────
 		function setLikeUI(btn: HTMLElement, count: number, liked: boolean) {
 			const svg = btn.querySelector('svg');
-			if (svg) { svg.setAttribute('fill', liked ? '#e0245e' : 'none'); svg.setAttribute('stroke', liked ? '#e0245e' : '#262626'); }
-			btn.classList.toggle('ig-liked', liked);
+			if (svg) { svg.setAttribute('fill', liked ? '#e0245e' : 'none'); svg.setAttribute('stroke', liked ? '#e0245e' : '#fff'); }
+			btn.classList.toggle('reel-liked', liked);
 			if (liked) { btn.classList.remove('tt-like-pop'); void btn.offsetWidth; btn.classList.add('tt-like-pop'); }
 			const memId = btn.dataset.memoryId!;
 			const likesEl = document.getElementById(`ig-like-count-${memId}`);
@@ -370,19 +369,29 @@ import Lighthouse from '../components/Lighthouse.astro';
 				}
 			});
 
-			// In-photo nav arrows
-			document.getElementById('ig-nav-prev')?.addEventListener('click', () => goTo(currentIndex - 1, 'right'));
-			document.getElementById('ig-nav-next')?.addEventListener('click', () => goTo(currentIndex + 1, 'left'));
-
-			// Touch swipe on the photo
-			const photoWrap = card.querySelector('.ig-photo-wrap');
-			if (photoWrap) {
-				let touchX = 0;
-				photoWrap.addEventListener('touchstart', (e) => { touchX = (e as TouchEvent).changedTouches[0].clientX; }, { passive: true });
-				photoWrap.addEventListener('touchend', (e) => {
-					const diff = touchX - (e as TouchEvent).changedTouches[0].clientX;
-					if (Math.abs(diff) > 40) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'left' : 'right');
+			// Vertical swipe + double-tap on the whole slide
+			const slide = card.querySelector('.reel-slide') as HTMLElement | null;
+			if (slide) {
+				let touchY = 0;
+				slide.addEventListener('touchstart', (e) => { touchY = (e as TouchEvent).changedTouches[0].clientY; }, { passive: true });
+				slide.addEventListener('touchend', (e) => {
+					const diff = touchY - (e as TouchEvent).changedTouches[0].clientY;
+					if (Math.abs(diff) > 50) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'left' : 'right');
 				}, { passive: true });
+
+				let lastTap = 0;
+				slide.addEventListener('click', (e) => {
+					if ((e.target as Element).closest('button, a, form, input')) return;
+					const now = Date.now();
+					if (now - lastTap < 350) {
+						const memId = slide.dataset.memoryId!;
+						const likeBtn = slide.querySelector(`[data-action="like"]`) as HTMLElement | null;
+						if (likeBtn) handleLike(memId, likeBtn);
+						const heartEl = document.getElementById(`reel-heart-${memId}`);
+						if (heartEl) { heartEl.classList.remove('reel-heart-pop'); void heartEl.offsetWidth; heartEl.classList.add('reel-heart-pop'); }
+					}
+					lastTap = now;
+				});
 			}
 		}
 
@@ -395,32 +404,45 @@ import Lighthouse from '../components/Lighthouse.astro';
 			document.querySelectorAll('.tt-dot').forEach((d, i) => d.classList.toggle('active', i === currentIndex));
 		}
 
-		async function goTo(newIdx: number, _dir: 'left' | 'right') {
+		async function goTo(newIdx: number, dir: 'left' | 'right') {
 			if (isAnimating || newIdx < 0 || newIdx >= memoriesList.length) return;
 			isAnimating = true;
 
 			const stage = document.getElementById('tt-stage');
 			if (!stage) { isAnimating = false; return; }
 
-			stage.style.transition = 'opacity 0.18s ease';
-			stage.style.opacity = '0';
-			await new Promise<void>((r) => setTimeout(r, 190));
+			// Build incoming slide: 'left' = next = comes from bottom; 'right' = prev = comes from top
+			const tmp = document.createElement('div');
+			tmp.innerHTML = slideHTML(newIdx).trim();
+			const inSlide = tmp.firstElementChild as HTMLElement;
+			Object.assign(inSlide.style, {
+				position: 'absolute', inset: '0',
+				transform: dir === 'left' ? 'translateY(100%)' : 'translateY(-100%)',
+				transition: 'none', zIndex: '2',
+			});
+			stage.appendChild(inSlide);
+			inSlide.offsetHeight;
+
+			const outSlide = stage.querySelector('.reel-slide:not(:last-child)') as HTMLElement | null;
+			const ty = dir === 'left' ? '-100%' : '100%';
+			const ease = 'transform 0.42s cubic-bezier(0.4,0,0.2,1)';
+			inSlide.style.transition = ease;
+			inSlide.style.transform  = 'translateY(0)';
+			if (outSlide) { outSlide.style.transition = ease; outSlide.style.transform = `translateY(${ty})`; }
+
+			await new Promise<void>((r) => setTimeout(r, 440));
 
 			stage.innerHTML = slideHTML(newIdx).trim();
 			currentIndex = newIdx;
 			attachSlideListeners();
 			updateDots();
-
-			stage.style.opacity = '1';
+			loadAndRenderComments(memoriesList[newIdx].id);
 			isAnimating = false;
 		}
 
 		// ── Render feed ───────────────────────────────────────────
 		function renderFeed() {
 			if (!containerEl) return;
-			const total = memoriesList.length;
-			const dots  = memoriesList.map((_, i) => `<div class="tt-dot${i === 0 ? ' active' : ''}"></div>`).join('');
-
 			containerEl.innerHTML = `
 <div class="tt-outer">
   <div class="tt-card" id="tt-card">
@@ -428,16 +450,15 @@ import Lighthouse from '../components/Lighthouse.astro';
       ${slideHTML(0).trim()}
     </div>
   </div>
-</div>
-${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`;
+</div>`;
 
 			attachSlideListeners();
 			loadAndRenderComments(memoriesList[0].id);
 
 			document.addEventListener('keydown', (e) => {
 				if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
-				if (e.key === 'ArrowRight') goTo(currentIndex + 1, 'left');
-				if (e.key === 'ArrowLeft')  goTo(currentIndex - 1, 'right');
+				if (e.key === 'ArrowDown' || e.key === 'ArrowRight') goTo(currentIndex + 1, 'left');
+				if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  goTo(currentIndex - 1, 'right');
 			});
 		}
 
@@ -590,249 +611,230 @@ ${total > 1 ? `<div class="tt-dots-row" aria-hidden="true">${dots}</div>` : ''}`
 	.shared-memories-msg { font-family: var(--font-body); color: var(--color-sepia); font-style: italic; text-align: center; padding: 2rem; margin: 0; }
 	.shared-memories-err { font-style: normal; color: #b91c1c; }
 
-	/* ── Instagram-style feed ──────────────────────────────────── */
+	/* ── Reels-style shared memories ──────────────────────────── */
 
 	:global(.tt-outer) {
 		display: flex;
 		justify-content: center;
-		max-width: 480px;
-		margin: 0 auto;
 		padding: 0 1rem;
 	}
 
 	:global(.tt-card) {
 		width: 100%;
-		background: #fff;
-		border: 1px solid #dbdbdb;
-		border-radius: 8px;
+		max-width: 420px;
+		height: clamp(520px, 82vh, 760px);
+		position: relative;
+		background: #111;
+		border-radius: 18px;
 		overflow: hidden;
+		box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
 	}
 
 	:global(.tt-stage) {
-		transition: opacity 0.18s ease;
+		position: absolute; inset: 0; overflow: hidden;
 	}
 
-	/* Post */
-	:global(.ig-post) {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	/* Reel slide */
+	:global(.reel-slide) {
+		position: absolute; inset: 0;
+		display: flex; flex-direction: column;
+		cursor: default;
+		user-select: none;
 	}
 
-	/* Header */
-	:global(.ig-post-header) {
-		display: flex;
-		align-items: center;
-		gap: 0.625rem;
-		padding: 10px 12px;
-		border-bottom: 1px solid #efefef;
-	}
-	:global(.ig-avatar) {
-		width: 34px; height: 34px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-		display: flex; align-items: center; justify-content: center;
-		font-size: 1.05rem; flex-shrink: 0;
-	}
-	:global(.ig-username) {
-		font-weight: 700; font-size: 0.875rem; color: #262626; flex: 1;
-	}
-	:global(.ig-header-counter) {
-		font-size: 0.75rem; color: #8e8e8e;
-	}
-
-	/* Photo */
-	:global(.ig-photo-wrap) {
-		position: relative;
-		width: 100%;
-		aspect-ratio: 1 / 1;
-		overflow: hidden;
-		background: #000;
-	}
-	:global(.ig-photo) {
+	/* Full-cover photo */
+	:global(.reel-photo) {
+		position: absolute; inset: 0;
 		width: 100%; height: 100%;
 		object-fit: cover; display: block;
+		pointer-events: none;
 	}
 
-	/* In-photo nav arrows */
-	:global(.ig-nav) {
-		position: absolute; top: 50%; transform: translateY(-50%);
-		background: rgba(255,255,255,0.88);
-		border: none; border-radius: 50%;
-		width: 30px; height: 30px;
-		display: flex; align-items: center; justify-content: center;
-		font-size: 1.35rem; line-height: 1;
-		cursor: pointer; z-index: 5;
-		box-shadow: 0 1px 6px rgba(0,0,0,0.18);
-		transition: background 0.15s;
-		padding: 0;
+	/* Bottom gradient overlay */
+	:global(.reel-gradient) {
+		position: absolute; inset: 0;
+		background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.28) 45%, transparent 70%);
+		pointer-events: none;
 	}
-	:global(.ig-nav:hover) { background: #fff; }
-	:global(.ig-nav-prev) { left: 10px; }
-	:global(.ig-nav-next) { right: 10px; }
 
-	/* Actions */
-	:global(.ig-actions) {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 8px 12px 4px;
+	/* Double-tap heart burst */
+	:global(.reel-dbl-heart) {
+		position: absolute; top: 50%; left: 50%;
+		transform: translate(-50%,-50%) scale(0);
+		font-size: 5rem; pointer-events: none;
+		opacity: 0; z-index: 20;
 	}
-	:global(.ig-actions-left) { display: flex; align-items: center; gap: 4px; }
-	:global(.ig-like-btn),
-	:global(.ig-comment-icon-btn),
-	:global(.ig-save-btn) {
+	:global(.reel-heart-pop) {
+		animation: reel-heart-burst 0.65s cubic-bezier(0.36,0.07,0.19,0.97) forwards;
+	}
+	@keyframes reel-heart-burst {
+		0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.9; }
+		40%  { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+		70%  { transform: translate(-50%,-50%) scale(1.05); }
+		100% { transform: translate(-50%,-50%) scale(1.1); opacity: 0; }
+	}
+
+	/* Bottom-left info */
+	:global(.reel-info) {
+		position: absolute; bottom: 80px; left: 12px; right: 90px;
+		z-index: 5; color: #fff;
+		text-shadow: 0 1px 4px rgba(0,0,0,0.65);
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	}
+	:global(.reel-username) { font-weight: 700; font-size: 0.9rem; margin: 0 0 4px; }
+	:global(.reel-caption) {
+		font-size: 0.875rem; line-height: 1.45; margin: 0 0 3px;
+		display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+	}
+	:global(.reel-by) { font-size: 0.8125rem; font-style: italic; opacity: 0.85; margin: 0 0 4px; }
+	:global(.reel-swipe-hint) {
+		font-size: 0.72rem; opacity: 0.55; margin: 2px 0 0;
+		animation: hint-pulse 2.8s ease-in-out infinite;
+	}
+	@keyframes hint-pulse {
+		0%, 100% { opacity: 0.55; }
+		50%       { opacity: 0.15; }
+	}
+
+	/* Right sidebar */
+	:global(.reel-sidebar) {
+		position: absolute; right: 10px; bottom: 80px;
+		display: flex; flex-direction: column; align-items: center;
+		gap: 20px; z-index: 5;
+	}
+	:global(.reel-like-btn),
+	:global(.reel-cmt-btn) {
 		background: none; border: none; cursor: pointer;
-		padding: 6px; display: flex; align-items: center;
-		transition: opacity 0.15s; color: inherit; text-decoration: none;
+		display: flex; flex-direction: column; align-items: center;
+		gap: 3px; color: #fff; font-size: 0.7rem; font-weight: 600;
+		padding: 0; line-height: 1;
+		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		transition: opacity 0.15s;
 	}
-	:global(.ig-like-btn:hover),
-	:global(.ig-comment-icon-btn:hover),
-	:global(.ig-save-btn:hover) { opacity: 0.55; }
+	:global(.reel-like-btn:hover), :global(.reel-cmt-btn:hover) { opacity: 0.75; }
+	:global(.reel-like-btn span), :global(.reel-cmt-btn span) { font-size: 0.7rem; line-height: 1; }
+	:global(.reel-save-btn) {
+		display: flex; flex-direction: column; align-items: center;
+		gap: 3px; color: #fff; text-decoration: none;
+		font-size: 0.7rem; font-weight: 600;
+		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		transition: opacity 0.15s;
+	}
+	:global(.reel-save-btn:hover) { opacity: 0.75; }
+	:global(.reel-counter) { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.85); line-height: 1; }
+	:global(.reel-counter span) { font-weight: 400; opacity: 0.65; }
 
+	/* Like pop animation */
 	:global(.tt-like-pop) { animation: ig-pop 0.35s cubic-bezier(0.36,0.07,0.19,0.97); }
 	@keyframes ig-pop {
-		0%  { transform: scale(1); }
-		35% { transform: scale(1.35); }
-		65% { transform: scale(0.9); }
-		100%{ transform: scale(1); }
+		0%   { transform: scale(1); }
+		35%  { transform: scale(1.35); }
+		65%  { transform: scale(0.9); }
+		100% { transform: scale(1); }
 	}
 
-	/* Likes */
-	:global(.ig-likes) {
-		padding: 2px 16px 4px;
-		font-size: 0.875rem;
-		color: #262626;
+	/* Comments bottom sheet */
+	:global(.reel-comments-panel) {
+		position: absolute; inset: 0; z-index: 30;
+		pointer-events: none; opacity: 0;
+		transition: opacity 0.25s;
 	}
-
-	/* Caption */
-	:global(.ig-caption) {
-		padding: 2px 16px 6px;
-		font-size: 0.875rem;
-		color: #262626;
-		line-height: 1.5;
+	:global(.reel-comments-panel.open) {
+		pointer-events: auto; opacity: 1;
 	}
-	:global(.ig-cap-user) { font-weight: 700; margin-right: 4px; }
-	:global(.ig-cap-by) {
-		display: block;
-		color: #8e8e8e;
-		font-style: italic;
-		margin-top: 2px;
-		font-size: 0.8125rem;
+	:global(.reel-cmts-backdrop) {
+		position: absolute; inset: 0;
+		background: rgba(0,0,0,0.45);
+		border: none; cursor: pointer; z-index: 0;
+		width: 100%; height: 100%;
 	}
-
-	/* View comments button */
-	:global(.ig-view-comments-btn) {
-		display: block; width: 100%; text-align: left;
-		padding: 2px 16px 6px;
-		background: none; border: none; cursor: pointer;
-		font-size: 0.875rem; color: #8e8e8e;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		transition: color 0.2s;
+	:global(.reel-cmts-sheet) {
+		position: absolute; bottom: 0; left: 0; right: 0;
+		background: #1a1a1a; border-radius: 20px 20px 0 0;
+		max-height: 65%; display: flex; flex-direction: column;
+		transform: translateY(100%);
+		transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+		z-index: 1;
 	}
-	:global(.ig-view-comments-btn:hover) { color: #262626; }
-
-	/* Comments section (collapsible) */
-	:global(.ig-comments-section) {
-		border-top: 1px solid #efefef;
-		max-height: 220px;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
+	:global(.reel-comments-panel.open .reel-cmts-sheet) {
+		transform: translateY(0);
 	}
-	:global(.ig-comments-section[hidden]) { display: none !important; }
-	:global(.ig-comments-header) {
+	:global(.reel-cmts-handle) {
+		width: 36px; height: 4px; border-radius: 2px;
+		background: rgba(255,255,255,0.25); margin: 10px auto 0; flex-shrink: 0;
+	}
+	:global(.reel-cmts-header) {
 		display: flex; align-items: center;
-		justify-content: space-between;
-		padding: 6px 12px;
-		border-bottom: 1px solid #efefef;
+		padding: 10px 16px 8px;
+		border-bottom: 1px solid rgba(255,255,255,0.1);
 		flex-shrink: 0;
 	}
-	:global(.ig-comments-label) {
-		font-size: 0.75rem; font-weight: 700;
-		text-transform: uppercase; letter-spacing: 0.06em;
-		color: #8e8e8e;
+	:global(.reel-cmts-title) {
+		flex: 1; font-size: 0.875rem; font-weight: 700; color: #fff;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	}
-	:global(.ig-comments-close) {
-		background: none; border: none; cursor: pointer;
-		font-size: 0.75rem; color: #8e8e8e;
-		padding: 2px 6px; border-radius: 4px;
-		transition: background 0.15s, color 0.15s;
-	}
-	:global(.ig-comments-close:hover) { background: #efefef; color: #262626; }
-
 	:global(.tt-comment-count) { font-weight: 400; }
+	:global(.reel-cmts-close) {
+		background: none; border: none; cursor: pointer;
+		font-size: 1rem; color: rgba(255,255,255,0.7);
+		padding: 4px 6px; border-radius: 4px;
+		transition: color 0.15s;
+	}
+	:global(.reel-cmts-close:hover) { color: #fff; }
+
+	/* Comments list */
 	:global(.tt-comments-list) {
-		flex: 1; overflow-y: auto;
-		padding: 6px 16px;
-		display: flex; flex-direction: column;
-		gap: 6px; scroll-behavior: smooth;
+		flex: 1; overflow-y: auto; padding: 8px 16px;
+		display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth;
 	}
 	:global(.tt-comment-placeholder) {
-		font-size: 0.8125rem; color: #8e8e8e; font-style: italic; margin: 0;
+		font-size: 0.8125rem; color: rgba(255,255,255,0.45); font-style: italic; margin: 0;
 	}
 	:global(.tt-comment) {
 		font-size: 0.875rem; line-height: 1.45;
-		display: flex; gap: 4px; flex-wrap: wrap; color: #262626;
+		display: flex; gap: 6px; flex-wrap: wrap; color: #fff;
 	}
-	:global(.tt-cmt-name) { font-weight: 700; flex-shrink: 0; }
+	:global(.tt-cmt-name) { font-weight: 700; flex-shrink: 0; color: rgba(255,255,255,0.9); }
 
 	/* Comment form */
-	:global(.ig-comment-form) {
-		border-top: 1px solid #efefef;
-		padding: 8px 16px;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
+	:global(.reel-cmt-form) {
+		border-top: 1px solid rgba(255,255,255,0.1);
+		padding: 8px 12px 14px; display: flex; flex-direction: column;
+		gap: 5px; flex-shrink: 0;
 	}
-	:global(.ig-cmt-row) {
-		display: flex; align-items: center;
-	}
-	:global(.ig-cmt-input) {
-		flex: 1;
-		border: none; outline: none;
-		font-size: 0.875rem; background: transparent;
+	:global(.reel-cmt-row) { display: flex; align-items: center; gap: 6px; }
+	:global(.reel-cmt-input) {
+		flex: 1; background: rgba(255,255,255,0.1);
+		border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+		color: #fff; font-size: 0.875rem; padding: 6px 12px; outline: none;
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		color: #262626; padding: 4px 0;
 	}
-	:global(.ig-cmt-input::placeholder) { color: #aaa; }
-	:global(.ig-name-input) {
-		border: none; border-bottom: 1px solid #efefef; outline: none;
-		font-size: 0.8125rem; color: #8e8e8e;
+	:global(.reel-cmt-input::placeholder) { color: rgba(255,255,255,0.38); }
+	:global(.reel-name-input) {
+		background: transparent; border: none;
+		border-bottom: 1px solid rgba(255,255,255,0.15);
+		color: rgba(255,255,255,0.6); font-size: 0.8125rem;
+		padding: 3px 4px; outline: none; width: 100%;
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		background: transparent; padding: 3px 0; width: 100%;
 	}
-	:global(.ig-name-input::placeholder) { color: #bbb; }
+	:global(.reel-name-input::placeholder) { color: rgba(255,255,255,0.28); }
 	:global(.ig-cmt-post) {
 		background: none; border: none; cursor: pointer;
 		font-size: 0.875rem; font-weight: 700;
-		color: #0095f6; padding: 0 0 0 8px;
+		color: #0095f6; padding: 0; white-space: nowrap;
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 		transition: opacity 0.15s;
 	}
 	:global(.ig-cmt-post:hover:not(:disabled)) { opacity: 0.7; }
 	:global(.ig-cmt-post:disabled) { opacity: 0.4; cursor: not-allowed; }
-	:global(.ig-cmt-error) { font-size: 0.75rem; color: #e0245e; margin: 0; }
-
-	/* Dots */
-	:global(.tt-dots-row) {
-		display: flex; justify-content: center;
-		gap: 5px; margin-top: 0.75rem; flex-wrap: wrap;
-		max-width: 480px; margin-left: auto; margin-right: auto;
-		padding: 0 1rem;
-	}
-	:global(.tt-dot) {
-		width: 6px; height: 6px; border-radius: 50%;
-		background: rgba(0,0,0,0.15);
-		transition: background 0.25s, transform 0.25s;
-	}
-	:global(.tt-dot.active) { background: var(--color-accent); transform: scale(1.35); }
+	:global(.reel-cmt-error) { font-size: 0.75rem; color: #e0245e; margin: 0; }
 
 	/* Mobile */
 	@media (max-width: 640px) {
 		:global(.tt-outer) { padding: 0; }
-		:global(.tt-card) { border-radius: 0; border-left: none; border-right: none; }
-		:global(.ig-nav) { width: 26px; height: 26px; font-size: 1.1rem; }
-		:global(.ig-name-input) { display: none; }
-		:global(.tt-dots-row) { padding: 0; }
+		:global(.tt-card)  { border-radius: 0; }
+		:global(.reel-info)    { bottom: 90px; right: 80px; }
+		:global(.reel-sidebar) { bottom: 90px; }
 	}
 
 	/* ── Share memories modal ──────────────────────────────────── */
