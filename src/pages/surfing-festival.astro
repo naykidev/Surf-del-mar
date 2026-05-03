@@ -64,7 +64,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 				</article>
 				<article class="event-card event-card-vintage">
 					<div class="event-card-photo">
-						<div class="photo-frame photo-frame-with-caption photo-frame-portrait">
+						<div class="photo-frame photo-frame-with-caption">
 							<img src="/filmfestival.jpg" alt="Film Festival" class="festival-vintage-img festival-portrait-img" width="178" height="252" />
 							<p class="event-card-photo-caption" data-editable="festival.events.film-festival.caption"></p>
 						</div>
@@ -247,19 +247,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		border: 1px solid rgba(0, 0, 0, 0.05);
 	}
 
-	.festival-portrait-img {
-		aspect-ratio: unset !important;
-		object-fit: contain !important;
-		width: auto !important;
-		max-width: 100%;
-		height: auto;
-	}
-
-	.photo-frame-portrait {
-		display: inline-flex;
-		flex-direction: column;
-		width: auto;
-	}
+	/* Portrait image — show full poster like collectors page */
 
 	/* Organic "Taped" Effect */
 	.tape-element {
@@ -440,6 +428,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 		height: auto;
 		aspect-ratio: 3 / 2;
 		object-fit: cover;
+	}
+
+	/* Portrait override — same height box, full image visible */
+	.event-card-vintage .festival-portrait-img {
+		object-fit: contain;
+		background: #fff;
 	}
 
 	.event-card-vintage h3 {
