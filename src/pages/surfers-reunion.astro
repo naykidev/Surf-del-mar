@@ -863,5 +863,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.reunion-intro-grid { gap: 1.5rem; }
 		.reunion-surfers-img { max-width: 100%; }
 		.share-memories-cancel, .share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
+		.reunion-share-btn { min-height: 44px; padding: 0.6rem 1.5rem; }
+	}
+
+	@media (max-width: 640px) {
+		.reunion-intro-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+		:global(.reel-like-btn), :global(.reel-cmt-btn) { min-width: 44px; min-height: 44px; justify-content: center; }
+		:global(.reel-info) { font-size: 0.85rem; }
+		.share-memories-box { padding: 1.25rem 1rem; }
 	}
 </style>

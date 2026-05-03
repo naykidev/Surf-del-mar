@@ -278,16 +278,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 		image-orientation: from-image;
 	}
 
-	@media (max-width: 768px) {
-		.shirt-img {
-			max-width: 200px;
-		}
-	}
-
-	@media (max-width: 560px) {
+	@media (max-width: 640px) {
 		.shirt-gallery {
 			grid-template-columns: 1fr;
 			gap: 1.5rem;
+		}
+		.shirt-img {
+			max-width: 220px;
 		}
 	}
 
@@ -341,7 +338,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		gap: 1.25rem;
 	}
 
-	@media (max-width: 500px) {
+	@media (max-width: 640px) {
 		.items-grid {
 			grid-template-columns: 1fr;
 		}
@@ -364,7 +361,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.item-size {
 		font-family: var(--font-display);
-		font-size: 1.5rem;
+		font-size: clamp(1.2rem, 3vw, 1.5rem);
 		font-weight: 600;
 		color: var(--color-ink);
 		margin-bottom: 0.5rem;
@@ -372,7 +369,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.item-price {
 		font-family: var(--font-body);
-		font-size: 1.75rem;
+		font-size: clamp(1.35rem, 3.5vw, 1.75rem);
 		font-weight: 700;
 		color: var(--color-accent);
 		margin-bottom: 0.35rem;
@@ -406,7 +403,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 
 	.tshirt-price {
-		font-size: 1.6rem;
+		font-size: clamp(1.25rem, 3.5vw, 1.6rem);
 		font-weight: 700;
 		color: var(--color-accent);
 		font-family: var(--font-body);
