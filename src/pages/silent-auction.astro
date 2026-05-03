@@ -33,6 +33,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 			<h2 class="section-heading">AUCTION ITEMS</h2>
 
+			<p class="coming-soon">Auction items coming soon.</p>
+
+			<!-- AUCTION ITEMS TEMPLATE — restore when photos/details are ready
 			<div class="items-grid">
 				<article class="event-card auction-card">
 					<div class="auction-lot">Lot 1</div>
@@ -71,6 +74,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 				</article>
 			</div>
+			-->
 
 			<article class="event-card info-card">
 				<h3 class="info-title">How the Auction Works</h3>
@@ -166,6 +170,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 		color: var(--color-ink);
 		margin: 0.5rem 0 0;
 		line-height: 1.3;
+	}
+
+	.coming-soon {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		font-style: italic;
+		color: var(--color-sepia);
+		margin: 0;
 	}
 
 	.items-grid {
