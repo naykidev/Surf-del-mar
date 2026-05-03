@@ -54,11 +54,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 			<div class="items-grid">
 				<article class="event-card item-card">
+					<img src="/Poster.webp" alt="Surf Del Mar poster — 19×13 inch" class="item-poster-img" width="600" height="800" />
 					<div class="item-size">19&Prime; &times; 13&Prime;</div>
 					<div class="item-price">$75.00</div>
 					<p class="item-note">Plus Shipping and Handling</p>
 				</article>
 				<article class="event-card item-card">
+					<img src="/Poster.webp" alt="Surf Del Mar poster — 24×18 inch" class="item-poster-img" width="600" height="800" />
 					<div class="item-size">24&Prime; &times; 18&Prime;</div>
 					<div class="item-price">$125.00</div>
 					<p class="item-note">Plus $7.00 Shipping and Handling</p>
@@ -347,7 +349,17 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.item-card {
 		text-align: center;
-		padding: 1.75rem 1.25rem;
+		padding: 1.25rem 1.25rem 1.75rem;
+	}
+
+	.item-poster-img {
+		width: 100%;
+		max-width: 180px;
+		height: auto;
+		display: block;
+		margin: 0 auto 1rem;
+		border-radius: 2px;
+		box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 	}
 
 	.item-size {
