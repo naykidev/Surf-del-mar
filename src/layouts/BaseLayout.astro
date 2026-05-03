@@ -472,8 +472,12 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		font-weight: 700;
 	}
 
+	.nav-menu-desktop {
+		display: none !important;
+	}
+
 	.nav-toggle {
-		display: none;
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		width: 44px;
@@ -596,6 +600,68 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	}
 	body.nav-drawer-body-open {
 		overflow: hidden;
+	}
+
+	/* Wide screen: horizontal dropdown from top */
+	@media (min-width: 769px) {
+		.nav-drawer-panel {
+			top: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			max-width: 100%;
+			height: auto;
+			transform: translateY(-100%);
+			padding: 1rem 3rem;
+			flex-direction: row;
+			align-items: center;
+			gap: 1.5rem;
+			box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+		}
+		.nav-drawer-open .nav-drawer-panel {
+			transform: translateY(0);
+		}
+		.nav-drawer-nav {
+			flex: 1;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 0.25rem 0.5rem;
+		}
+		.nav-drawer-nav .tower-container,
+		.nav-drawer-nav .surf-container,
+		.nav-drawer-nav .reunion-container,
+		.nav-drawer-nav .schedule-container,
+		.nav-drawer-nav .sponsors-container,
+		.nav-drawer-nav .collectors-container,
+		.nav-drawer-nav .auction-container,
+		.nav-drawer-nav .faces-container {
+			width: auto;
+			max-width: none;
+			justify-content: flex-start;
+		}
+		.nav-drawer-nav .nav-tower,
+		.nav-drawer-nav .nav-surfboard,
+		.nav-drawer-nav .nav-reunion,
+		.nav-drawer-nav .nav-sponsors,
+		.nav-drawer-nav .nav-collectors,
+		.nav-drawer-nav .nav-auction,
+		.nav-drawer-nav .nav-faces,
+		.nav-drawer-nav .nav-schedule {
+			width: auto;
+			text-align: left;
+			justify-content: flex-start;
+		}
+		.nav-drawer-admin {
+			margin-top: 0;
+			padding-top: 0;
+			border-top: none;
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			flex-shrink: 0;
+		}
 	}
 
 	.nav-right {
@@ -1191,19 +1257,6 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	}
 
 	/* Mobile: hamburger + drawer, compact header/footer */
-	/* Switch to hamburger at 1024px — too many nav items to fit at mid widths */
-	@media (max-width: 1024px) {
-		.nav-toggle {
-			display: flex;
-		}
-		.nav-menu-desktop {
-			display: none !important;
-		}
-		header {
-			padding: 0.5rem 1.5rem;
-		}
-	}
-
 	@media (max-width: 768px) {
 		header {
 			padding: 0.5rem 1rem;
