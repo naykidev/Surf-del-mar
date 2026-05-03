@@ -64,7 +64,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 				</article>
 				<article class="event-card event-card-vintage">
 					<div class="event-card-photo">
-						<div class="photo-frame photo-frame-with-caption">
+						<div class="photo-frame photo-frame-with-caption photo-frame-portrait">
 							<img src="/filmfestival.jpg" alt="Film Festival" class="festival-vintage-img festival-portrait-img" width="178" height="252" />
 							<p class="event-card-photo-caption" data-editable="festival.events.film-festival.caption"></p>
 						</div>
@@ -248,10 +248,15 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 
 	.festival-portrait-img {
-		width: auto;
+		width: auto !important;
 		max-width: 100%;
-		max-height: 260px;
-		margin: 0 auto;
+		height: auto;
+	}
+
+	.photo-frame-portrait {
+		display: inline-flex;
+		flex-direction: column;
+		width: auto;
 	}
 
 	/* Organic "Taped" Effect */
