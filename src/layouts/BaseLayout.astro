@@ -1191,15 +1191,22 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	}
 
 	/* Mobile: hamburger + drawer, compact header/footer */
-	@media (max-width: 768px) {
-		header {
-			padding: 0.5rem 1rem;
-		}
+	/* Switch to hamburger at 1024px — too many nav items to fit at mid widths */
+	@media (max-width: 1024px) {
 		.nav-toggle {
 			display: flex;
 		}
 		.nav-menu-desktop {
 			display: none !important;
+		}
+		header {
+			padding: 0.5rem 1.5rem;
+		}
+	}
+
+	@media (max-width: 768px) {
+		header {
+			padding: 0.5rem 1rem;
 		}
 		.logo {
 			font-size: 1rem;
