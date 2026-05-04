@@ -29,17 +29,24 @@ import Lighthouse from '../components/Lighthouse.astro';
 			<div class="reunion-intro-grid">
 				<div class="reunion-intro-image-col">
 					<div class="reunion-surfers-wrap">
-						<img src="/surfers.jpg" alt="Surfers at Del Mar" class="reunion-surfers-img" width="600" height="400" />
+						<img src="/hanson.png" alt="Don Hansen" class="reunion-surfers-img" width="942" height="910" />
 					</div>
 				</div>
 				<div class="reunion-intro-text-col">
-					<p class="reunion-intro" data-editable="reunion.intro1">
-						For decades, surfers have gathered along our local beaches to ride the waves, and share stories, building a unique coastal culture. SURF DEL MAR brings these generations together again.
-					</p>
-					<p class="reunion-intro" data-editable="reunion.intro2">
-						From the pioneers who surfed here in the 1930s, like XXXXXXX, and into the 1950s and 60s, to today's surfers and young riders, this reunion invites everyone connected to Del Mar and the surrounding surf communities to come together and celebrate.
+					<h2 class="reunion-tribute-heading">A Tribute to Don Hansen</h2>
+					<p class="reunion-intro">
+						Donald Hansen, a lifelong entrepreneur, athlete and adventurer, passed away on March 28, 2026 at 89, leaving behind a legacy of exploration, mentorship and deep connection to family and community. Born in South Dakota, he followed his passion to California, where he founded Hansen Surfboards in 1960 near Cardiff Reef, building it into a cornerstone of surf culture and a place where he uplifted and supported others. His drive for challenge took him from big Hawaiian waves to national champion skydiving teams and eventually to the mountains of Montana, where he embraced new pursuits with the same fearless spirit. More than anything, Don was remembered for his kindness, humor and belief in people, living each day with gratitude and an energy that inspired those around him.
 					</p>
 				</div>
+			</div>
+
+			<div class="reunion-intro-body">
+				<p class="reunion-intro" data-editable="reunion.intro1">
+					For decades, surfers have gathered along our local beaches to ride the waves, and share stories, building a unique coastal culture. SURF DEL MAR brings these generations together again.
+				</p>
+				<p class="reunion-intro" data-editable="reunion.intro2">
+					From the pioneers who surfed here in the 1930s and into the 1950s and 60s, to today's surfers and young riders, this reunion invites everyone connected to Del Mar and the surrounding surf communities to come together and celebrate.
+				</p>
 			</div>
 
 			<h2 class="reunion-subhead" data-editable="reunion.subhead1">REMEMBERING THE WAVES</h2>
@@ -582,6 +589,19 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.reunion-surfers-wrap:hover .reunion-surfers-img { transform: rotate(0deg); box-shadow: 0 24px 56px rgba(0,0,0,0.2); }
 
 	.reunion-intro-text-col .reunion-intro { margin-top: 0; }
+
+	.reunion-tribute-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.25rem, 3vw, 1.6rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 0.85rem;
+		line-height: 1.3;
+	}
+
+	.reunion-intro-body {
+		margin-bottom: 0.5rem;
+	}
 	.reunion-intro   { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1rem; }
 	.reunion-intro:last-of-type { margin-bottom: 0; }
 	.reunion-subhead { font-family: var(--font-body); font-size: clamp(1rem,2.5vw,1.2rem); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink); margin: 2rem 0 0.75rem; line-height: 1.4; }
