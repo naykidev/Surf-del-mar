@@ -26,20 +26,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	<section class="reunion-content">
 		<div class="container">
-			<div class="reunion-intro-grid">
-				<div class="reunion-intro-image-col">
-					<div class="reunion-surfers-wrap">
-						<img src="/hanson.png" alt="Don Hansen" class="reunion-surfers-img" width="942" height="910" />
-					</div>
-				</div>
-				<div class="reunion-intro-text-col">
-					<h2 class="reunion-tribute-heading">A Tribute to Don Hansen</h2>
-					<p class="reunion-intro">
-						Donald Hansen, a lifelong entrepreneur, athlete and adventurer, passed away on March 28, 2026 at 89, leaving behind a legacy of exploration, mentorship and deep connection to family and community. Born in South Dakota, he followed his passion to California, where he founded Hansen Surfboards in 1960 near Cardiff Reef, building it into a cornerstone of surf culture and a place where he uplifted and supported others. His drive for challenge took him from big Hawaiian waves to national champion skydiving teams and eventually to the mountains of Montana, where he embraced new pursuits with the same fearless spirit. More than anything, Don was remembered for his kindness, humor and belief in people, living each day with gratitude and an energy that inspired those around him.
-					</p>
-				</div>
-			</div>
-
 			<div class="reunion-intro-body">
 				<p class="reunion-intro" data-editable="reunion.intro1">
 					For decades, surfers have gathered along our local beaches to ride the waves, and share stories, building a unique coastal culture. SURF DEL MAR brings these generations together again.
@@ -573,32 +559,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 	.reunion-content .container { max-width: 820px; margin: 0 auto; }
 
-	.reunion-intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 2.5rem; }
-	@media (max-width: 768px) {
-		.reunion-intro-grid { grid-template-columns: 1fr; gap: 2rem; }
-		.reunion-intro-image-col { order: 1; }
-		.reunion-intro-text-col  { order: 2; }
-	}
-
-	.reunion-surfers-wrap { display: flex; justify-content: center; align-items: center; }
-	.reunion-surfers-img {
-		width: 100%; max-width: 380px; height: auto; display: block; border-radius: 6px;
-		box-shadow: 0 20px 50px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
-		transform: rotate(-2deg); transition: transform 0.35s ease, box-shadow 0.35s ease;
-	}
-	.reunion-surfers-wrap:hover .reunion-surfers-img { transform: rotate(0deg); box-shadow: 0 24px 56px rgba(0,0,0,0.2); }
-
-	.reunion-intro-text-col .reunion-intro { margin-top: 0; }
-
-	.reunion-tribute-heading {
-		font-family: var(--font-display);
-		font-size: clamp(1.25rem, 3vw, 1.6rem);
-		font-weight: 600;
-		color: var(--color-ink);
-		margin: 0 0 0.85rem;
-		line-height: 1.3;
-	}
-
 	.reunion-intro-body {
 		margin-bottom: 0.5rem;
 	}
@@ -880,8 +840,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.hero { padding: 3rem 1rem; }
 		.hero .hero-title { font-size: clamp(1.75rem, 6vw, 2.25rem); }
 		.reunion-content { padding: 2.5rem 1rem 2rem; }
-		.reunion-intro-grid { gap: 1.5rem; }
-		.reunion-surfers-img { max-width: 100%; }
 		.share-memories-cancel, .share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
 		.reunion-share-btn { min-height: 44px; padding: 0.6rem 1.5rem; }
 	}
