@@ -58,19 +58,27 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 	<!-- Don Hansen Tribute -->
 	<section class="hansen-section">
 		<div class="hansen-container">
-			<div class="hansen-image-col">
-				<div class="hansen-wrap">
+			<h2 class="hansen-heading">A Tribute to Don Hansen</h2>
+
+			<div class="hansen-content">
+				<div class="hansen-photo-frame">
 					<img src="/hanson.png" alt="Don Hansen" class="hansen-photo" width="942" height="910" />
+					<span class="photo-caption">Don Hansen (1936–2026)</span>
 				</div>
-			</div>
-			<div class="hansen-text-col">
-				<h2 class="hansen-heading">A Tribute to Don Hansen</h2>
-				<p class="hansen-body">Donald Hansen, an entrepreneur, athlete and adventurer whose life stretched far beyond any one calling, passed away on March 28th, 2026 at the age of 89.</p>
+
+				<p class="hansen-body"><strong>Donald Hansen</strong>, an entrepreneur, athlete and adventurer whose life stretched far beyond any one calling, passed away on March 28th, 2026 at the age of 89.</p>
+
 				<p class="hansen-body">To write about Don Hansen is to write about motion: prairie wind, Pacific swell, open sky, mountain trails and the forward pull of a man who never stopped testing the edges of life. Don leaves behind a legacy rooted not only in adventure, but in kindness, mentorship and family.</p>
-				<p class="hansen-body">Born in 1936 in Aberdeen, South Dakota, to Fred and Violet Hansen, Don was raised in nearby Redfield where he spent his youth hunting, fishing, working and later dreaming of California. It was in his early years on the prairie that Don was introduced to California, where he discovered the sport that would forever mark his path: surfing. In 1960, Don founded Hansen Surfboards near Cardiff Reef in Encinitas. The shop became one of the best-known names in California surf culture. For generations of surfers, skaters, skiers and local families, Hansen's was a gathering place and Don was its heart. He had an instinct not only for business, but for people. He helped sponsor top surfers, mentored young workers and earned the respect of the broader surfing world.</p>
-				<p class="hansen-body">Don chased challenge everywhere. He surfed big Hawaiian waves when that frontier was still young. In those Pacific swells, Don found his Kulia (koo-lee-ah), stepping into something bigger, pushing past comfort and the thrill of chasing adventure.</p>
-				<p class="hansen-body">That appetite for challenge never stopped at the shoreline; it carried him into the open sky. As captain of the Airfreight skydiving team, he helped lead a squad that won national titles and set world records in ten-man speed star competition. Later, on Montana mountain trails, Don "let her buck"–a phrase once used by World War I soldiers from Montana as they charged into battle–and he brought that same spirit to the mountains while living in Big Sky, taking up team roping with enthusiasm and grit.</p>
-				<p class="hansen-body">What set Don apart was not just his willingness to take risks, but his willingness to care. He carried a strong spirit, a memorable sense of humor and an infectious laugh. Don moved through life with faith and gratitude, meeting moments with humor and believing in people before they fully believed in themselves.</p>
+
+				<blockquote class="hansen-pullquote">
+					"Don moved through life with faith and gratitude, believing in people before they fully believed in themselves."
+				</blockquote>
+
+				<p class="hansen-body">Born in 1936 in Aberdeen, South Dakota, Don was raised in Redfield where he spent his youth hunting and fishing before dreaming of California. In 1960, Don founded <strong>Hansen Surfboards</strong> near Cardiff Reef in Encinitas. The shop became a pillar of California surf culture—a gathering place where Don was the heart, mentoring generations of surfers and earning the respect of the global surfing world.</p>
+
+				<p class="hansen-body">Don chased challenge everywhere. He surfed big Hawaiian waves when that frontier was still young. In those Pacific swells, Don found his <em>Kulia</em> (koo-lee-ah), stepping into something bigger and pushing past comfort.</p>
+
+				<p class="hansen-body">That appetite for challenge carried him into the open sky as captain of the Airfreight skydiving team, winning national titles and setting world records. Later, on Montana trails, Don "let her buck"—bringing that same spirit to the mountains while taking up team roping with enthusiasm and grit.</p>
 			</div>
 		</div>
 	</section>
@@ -314,62 +322,90 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		line-height: 1.35;
 	}
 
-	/* --- Don Hansen Tribute --- */
+	/* --- Don Hansen Tribute: Editorial Style --- */
 	.hansen-section {
-		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
-		padding: 4rem 2rem;
+		background: var(--color-cream);
+		padding: 6rem 2rem;
+		border-bottom: 1px solid rgba(0,0,0,0.05);
 	}
 
 	.hansen-container {
-		max-width: 820px;
+		max-width: 900px;
 		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 3rem;
-		align-items: center;
-	}
-
-	.hansen-wrap {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.hansen-photo {
-		width: 100%;
-		max-width: 380px;
-		height: auto;
-		display: block;
-		border-radius: 6px;
-		box-shadow: 0 20px 50px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
-		transform: rotate(-2deg);
-		transition: transform 0.35s ease, box-shadow 0.35s ease;
-	}
-
-	.hansen-wrap:hover .hansen-photo {
-		transform: rotate(0deg);
-		box-shadow: 0 24px 56px rgba(0,0,0,0.2);
 	}
 
 	.hansen-heading {
 		font-family: var(--font-display);
-		font-size: clamp(1.25rem, 3vw, 1.6rem);
+		font-size: clamp(2.5rem, 5vw, 3.5rem);
 		font-weight: 600;
 		color: var(--color-ink);
-		margin: 0 0 0.85rem;
-		line-height: 1.3;
+		margin-bottom: 3rem;
+		text-align: center;
+		position: relative;
+		line-height: 1.2;
+	}
+
+	.hansen-heading::after {
+		content: '';
+		display: block;
+		width: 60px;
+		height: 3px;
+		background: #c9a227;
+		margin: 1rem auto 0;
+	}
+
+	.hansen-content {
+		display: block;
+	}
+
+	.hansen-content::after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+
+	.hansen-photo-frame {
+		float: left;
+		width: 40%;
+		margin: 0 3rem 2rem 0;
+	}
+
+	.hansen-photo {
+		width: 100%;
+		height: auto;
+		border-radius: 4px;
+		box-shadow: 15px 15px 0px var(--color-sand);
+		border: 1px solid rgba(0,0,0,0.1);
+	}
+
+	.photo-caption {
+		display: block;
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		margin-top: 1.5rem;
+		color: var(--color-sepia);
 	}
 
 	.hansen-body {
 		font-family: var(--font-body);
-		font-size: 1.0625rem;
+		font-size: 1.15rem;
+		line-height: 1.8;
 		color: var(--color-ink);
-		line-height: 1.75;
-		margin: 0 0 1rem;
+		margin-bottom: 1.5rem;
 	}
 
-	.hansen-body:last-child {
-		margin-bottom: 0;
+	.hansen-pullquote {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-style: italic;
+		color: var(--color-sepia);
+		border-left: 4px solid #c9a227;
+		padding-left: 2rem;
+		margin: 3rem 0;
+		line-height: 1.4;
+		clear: right;
 	}
 
 	/* --- Support / donate --- */
@@ -497,10 +533,25 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 			font-size: 1.1rem;
 		}
 		.hansen-section {
-			padding: 2.5rem 1rem;
+			padding: 4rem 1rem;
 		}
-		.hansen-container {
-			gap: 1.5rem;
+		.hansen-photo-frame {
+			float: none;
+			width: 100%;
+			margin: 0 0 2rem 0;
+			text-align: center;
+		}
+		.hansen-photo {
+			max-width: 300px;
+			margin: 0 auto;
+			box-shadow: 10px 10px 0px var(--color-sand);
+		}
+		.hansen-heading {
+			font-size: 2rem;
+		}
+		.hansen-pullquote {
+			font-size: 1.25rem;
+			margin: 2rem 0;
 		}
 		.support-section {
 			padding: 2.5rem 1rem;
@@ -531,13 +582,8 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		.reunion-section {
 			padding: 2rem 1rem;
 		}
-		.hansen-container {
-			grid-template-columns: 1fr;
-			gap: 1.25rem;
-		}
-		.hansen-photo {
-			max-width: 300px;
-			margin: 0 auto;
+		.hansen-section {
+			padding: 3rem 1rem;
 		}
 		.support-section,
 		.cta-section {
