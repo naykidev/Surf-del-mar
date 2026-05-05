@@ -55,6 +55,24 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		</div>
 	</section>
 
+	<!-- Don Hansen Tribute -->
+	<section class="hansen-section">
+		<div class="hansen-container">
+			<div class="hansen-image-col">
+				<img src="/hanson.png" alt="Don Hansen" class="hansen-photo" width="942" height="910" />
+			</div>
+			<div class="hansen-text-col">
+				<h2 class="hansen-heading">A Tribute to Don Hansen</h2>
+				<p class="hansen-body">Donald Hansen, an entrepreneur, athlete and adventurer whose life stretched far beyond any one calling, passed away on March 28th, 2026 at the age of 89.</p>
+				<p class="hansen-body">To write about Don Hansen is to write about motion: prairie wind, Pacific swell, open sky, mountain trails and the forward pull of a man who never stopped testing the edges of life. Don leaves behind a legacy rooted not only in adventure, but in kindness, mentorship and family.</p>
+				<p class="hansen-body">Born in 1936 in Aberdeen, South Dakota, to Fred and Violet Hansen, Don was raised in nearby Redfield where he spent his youth hunting, fishing, working and later dreaming of California. It was in his early years on the prairie that Don was introduced to California, where he discovered the sport that would forever mark his path: surfing. In 1960, Don founded Hansen Surfboards near Cardiff Reef in Encinitas. The shop became one of the best-known names in California surf culture. For generations of surfers, skaters, skiers and local families, Hansen's was a gathering place and Don was its heart. He had an instinct not only for business, but for people. He helped sponsor top surfers, mentored young workers and earned the respect of the broader surfing world.</p>
+				<p class="hansen-body">Don chased challenge everywhere. He surfed big Hawaiian waves when that frontier was still young. In those Pacific swells, Don found his Kulia (koo-lee-ah), stepping into something bigger, pushing past comfort and the thrill of chasing adventure.</p>
+				<p class="hansen-body">That appetite for challenge never stopped at the shoreline; it carried him into the open sky. As captain of the Airfreight skydiving team, he helped lead a squad that won national titles and set world records in ten-man speed star competition. Later, on Montana mountain trails, Don "let her buck"–a phrase once used by World War I soldiers from Montana as they charged into battle–and he brought that same spirit to the mountains while living in Big Sky, taking up team roping with enthusiasm and grit.</p>
+				<p class="hansen-body">What set Don apart was not just his willingness to take risks, but his willingness to care. He carried a strong spirit, a memorable sense of humor and an infectious laugh. Don moved through life with faith and gratitude, meeting moments with humor and believing in people before they fully believed in themselves.</p>
+			</div>
+		</div>
+	</section>
+
 	<DynamicPageBlocks pageKey="home" />
 
 	<!-- Support / donate (Zeffy); copy editable when logged in as admin -->
@@ -294,6 +312,50 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		line-height: 1.35;
 	}
 
+	/* --- Don Hansen Tribute --- */
+	.hansen-section {
+		background: linear-gradient(180deg, #a8d4e0 0%, #c8e4ec 100%);
+		padding: 4rem 2rem;
+	}
+
+	.hansen-container {
+		max-width: 960px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 280px 1fr;
+		gap: 2.5rem;
+		align-items: flex-start;
+	}
+
+	.hansen-photo {
+		width: 100%;
+		height: auto;
+		display: block;
+		border-radius: 10px;
+		box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+	}
+
+	.hansen-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 1.25rem;
+		line-height: 1.25;
+	}
+
+	.hansen-body {
+		font-family: var(--font-body);
+		font-size: 1rem;
+		color: var(--color-ink);
+		line-height: 1.75;
+		margin: 0 0 1rem;
+	}
+
+	.hansen-body:last-child {
+		margin-bottom: 0;
+	}
+
 	/* --- Support / donate --- */
 	.support-section {
 		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-cream) 100%);
@@ -418,6 +480,13 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		.calendar-callout-dates {
 			font-size: 1.1rem;
 		}
+		.hansen-section {
+			padding: 2.5rem 1rem;
+		}
+		.hansen-container {
+			grid-template-columns: 220px 1fr;
+			gap: 1.75rem;
+		}
 		.support-section {
 			padding: 2.5rem 1rem;
 		}
@@ -446,6 +515,14 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		}
 		.reunion-section {
 			padding: 2rem 1rem;
+		}
+		.hansen-container {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+		.hansen-photo {
+			max-width: 260px;
+			margin: 0 auto;
 		}
 		.support-section,
 		.cta-section {
