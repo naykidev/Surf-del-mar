@@ -55,35 +55,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		</div>
 	</section>
 
-	<!-- Features: What to Look For -->
-	<section class="features-section">
-		<div class="features-container">
-			<h2 class="features-heading" data-editable="home.features.heading">Here's What to Look For</h2>
-			<ul class="features-list">
-				<li class="feature-item">
-					<span class="feature-badge" aria-hidden="true">1</span>
-					<p data-editable="home.features.1">Listen to the music of Peter Sprague and his group at the Del Mar Plaza, and the legendary Mar Dels at Powerhouse Park</p>
-				</li>
-				<li class="feature-item">
-					<span class="feature-badge" aria-hidden="true">2</span>
-					<p data-editable="home.features.2">Catch Some Surfing Flicks: Watch Bruce Brown's legendary film Endless Summer at Powerhouse Park, and a showing of local filmmakers' documentaries about the sport and the people who surf.</p>
-				</li>
-				<li class="feature-item">
-					<span class="feature-badge" aria-hidden="true">3</span>
-					<p data-editable="home.features.3">Stroll through a display of surfing artwork created by local artists and students from Del Mar Elementary schools, Earl Warren Middle School and Torrey Pines High School</p>
-				</li>
-				<li class="feature-item">
-					<span class="feature-badge" aria-hidden="true">4</span>
-					<p data-editable="home.features.4">Learn about surfing and sustainability, the invaluable work local researchers, top surfers, and surfboard manufacturers are doing to raise awareness of coastal challenges and climate change</p>
-				</li>
-				<li class="feature-item">
-					<span class="feature-badge" aria-hidden="true">5</span>
-					<p data-editable="home.features.5">Meet authors who have written about the sport and culture of surfing and have them sign your book at the Surfwriter's Book Fair</p>
-				</li>
-			</ul>
-		</div>
-	</section>
-
 	<DynamicPageBlocks pageKey="home" />
 
 	<!-- Support / donate (Zeffy); copy editable when logged in as admin -->
@@ -323,76 +294,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		line-height: 1.35;
 	}
 
-	/* --- Features --- */
-	.features-section {
-		background: linear-gradient(180deg, #a8d4e0 0%, #c8e4ec 100%);
-		padding: 4rem 2rem;
-	}
-
-	.features-container {
-		max-width: 780px;
-		margin: 0 auto;
-	}
-
-	.features-heading {
-		font-family: var(--font-display);
-		font-size: clamp(1.75rem, 4vw, 2.25rem);
-		font-weight: 600;
-		color: var(--color-ink);
-		text-align: center;
-		margin: 0 0 2rem 0;
-		line-height: 1.25;
-	}
-
-	.features-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.feature-item {
-		display: flex;
-		gap: 1rem;
-		align-items: flex-start;
-		background: rgba(184,220,228,0.8);
-		padding: 1.25rem 1.5rem;
-		border-radius: 12px;
-		border: 1px solid rgba(184, 220, 228, 0.7);
-		box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
-	}
-
-	.feature-item:hover {
-		transform: translateX(6px);
-		box-shadow: 0 6px 24px rgba(0,0,0,0.08);
-	}
-
-	.feature-badge {
-		flex-shrink: 0;
-		width: 2rem;
-		height: 2rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--color-ink);
-		color: var(--color-cream);
-		font-family: var(--font-body);
-		font-size: 0.8rem;
-		font-weight: 700;
-		border-radius: 50%;
-	}
-
-	.feature-item p {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		color: var(--color-ink);
-		line-height: 1.7;
-		margin: 0;
-	}
-
 	/* --- Support / donate --- */
 	.support-section {
 		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-cream) 100%);
@@ -517,20 +418,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		.calendar-callout-dates {
 			font-size: 1.1rem;
 		}
-		.features-section {
-			padding: 2.5rem 1rem;
-		}
-		.features-heading {
-			font-size: 1.5rem;
-			margin-bottom: 1.5rem;
-		}
-		.feature-item {
-			padding: 1rem 1.25rem;
-			gap: 0.75rem;
-		}
-		.feature-item p {
-			font-size: 0.95rem;
-		}
 		.support-section {
 			padding: 2.5rem 1rem;
 		}
@@ -560,7 +447,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		.reunion-section {
 			padding: 2rem 1rem;
 		}
-		.features-section,
 		.support-section,
 		.cta-section {
 			padding: 2rem 1rem;
