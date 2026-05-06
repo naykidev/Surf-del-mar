@@ -62,6 +62,19 @@
 	<div class="fog-overlay" id="fog-overlay" aria-hidden="true">
 		<div class="parallax-mist" aria-hidden="true"></div>
 	</div>
+	<!-- Score badge: bottom-left of wave area, visible in pirate-mode -->
+	<div class="pirate-score-badge" id="pirate-score-badge" aria-live="polite">
+		<span class="pirate-score-anchor" aria-hidden="true">⚓</span>
+		<span class="pirate-score-label">Ships spotted:</span>
+		<span class="pirate-score-count" id="pirate-score-count">0</span>
+	</div>
+	<!-- "Found it!" flash: big centered text when ship is spotted -->
+	<div class="pirate-found-flash" id="pirate-found-flash" aria-live="assertive"></div>
+	<!-- Fog hint caption: floats below the wave section in fog mode -->
+	<div class="fog-caption" id="fog-caption" aria-live="polite">
+		<span class="fog-caption-icon" aria-hidden="true">🌫️</span>
+		<span class="fog-caption-text">Move your cursor through the fog to find the hidden ship</span>
+	</div>
 </div>
 
 <script>
@@ -70,17 +83,52 @@
 		const ship = document.querySelector('.pirate-ship');
 		const waveWrap = shipWrap?.closest('.wave-wrap') ?? document.getElementById('festival-wave-wrap') ?? document.getElementById('home-wave-wrap');
 		const fogOverlay = document.querySelector('.fog-overlay');
+		const scoreCountEl = document.getElementById('pirate-score-count');
+		const foundFlashEl = document.getElementById('pirate-found-flash');
+		const fogCaptionTextEl = document.querySelector('.fog-caption-text');
 		if (!shipWrap || !ship || !waveWrap || !fogOverlay) return;
 
 		ship.style.pointerEvents = 'auto';
 		ship.style.cursor = 'pointer';
 
+		// --- Score ---
+		let score = parseInt(localStorage.getItem('pirateSpottings') || '0', 10);
+		let sessionFound = false;
+
+		function refreshScoreDisplay() {
+			if (scoreCountEl) scoreCountEl.textContent = score;
+		}
+		refreshScoreDisplay();
+
+		function showFoundFlash() {
+			if (!foundFlashEl) return;
+			foundFlashEl.textContent = score === 1 ? '⚓  SPOTTED!  +1 sighting' : `⚓  SPOTTED!  +1  (${score} total)`;
+			foundFlashEl.classList.add('visible');
+			setTimeout(() => foundFlashEl.classList.remove('visible'), 2400);
+		}
+
+		function awardPoint() {
+			if (sessionFound) return;
+			sessionFound = true;
+			score++;
+			localStorage.setItem('pirateSpottings', score);
+			refreshScoreDisplay();
+			showFoundFlash();
+			if (fogCaptionTextEl) fogCaptionTextEl.textContent = 'You found it! 🎉';
+			setTimeout(resetVoyage, 500);
+		}
+
+		let fogStartTime = 0; // grace period: skip proximity check right after click
+
+		// --- Fog ---
 		function toggleFog() {
 			waveWrap.classList.toggle('fog-mode');
 		}
 
 		function resetVoyage() {
 			waveWrap.classList.remove('fog-mode');
+			sessionFound = false;
+			if (fogCaptionTextEl) fogCaptionTextEl.textContent = 'Move your cursor through the fog to find the hidden ship';
 		}
 
 		ship.addEventListener('click', (e) => {
@@ -91,6 +139,7 @@
 				pendingClientX = e.clientX;
 				pendingClientY = e.clientY;
 				if (rafId === null) rafId = requestAnimationFrame(updateMask);
+				fogStartTime = Date.now();
 
 				ship.addEventListener('animationend', (ev) => {
 					if (ev.animationName === 'grand-voyage') {
@@ -102,7 +151,14 @@
 
 		fogOverlay.addEventListener('click', (e) => {
 			e.stopPropagation();
-			if (waveWrap.classList.contains('fog-mode')) {
+			if (!waveWrap.classList.contains('fog-mode')) return;
+			// On touch/click: check proximity to ship for spotting
+			const rect = ship.getBoundingClientRect();
+			const cx = rect.left + rect.width / 2;
+			const cy = rect.top + rect.height / 2;
+			if (Math.hypot(e.clientX - cx, e.clientY - cy) < 80) {
+				awardPoint();
+			} else {
 				resetVoyage();
 			}
 		});
@@ -134,17 +190,24 @@
 			hideHole = false;
 			pendingClientX = e.clientX;
 			pendingClientY = e.clientY;
-			if (rafId === null) {
-				rafId = requestAnimationFrame(updateMask);
+			if (rafId === null) rafId = requestAnimationFrame(updateMask);
+
+			// Proximity check — wait 1.5s after fog starts so the click itself
+			// doesn't immediately trigger a win while cursor is still on the ship
+			if (!sessionFound && Date.now() - fogStartTime > 1500) {
+				const rect = ship.getBoundingClientRect();
+				const cx = rect.left + rect.width / 2;
+				const cy = rect.top + rect.height / 2;
+				if (Math.hypot(e.clientX - cx, e.clientY - cy) < 60) {
+					awardPoint();
+				}
 			}
 		});
 
 		waveWrap.addEventListener('mouseleave', () => {
 			if (waveWrap.classList.contains('fog-mode')) {
 				hideHole = true;
-				if (rafId === null) {
-					rafId = requestAnimationFrame(updateMask);
-				}
+				if (rafId === null) rafId = requestAnimationFrame(updateMask);
 			}
 		});
 	})();
@@ -191,20 +254,20 @@
 		backdrop-filter: blur(4px);
 		-webkit-backdrop-filter: blur(4px);
 		background:
-			rgba(70, 73, 78, 0.92),
+			rgba(28, 30, 33, 0.97),
 			repeating-radial-gradient(
 				circle at 0 0,
-				rgba(80, 82, 85, 0.35) 0,
+				rgba(38, 40, 43, 0.5) 0,
 				transparent 40px
 			),
 			repeating-radial-gradient(
 				circle at 60px 60px,
-				rgba(75, 77, 80, 0.3) 0,
+				rgba(33, 35, 38, 0.4) 0,
 				transparent 50px
 			),
 			repeating-radial-gradient(
 				circle at 120px 0,
-				rgba(72, 74, 77, 0.25) 0,
+				rgba(30, 32, 35, 0.35) 0,
 				transparent 35px
 			);
 		background-size: 100% 100%, 200% 200%, 250% 250%, 180% 180%;
@@ -440,6 +503,140 @@
 		85% { transform: translate3d(0, 0, 0) rotate(-5deg); }
 		92% { transform: translate3d(0, -20px, 0) rotate(5deg); }
 		100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+	}
+
+		/* Score badge — bottom-left of wave area, shown in pirate-mode */
+	.pirate-score-badge {
+		position: absolute;
+		bottom: 12px;
+		left: 14px;
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+		font-family: var(--font-body, system-ui, sans-serif);
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-ink, #1a2e2e);
+		background: rgba(255, 255, 255, 0.88);
+		border: 1px solid rgba(184, 220, 228, 0.7);
+		border-radius: 999px;
+		padding: 0.3rem 0.7rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transition: opacity 0.4s ease, visibility 0.4s ease;
+		z-index: 15;
+	}
+
+	:global(.fog-mode) .pirate-score-badge {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.pirate-score-anchor {
+		font-size: 0.85em;
+	}
+
+	.pirate-score-count {
+		font-size: 1rem;
+		font-weight: 800;
+		color: var(--color-accent, #2a9d9d);
+		line-height: 1;
+		min-width: 1ch;
+	}
+
+	/* "SPOTTED!" flash — big centered overlay when ship is found */
+	.pirate-found-flash {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(0.7);
+		font-family: var(--font-display, Georgia, serif);
+		font-size: clamp(1.5rem, 5vw, 2.5rem);
+		font-weight: 700;
+		color: #fff;
+		text-align: center;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		text-shadow:
+			0 0 20px rgba(255, 230, 100, 0.9),
+			0 0 40px rgba(255, 200, 60, 0.6),
+			0 2px 6px rgba(0, 0, 0, 0.5);
+		background: rgba(26, 46, 46, 0.6);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		border: 2px solid rgba(255, 230, 100, 0.5);
+		border-radius: 12px;
+		padding: 0.6rem 1.4rem;
+		pointer-events: none;
+		z-index: 30;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+	}
+
+	.pirate-found-flash.visible {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, -50%) scale(1);
+		animation: flash-bounce 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	@keyframes flash-bounce {
+		0%   { transform: translate(-50%, -50%) scale(0.7); }
+		60%  { transform: translate(-50%, -50%) scale(1.08); }
+		100% { transform: translate(-50%, -50%) scale(1); }
+	}
+
+	/* Fog hint caption — floats below the wave wrap in fog mode */
+	.fog-caption {
+		position: absolute;
+		bottom: -48px;
+		left: 50%;
+		transform: translateX(-50%);
+		white-space: nowrap;
+		font-family: var(--font-body, system-ui, sans-serif);
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: var(--color-ink, #1a2e2e);
+		background: rgba(255, 255, 255, 0.92);
+		border: 1px solid rgba(184, 220, 228, 0.6);
+		border-radius: 999px;
+		padding: 0.4rem 1rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transition: opacity 0.5s ease 0.8s, visibility 0.5s ease 0.8s;
+		z-index: 20;
+	}
+
+	:global(.fog-mode) .fog-caption {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.fog-caption-icon {
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	@media (max-width: 768px) {
+		.fog-caption {
+			font-size: 0.72rem;
+			padding: 0.35rem 0.85rem;
+			bottom: -44px;
+			white-space: normal;
+			text-align: center;
+			max-width: calc(100vw - 2rem);
+		}
 	}
 
 	@media (max-width: 768px) {
