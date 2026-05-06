@@ -79,7 +79,10 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 				<p class="hansen-body">What set Don apart was not just his willingness to take risks, but his willingness to care. He carried a strong spirit, a memorable sense of humor and an infectious laugh. Don moved through life with faith and gratitude, meeting moments with humor and believing in people before they fully believed in themselves.</p>
 			</div>
 			<img src="/surfboards.png" alt="Surfboards" class="hansen-surfboards" width="1920" height="1080" />
-			<img src="/hansensurfing.png" alt="Hansen surfing" class="hansen-surfboards" width="1000" height="752" />
+			<div class="hansen-polaroid">
+				<img src="/hansensurfing.png" alt="Hansen surfing" class="hansen-polaroid-img" width="1000" height="752" />
+				<div class="tape-element"></div>
+			</div>
 		</div>
 	</section>
 
@@ -405,6 +408,48 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		clear: both;
 		margin-top: 1.25rem;
 		border-radius: 8px;
+	}
+
+	.hansen-polaroid {
+		position: relative;
+		width: 55%;
+		margin: 2rem auto 1rem;
+		padding: 14px 14px 44px;
+		background: #fff;
+		box-shadow: 0 12px 32px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
+		transform: rotate(1.5deg);
+		transition: transform 0.35s ease, box-shadow 0.35s ease;
+		clear: both;
+	}
+
+	.hansen-polaroid:hover {
+		transform: rotate(0deg) scale(1.01);
+		box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+	}
+
+	.hansen-polaroid .tape-element {
+		position: absolute;
+		top: -14px;
+		left: 50%;
+		transform: translateX(-50%) rotate(-2deg);
+		width: 100px;
+		height: 30px;
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(2px);
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		z-index: 2;
+	}
+
+	.hansen-polaroid-img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	@media (max-width: 768px) {
+		.hansen-polaroid {
+			width: 80%;
+		}
 	}
 
 	/* --- Support / donate --- */
