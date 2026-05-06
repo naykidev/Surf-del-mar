@@ -275,16 +275,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 
 
-	@media (max-width: 600px) {
-		.bio-card {
-			flex-direction: column;
-		}
-		.bio-photo-wrap {
-			width: 100%;
-			height: 260px;
-		}
-	}
-
 	.bio-body {
 		padding: 1.25rem 1.25rem 1.5rem;
 		display: flex;
@@ -320,6 +310,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		margin: 0.35rem 0 0;
 	}
 
+	/* Tablet: narrow the photo column so text has more room */
 	@media (max-width: 768px) {
 		.hero {
 			padding: 3rem 1rem;
@@ -329,6 +320,46 @@ import Lighthouse from '../components/Lighthouse.astro';
 		}
 		.event-card:hover {
 			transform: none;
+		}
+		.bio-photo-wrap {
+			width: 200px;
+		}
+		.bio-name {
+			font-size: 1.2rem;
+		}
+		.bio-text {
+			font-size: 0.875rem;
+		}
+		.bio-body {
+			padding: 1rem;
+		}
+	}
+
+	/* Mobile: stack photo above text */
+	@media (max-width: 560px) {
+		.bio-card {
+			flex-direction: column;
+		}
+		.bio-photo-wrap {
+			width: 100%;
+			height: 260px;
+			flex-shrink: 0;
+			position: relative;
+			display: block;
+		}
+		.bio-photo-wrap img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center top;
+		}
+		.hero-tagline {
+			font-size: 1rem;
+		}
+		.faces-intro {
+			font-size: 0.9375rem;
 		}
 	}
 </style>
