@@ -55,6 +55,17 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 				</article>
 
+				<article class="bio-card event-card">
+					<div class="bio-photo-wrap">
+						<img src="/jim.png" alt="Jim Lischer" />
+					</div>
+					<div class="bio-body">
+						<h2 class="bio-name">Jim Lischer</h2>
+						<p class="bio-role">Filmmaker &amp; Lifeguard Videographer</p>
+						<p class="bio-text">Jim Lischer began filming in 1968 during the Vietnam War after purchasing his first 8mm movie camera, and by 1969 he was documenting surf culture while surfing the North Shore of Oahu. In 1972, he was hired as a Del Mar ocean lifeguard, beginning a 40-year career in public safety and coastal service. During his time with the City of Del Mar, he played a key role in organizing community surf contests and events involving the Del Mar Surf Club, the city, and the Del Mar Lifeguard Association. He also began filming lifeguard training sessions, a role he has continued for decades, and as of summer 2026 will mark his 54th year as a training videographer. Today, he continues to produce videography projects focused on the ocean, surfing, beach life, and private events through his ongoing work in coastal documentation and storytelling.</p>
+					</div>
+				</article>
+
 				<!-- BIO CARDS TEMPLATE — restore when photos/details are ready
 				<article class="bio-card event-card">
 					<div class="bio-photo-wrap">
@@ -227,15 +238,16 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.bio-card {
 		display: flex;
 		flex-direction: row;
-		align-items: flex-start;
+		align-items: stretch;
 	}
 
 	.bio-photo-wrap {
 		width: 260px;
-		height: 320px;
+		align-self: stretch;
 		flex-shrink: 0;
 		overflow: hidden;
 		background: var(--color-foam);
+		display: flex;
 	}
 
 	.bio-photo-placeholder {
@@ -258,7 +270,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		object-position: center top;
+		object-position: center center;
 		display: block;
 	}
 
