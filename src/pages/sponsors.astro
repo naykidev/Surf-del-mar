@@ -32,11 +32,27 @@ import Lighthouse from '../components/Lighthouse.astro';
 				We are deeply grateful for their commitment to the history, the sport and culture, and the spirit of surfing and the ocean.
 			</p>
 			<div class="sponsors-logos">
-				<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo sponsor-logo-ogr" width="320" height="128" />
-				<img src="/randeturnerlogo.png" alt="Rande Turner Collective" class="sponsor-logo sponsor-logo-rande" width="420" height="103" />
-				<img src="/delmarcalilogo.jpg" alt="Del Mar California" class="sponsor-logo sponsor-logo-delmar" width="360" height="360" />
-				<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo sponsor-logo-willis" width="3665" height="638" />
-				<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo sponsor-logo-plaza" width="676" height="672" />
+				<div class="sponsor-tile">
+					<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo sponsor-logo-ogr" width="320" height="128" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/randeturnerlogo.png" alt="Rande Turner Collective" class="sponsor-logo sponsor-logo-rande" width="420" height="103" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/delmarcalilogo.jpg" alt="Del Mar California" class="sponsor-logo sponsor-logo-delmar" width="360" height="360" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo sponsor-logo-willis" width="3665" height="638" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo sponsor-logo-plaza" width="676" height="672" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/jimmyos.png" alt="Jimmy O's" class="sponsor-logo sponsor-logo-jimmyos" width="1375" height="1375" />
+				</div>
+				<div class="sponsor-tile">
+					<img src="/Sbicca.png" alt="Sbicca" class="sponsor-logo sponsor-logo-sbicca" width="306" height="100" />
+				</div>
 			</div>
 		</div>
 	</section>
@@ -86,7 +102,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 
 	.sponsors-inner {
-		max-width: 640px;
+		max-width: 1100px;
 		margin: 0 auto;
 		text-align: center;
 	}
@@ -96,7 +112,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 		font-size: 1.0625rem;
 		color: var(--color-ink);
 		line-height: 1.7;
-		margin-bottom: 1.5rem;
+		margin: 0 auto 1.5rem;
+		max-width: 640px;
 	}
 
 	.sponsors-intro:last-of-type {
@@ -108,39 +125,29 @@ import Lighthouse from '../components/Lighthouse.astro';
 		flex-wrap: wrap;
 		justify-content: center;
 		align-items: center;
-		gap: 2rem;
+		gap: 2.5rem 3rem;
 		padding-top: 1rem;
 	}
 
+	.sponsor-tile {
+		flex: 0 0 auto;
+		width: 260px;
+		height: 160px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.sponsor-logo {
+		max-width: 100%;
+		max-height: 100%;
+		width: auto;
 		height: auto;
 		object-fit: contain;
 	}
 
-	.sponsor-logo-ogr {
-		max-width: 360px;
-		max-height: 140px;
-	}
-
-	.sponsor-logo-rande {
-		max-width: 420px;
-		max-height: 110px;
-	}
-
 	.sponsor-logo-delmar {
-		max-width: 260px;
-		max-height: 260px;
 		border-radius: 12px;
-	}
-
-	.sponsor-logo-willis {
-		max-width: 460px;
-		max-height: 90px;
-	}
-
-	.sponsor-logo-plaza {
-		max-width: 220px;
-		max-height: 220px;
 	}
 
 	.btn {
@@ -176,25 +183,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.sponsors-intro {
 			font-size: 1rem;
 		}
-		.sponsor-logo-ogr {
-			max-width: 280px;
-			max-height: 110px;
+		.sponsors-logos {
+			gap: 1.5rem 1.75rem;
 		}
-		.sponsor-logo-rande {
-			max-width: 300px;
-			max-height: 85px;
-		}
-		.sponsor-logo-delmar {
-			max-width: 210px;
-			max-height: 210px;
-		}
-		.sponsor-logo-willis {
-			max-width: 320px;
-			max-height: 70px;
-		}
-		.sponsor-logo-plaza {
-			max-width: 180px;
-			max-height: 180px;
+		.sponsor-tile {
+			width: 220px;
+			height: 130px;
 		}
 		.btn {
 			min-height: 48px;
