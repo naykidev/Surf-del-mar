@@ -11,7 +11,7 @@ title: Festival Schedule
 
 - **Climate Change/Conservation Symposium**  
   Venue: St. Peter's Parish Hall  
-  Time: 10:00 am to 4:00 pm
+  Time: 11:00 am to 4:00 pm
 
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
