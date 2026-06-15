@@ -11,7 +11,7 @@ title: Festival Schedule
 
 - **Climate Change/Conservation Symposium**  
   Venue: St. Peter's Parish Hall  
-  Time: 10:00 am to 3:00 pm
+  Time: 10:00 am to 4:00 pm
 
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
@@ -36,19 +36,15 @@ title: Festival Schedule
 
 - **Woody Wagon Parade Through Del Mar and Display**  
   Venue: Del Mar Train Station  
-  Time: 11:00 am to 3:00 pm
+  Time: 12:00 pm to 3:00 pm
 
 - **Afternoon Concert with the Mar Dels**  
   Venue: Powerhouse Park  
-  Time: 2:00 pm to 4:30 pm
+  Time: 2:00 pm to 5:00 pm
 
 - **VIP Reception**  
   Venue: Community Room at Powerhouse Park  
   Time: 5:00 pm to 7:30 pm
-
-- **Film Presentation: Endless Summer**  
-  Venue: Powerhouse Park Stage  
-  Time: 7:30 pm to 9:00 pm
 
 ## Sunday, October 11
 

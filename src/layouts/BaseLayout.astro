@@ -93,6 +93,19 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 							</div>
 						</li>
 						<li>
+							<div class="news-container">
+								<a href="/in-the-news/" class="nav-news">
+									<span class="nav-news-icon" aria-hidden="true">
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
+											<path d="M4 4h16v16H4z"/>
+											<path d="M8 8h8M8 12h8M8 16h5"/>
+										</svg>
+									</span>
+									<span class="nav-news-text">In The News</span>
+								</a>
+							</div>
+						</li>
+						<li>
 							<div class="collectors-container">
 								<a href="/collectors-items/" class="nav-collectors">
 									<span class="nav-collectors-text">Shop</span>
@@ -146,6 +159,17 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 							<a href="/sponsors/" class="nav-sponsors">
 								<span class="nav-sponsors-star" aria-hidden="true">★</span>
 								<span class="nav-sponsors-text">Sponsors</span>
+							</a>
+						</div>
+						<div class="news-container">
+							<a href="/in-the-news/" class="nav-news">
+								<span class="nav-news-icon" aria-hidden="true">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
+										<path d="M4 4h16v16H4z"/>
+										<path d="M8 8h8M8 12h8M8 16h5"/>
+									</svg>
+								</span>
+								<span class="nav-news-text">In The News</span>
 							</a>
 						</div>
 						<div class="collectors-container">
@@ -563,6 +587,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-drawer-nav .reunion-container,
 	.nav-drawer-nav .schedule-container,
 	.nav-drawer-nav .sponsors-container,
+	.nav-drawer-nav .news-container,
 	.nav-drawer-nav .collectors-container,
 	.nav-drawer-nav .auction-container,
 	.nav-drawer-nav .faces-container {
@@ -575,6 +600,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-drawer-nav .nav-surfboard,
 	.nav-drawer-nav .nav-reunion,
 	.nav-drawer-nav .nav-sponsors,
+	.nav-drawer-nav .nav-news,
 	.nav-drawer-nav .nav-collectors,
 	.nav-drawer-nav .nav-auction,
 	.nav-drawer-nav .nav-faces {
@@ -679,12 +705,13 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		border-radius: 10px;
 	}
 
-	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, Sponsors, Shop, Auction, and Faces */
+	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, Sponsors, In The News, Shop, Auction, and Faces */
 	.tower-container,
 	.surf-container,
 	.reunion-container,
 	.schedule-container,
 	.sponsors-container,
+	.news-container,
 	.collectors-container,
 	.auction-container,
 	.faces-container {
@@ -699,6 +726,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.reunion-container::after,
 	.schedule-container::after,
 	.sponsors-container::after,
+	.news-container::after,
 	.collectors-container::after,
 	.auction-container::after,
 	.faces-container::after {
@@ -721,6 +749,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.reunion-container:hover::after,
 	.schedule-container:hover::after,
 	.sponsors-container:hover::after,
+	.news-container:hover::after,
 	.collectors-container:hover::after,
 	.auction-container:hover::after,
 	.faces-container:hover::after {
@@ -782,6 +811,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.surf-container:hover .nav-surfboard,
 	.reunion-container:hover .nav-reunion,
 	.sponsors-container:hover .nav-sponsors,
+	.news-container:hover .nav-news,
 	.schedule-container:hover .nav-schedule,
 	.auction-container:hover .nav-auction,
 	.faces-container:hover .nav-faces {
@@ -946,6 +976,61 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.sponsors-container:hover .nav-sponsors {
 		box-shadow: 0 8px 24px rgba(139, 105, 20, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 		background: linear-gradient(to bottom, #f5dc80 0%, #ecca58 45%, #dab840 50%, #ecca58 55%, #f5dc80 100%);
+	}
+
+	/* In The News nav — newspaper tab */
+	.nav-news {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+		padding: 0.5rem 1.35rem;
+		min-width: 150px;
+		margin-bottom: 0;
+		position: relative;
+		z-index: 2;
+		clip-path: polygon(0 0, 100% 0, 100% 88%, 92% 100%, 0 100%);
+		background:
+			linear-gradient(to bottom, transparent 0%, transparent 18%, rgba(0, 0, 0, 0.04) 18%, rgba(0, 0, 0, 0.04) 20%, transparent 20%),
+			linear-gradient(to bottom, #fdf8f0 0%, #f5efe6 100%);
+		border: 1px solid rgba(0, 0, 0, 0.08);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+		text-transform: uppercase;
+		font-size: 0.65rem;
+		letter-spacing: 0.08em;
+		font-weight: 800;
+		color: var(--color-ink) !important;
+		text-decoration: none;
+		transition: transform 0.4s var(--ease-coastal), box-shadow 0.4s var(--ease-coastal), background 0.3s ease;
+		animation: building-idle 6s var(--ease-coastal) infinite 0.5s;
+	}
+
+	.nav-news-icon {
+		display: flex;
+		width: 14px;
+		height: 14px;
+		color: var(--color-ink);
+		opacity: 0.85;
+		flex-shrink: 0;
+	}
+
+	.nav-news-icon svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	.nav-news-text {
+		line-height: 1.1;
+		text-align: center;
+	}
+
+	.news-container:hover .nav-news {
+		transform: translateY(-5px);
+		animation: none;
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+		background:
+			linear-gradient(to bottom, transparent 0%, transparent 18%, rgba(0, 0, 0, 0.05) 18%, rgba(0, 0, 0, 0.05) 20%, transparent 20%),
+			linear-gradient(to bottom, #fff 0%, #f8f2e8 100%);
 	}
 
 	/* SHOPPING BAG - Thin Half-Circle Handle Design */

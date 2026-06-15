@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const articleUrl = '/in-the-news/del-mar-times-surf-del-mar.pdf';
+const articleTitle = 'Del Mar Times — Surf Del Mar';
+---
+
+<BaseLayout
+	title="In The News"
+	description="Press coverage of Surf Del Mar and the Del Mar Historical Society Surfing Festival."
+	pageKey="in-the-news"
+>
+	<section class="hero news-hero">
+		<div class="hero-content">
+			<span class="eyebrow">Press</span>
+			<h1 class="hero-title">In The News</h1>
+			<p class="tagline">Surf Del Mar in the Del Mar Times</p>
+		</div>
+	</section>
+
+	<section class="news-content" aria-label="Newspaper article">
+		<div class="container news-inner">
+			<p class="news-intro">
+				Read the Del Mar Times feature on Surf Del Mar and the festival lineup.
+			</p>
+			<div class="news-actions">
+				<a href={articleUrl} class="btn btn-primary" download>
+					Download PDF
+				</a>
+				<a href={articleUrl} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+					Open in new tab
+				</a>
+			</div>
+			<div class="news-pdf-wrap">
+				<iframe
+					src={`${articleUrl}#view=FitH`}
+					title={articleTitle}
+					class="news-pdf-frame"
+				></iframe>
+			</div>
+			<p class="news-fallback">
+				If the article does not display, <a href={articleUrl} download>download the PDF</a> or
+				<a href={articleUrl} target="_blank" rel="noopener noreferrer">open it in a new tab</a>.
+			</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero.news-hero {
+		padding: 5rem 2rem;
+		text-align: center;
+		background: linear-gradient(to bottom, #f5efe6, var(--color-foam));
+	}
+
+	.news-hero .eyebrow {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		opacity: 0.7;
+		margin-bottom: 0.5rem;
+		font-family: var(--font-body);
+	}
+
+	.news-hero .hero-title {
+		font-family: var(--font-display);
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 0.5rem;
+		line-height: 1.15;
+	}
+
+	.news-hero .tagline {
+		font-family: var(--font-body);
+		font-size: 1.125rem;
+		color: var(--color-ink);
+		opacity: 0.85;
+		margin: 0;
+	}
+
+	.news-content {
+		padding: 3rem 2rem 4rem;
+		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
+	}
+
+	.news-inner {
+		max-width: 960px;
+		margin: 0 auto;
+	}
+
+	.news-intro {
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+		text-align: center;
+		margin: 0 0 1.5rem;
+	}
+
+	.news-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.btn {
+		display: inline-block;
+		padding: 0.75rem 1.5rem;
+		border-radius: 50px;
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 0.875rem;
+		letter-spacing: 0.04em;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		font-family: var(--font-body);
+	}
+
+	.btn-primary {
+		background: var(--color-ink);
+		color: var(--color-cream);
+	}
+
+	.btn-secondary {
+		background: var(--color-cream);
+		color: var(--color-ink);
+		border: 2px solid var(--color-ink);
+	}
+
+	.btn:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	.news-pdf-wrap {
+		background: #fff;
+		border: 1px solid rgba(0, 0, 0, 0.08);
+		border-radius: 12px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+		min-height: 70vh;
+	}
+
+	.news-pdf-frame {
+		display: block;
+		width: 100%;
+		height: min(85vh, 1100px);
+		border: 0;
+		background: #fff;
+	}
+
+	.news-fallback {
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		color: var(--color-ink);
+		opacity: 0.8;
+		text-align: center;
+		margin: 1rem 0 0;
+	}
+
+	.news-fallback a {
+		color: var(--color-ink);
+		font-weight: 700;
+	}
+
+	@media (max-width: 768px) {
+		.hero.news-hero {
+			padding: 3.5rem 1rem;
+		}
+		.news-content {
+			padding: 2rem 1rem 3rem;
+		}
+		.news-pdf-wrap {
+			min-height: 55vh;
+		}
+		.news-pdf-frame {
+			height: min(70vh, 800px);
+		}
+		.btn {
+			min-height: 48px;
+			width: 100%;
+			max-width: 280px;
+			text-align: center;
+		}
+	}
+</style>
