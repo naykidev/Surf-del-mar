@@ -410,7 +410,19 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 		// ── Navigation ────────────────────────────────────────────
 		function updateNavButtons() {
-			// Arrows are rendered conditionally in slideHTML — nothing to toggle here
+			const backBtn = document.getElementById('reel-nav-back') as HTMLButtonElement | null;
+			const nextBtn = document.getElementById('reel-nav-next') as HTMLButtonElement | null;
+			const navEl = document.getElementById('reel-nav');
+			if (!backBtn || !nextBtn || !navEl) return;
+			const total = memoriesList.length;
+			navEl.hidden = total <= 1;
+			backBtn.disabled = currentIndex <= 0;
+			nextBtn.disabled = currentIndex >= total - 1;
+		}
+
+		function attachNavListeners() {
+			document.getElementById('reel-nav-back')?.addEventListener('click', () => goTo(currentIndex - 1, 'right'));
+			document.getElementById('reel-nav-next')?.addEventListener('click', () => goTo(currentIndex + 1, 'left'));
 		}
 
 		function updateDots() {
@@ -449,6 +461,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			currentIndex = newIdx;
 			attachSlideListeners();
 			updateDots();
+			updateNavButtons();
 			loadAndRenderComments(memoriesList[newIdx].id);
 			isAnimating = false;
 		}
@@ -456,16 +469,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 		// ── Render feed ───────────────────────────────────────────
 		function renderFeed() {
 			if (!containerEl) return;
+			const showNav = memoriesList.length > 1;
 			containerEl.innerHTML = `
 <div class="tt-outer">
-  <div class="tt-card" id="tt-card">
-    <div class="tt-stage" id="tt-stage">
-      ${slideHTML(0).trim()}
+  <div class="tt-feed">
+    <div class="tt-card" id="tt-card">
+      <div class="tt-stage" id="tt-stage">
+        ${slideHTML(0).trim()}
+      </div>
+    </div>
+    <div class="reel-nav" id="reel-nav"${showNav ? '' : ' hidden'}>
+      <button type="button" class="reel-nav-btn" id="reel-nav-back" aria-label="Previous memory" disabled>Back</button>
+      <button type="button" class="reel-nav-btn" id="reel-nav-next" aria-label="Next memory">Next</button>
     </div>
   </div>
 </div>`;
 
 			attachSlideListeners();
+			attachNavListeners();
+			updateNavButtons();
 			loadAndRenderComments(memoriesList[0].id);
 
 			document.addEventListener('keydown', (e) => {
@@ -650,6 +672,47 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: flex;
 		justify-content: center;
 		padding: 0 1rem;
+	}
+
+	:global(.tt-feed) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		width: 100%;
+		max-width: 420px;
+	}
+
+	:global(.reel-nav) {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		width: 100%;
+	}
+
+	:global(.reel-nav-btn) {
+		flex: 1;
+		max-width: 160px;
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--wave-deep);
+		background: transparent;
+		padding: 0.65rem 1.25rem;
+		border: 2px solid var(--wave-mid);
+		border-radius: 50px;
+		cursor: pointer;
+		transition: background 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+	}
+
+	:global(.reel-nav-btn:hover:not(:disabled)) {
+		background: var(--wave-deep);
+		color: var(--color-cream);
+	}
+
+	:global(.reel-nav-btn:disabled) {
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 
 	:global(.tt-card) {
