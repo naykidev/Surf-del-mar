@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ScrollWaves from '../components/ScrollWaves.astro';
+import WaveSurfer from '../components/WaveSurfer.astro';
+import PirateShip from '../components/PirateShip.astro';
+import Lighthouse from '../components/Lighthouse.astro';
 
 const articleUrl = '/in-the-news/del-mar-times-surf-del-mar.pdf';
 const articleTitle = 'Del Mar Times — Surf Del Mar';
@@ -10,13 +14,18 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 	description="Press coverage of Surf Del Mar and the Del Mar Historical Society Surfing Festival."
 	pageKey="in-the-news"
 >
-	<section class="hero news-hero">
-		<div class="hero-content">
-			<span class="eyebrow">Press</span>
-			<h1 class="hero-title">In The News</h1>
-			<p class="tagline">Surf Del Mar in the Del Mar Times</p>
+	<section class="hero hero-sunset-bg">
+		<div class="hero-content hero-entrance">
+			<h1 class="hero-title">IN THE NEWS</h1>
+			<p class="tagline hero-tagline">Surf Del Mar in the Del Mar Times</p>
 		</div>
 	</section>
+	<div class="wave-wrap wave-hero hero-sunset-bg" id="news-wave-wrap">
+		<ScrollWaves variant="light" />
+		<WaveSurfer />
+		<PirateShip />
+		<Lighthouse toggleTargetId="news-wave-wrap" />
+	</div>
 
 	<section class="news-content" aria-label="Newspaper article">
 		<div class="container news-inner">
@@ -47,58 +56,70 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 </BaseLayout>
 
 <style>
-	.hero.news-hero {
-		padding: 5rem 2rem;
+	.hero {
+		color: var(--color-cream);
+		padding: 4rem 2rem;
 		text-align: center;
-		background: linear-gradient(to bottom, #f5efe6, var(--color-foam));
+		min-height: 220px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.news-hero .eyebrow {
-		display: block;
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: var(--color-ink);
-		opacity: 0.7;
-		margin-bottom: 0.5rem;
-		font-family: var(--font-body);
-	}
-
-	.news-hero .hero-title {
+	.hero-title {
 		font-family: var(--font-display);
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-size: clamp(2.5rem, 5vw, 4rem);
 		font-weight: 600;
-		color: var(--color-ink);
-		margin: 0 0 0.5rem;
-		line-height: 1.15;
+		color: var(--color-cream);
+		margin: 0;
+		line-height: 1.2;
 	}
 
-	.news-hero .tagline {
+	.hero-tagline {
 		font-family: var(--font-body);
 		font-size: 1.125rem;
-		color: var(--color-ink);
-		opacity: 0.85;
-		margin: 0;
+		color: var(--color-cream);
+		opacity: 0.92;
+		margin: 0.75rem 0 0;
+		max-width: 36rem;
+	}
+
+	.wave-wrap {
+		position: relative;
+		overflow: visible;
+		min-height: 120px;
+	}
+
+	.wave-wrap :global(.wave-surfer-wrap) {
+		transition: opacity 0.4s ease, visibility 0.4s ease;
+	}
+	:global(.wave-wrap.pirate-mode) :global(.wave-surfer-wrap) {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
 	}
 
 	.news-content {
-		padding: 3rem 2rem 4rem;
+		position: relative;
+		z-index: 1;
+		padding: 4rem 2rem;
 		background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-foam) 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	}
 
 	.news-inner {
 		max-width: 960px;
 		margin: 0 auto;
+		text-align: center;
 	}
 
 	.news-intro {
 		font-family: var(--font-body);
 		font-size: 1.0625rem;
-		line-height: 1.7;
 		color: var(--color-ink);
-		text-align: center;
-		margin: 0 0 1.5rem;
+		line-height: 1.7;
+		margin: 0 auto 1.5rem;
+		max-width: 640px;
 	}
 
 	.news-actions {
@@ -106,16 +127,16 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 0.75rem;
-		margin-bottom: 1.5rem;
+		margin-bottom: 2rem;
 	}
 
 	.btn {
 		display: inline-block;
-		padding: 0.75rem 1.5rem;
+		padding: 0.85rem 1.75rem;
 		border-radius: 50px;
 		text-decoration: none;
 		font-weight: 700;
-		font-size: 0.875rem;
+		font-size: 0.9rem;
 		letter-spacing: 0.04em;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
 		font-family: var(--font-body);
@@ -132,9 +153,10 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 		border: 2px solid var(--color-ink);
 	}
 
-	.btn:hover {
+	.btn-primary:hover,
+	.btn-secondary:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 	}
 
 	.news-pdf-wrap {
@@ -159,7 +181,6 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 		font-size: 0.9375rem;
 		color: var(--color-ink);
 		opacity: 0.8;
-		text-align: center;
 		margin: 1rem 0 0;
 	}
 
@@ -169,11 +190,15 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 	}
 
 	@media (max-width: 768px) {
-		.hero.news-hero {
-			padding: 3.5rem 1rem;
+		.hero {
+			padding: 3rem 1rem;
+			min-height: 180px;
 		}
 		.news-content {
-			padding: 2rem 1rem 3rem;
+			padding: 2.5rem 1rem;
+		}
+		.news-intro {
+			font-size: 1rem;
 		}
 		.news-pdf-wrap {
 			min-height: 55vh;
@@ -183,6 +208,7 @@ const articleTitle = 'Del Mar Times — Surf Del Mar';
 		}
 		.btn {
 			min-height: 48px;
+			padding: 0.85rem 1.5rem;
 			width: 100%;
 			max-width: 280px;
 			text-align: center;
