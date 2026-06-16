@@ -1,8 +1,11 @@
-<script>
-	import { boot } from '@axol-assist/accessflow';
+---
+// AccessFlow accessibility toolbar — CDN load for reliable static deploys.
+---
 
-	boot({
-		accentColor: '#2a9d9d',
+<script is:inline>
+	window.AccessFlowConfig = {
 		position: 'bottom-right',
-	});
+		accentColor: '#2a9d9d',
+	};
 </script>
+<script is:inline src="https://axolassist.com/cdn/accessflow.js"></script>
