@@ -1,6 +1,7 @@
 ---
 import AdminLoginButton from '../components/AdminLoginButton.astro';
 import AdminBar from '../components/AdminBar.astro';
+import AccessFlowInit from '../components/AccessFlowInit.astro';
 import { HISTORICAL_SOCIETY_URL, getZeffyDonationUrl } from '../config/siteLinks';
 
 interface Props {
@@ -375,6 +376,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 				});
 			})();
 		</script>
+		<AccessFlowInit />
 	</body>
 </html>
 

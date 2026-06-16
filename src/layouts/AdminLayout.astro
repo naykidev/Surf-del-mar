@@ -1,5 +1,6 @@
 ---
 // Minimal layout for Decap CMS admin — no site chrome, only scripts and mount point.
+import AccessFlowInit from '../components/AccessFlowInit.astro';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -43,5 +44,6 @@
 	</head>
 	<body>
 		<slot />
+		<AccessFlowInit />
 	</body>
 </html>
