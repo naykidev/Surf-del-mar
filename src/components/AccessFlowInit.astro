@@ -9,3 +9,15 @@
 	};
 </script>
 <script is:inline src="https://axolassist.com/cdn/accessflow.js"></script>
+<script is:inline>
+	(function () {
+		function fixBranding() {
+			var link = document.querySelector('.aat-powered-by a');
+			if (link && /Axolo Assist/i.test(link.textContent)) {
+				link.textContent = 'Axol Assist';
+			}
+		}
+		fixBranding();
+		new MutationObserver(fixBranding).observe(document.body, { childList: true, subtree: true });
+	})();
+</script>
