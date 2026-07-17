@@ -42,6 +42,8 @@ exports.handler = async (event, context) => {
       imageUrl: dataUrl, // keep under 1MB total doc size
       caption: String(caption).trim().slice(0, 1000),
       name: String(name).trim().slice(0, 200),
+      likes: 0,
+      likedByIp: [],
       submittedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     return {

@@ -3,7 +3,7 @@
  * Set PUBLIC_FIREBASE_* in .env and Netlify for this to work.
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, orderBy, increment, arrayUnion } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 import type { SiteConfigDoc } from './site-config-types';
 
 const firebaseConfig = {
@@ -120,20 +120,6 @@ export interface SharedMemory {
   likes: number;
   /** If false, hidden from public; missing or true = shown */
   approved?: boolean;
-}
-
-/** Increment likes for a memory. Uses atomic increment so concurrent clicks stay accurate. */
-export async function likeMemory(
-  memoryId: string,
-  fingerprint: string,
-): Promise<void> {
-  if (!import.meta.env.PUBLIC_FIREBASE_PROJECT_ID) throw new Error('Firebase not configured');
-  const db = getFirestore(getFirebaseApp());
-  const ref = doc(db, 'sharedMemories', memoryId);
-  await updateDoc(ref, {
-    likes: increment(1),
-    ...(fingerprint ? { likedBy: arrayUnion(fingerprint) } : {}),
-  });
 }
 
 export interface MemoryComment {

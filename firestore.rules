@@ -24,12 +24,12 @@ service cloud.firestore {
 
     // Shared memories: public read.
     // Clients may only increment likes (and append their fingerprint to likedBy).
-    // Create/delete requires admin SDK (Netlify functions).
+    // Create/delete and preferred like path use admin SDK (Netlify functions).
     match /sharedMemories/{id} {
       allow read: if true;
       allow create, delete: if false;
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy'])
-                    && request.resource.data.likes == resource.data.likes + 1;
+                    && request.resource.data.likes == resource.data.get('likes', 0) + 1;
     }
 
     // Comments subcollection: public read; writes via Netlify function only.
