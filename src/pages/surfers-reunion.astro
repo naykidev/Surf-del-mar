@@ -115,7 +115,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		import { getSharedMemories, getMemoryComments } from '../lib/firebase';
+		import { getSharedMemories, getMemoryComments, likeMemory } from '../lib/firebase';
 		import type { SharedMemory, MemoryComment } from '../lib/firebase';
 
 		const SUBMIT_URL      = '/.netlify/functions/submit-memory';
@@ -123,7 +123,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 		const LIKE_URL        = '/.netlify/functions/like-memory';
 		const MAX_IMAGE_SIZE  = 700 * 1024;
 		const MAX_DIMENSION   = 1200;
-		const LIKED_LS_KEY    = 'sdm_liked_v2';
+		// v3: only store after server confirms (clears stuck IDs from failed optimistic likes)
+		const LIKED_LS_KEY    = 'sdm_liked_v3';
 
 		// Share modal refs
 		const openBtn      = document.getElementById('reunion-share-memories-btn');
@@ -143,6 +144,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 		// Per-memory likes state (count + whether user has liked)
 		const likesMap = new Map<string, { count: number; liked: boolean }>();
+		const likingInProgress = new Set<string>();
 		// Per-memory comments cache
 		const commentsCache = new Map<string, MemoryComment[]>();
 
@@ -152,6 +154,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 		}
 		function addLocalLiked(memoryId: string) {
 			try { const s = getLocalLiked(); s.add(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
+		}
+		function removeLocalLiked(memoryId: string) {
+			try { const s = getLocalLiked(); s.delete(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
 		}
 
 		// ── Share modal ───────────────────────────────────────────
@@ -195,7 +200,7 @@ import Lighthouse from '../components/Lighthouse.astro';
   </div>
 
   <div class="reel-sidebar">
-    <button class="reel-like-btn${liked ? ' reel-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like">
+    <button type="button" class="reel-like-btn${liked ? ' reel-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like">
       <svg viewBox="0 0 24 24" width="30" height="30" fill="${liked ? '#e0245e' : 'none'}" stroke="${liked ? '#e0245e' : '#fff'}" stroke-width="1.75">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
       </svg>
@@ -294,39 +299,64 @@ import Lighthouse from '../components/Lighthouse.astro';
 		}
 
 		async function handleLike(memoryId: string, btn: HTMLElement) {
-			const localLiked = getLocalLiked();
-			if (localLiked.has(memoryId)) return;
+			if (!memoryId || likingInProgress.has(memoryId)) return;
 
-			// Optimistic update
-			const state    = likesMap.get(memoryId) ?? { count: memoriesList.find(m => m.id === memoryId)?.likes ?? 0, liked: false };
+			const state = likesMap.get(memoryId) ?? {
+				count: memoriesList.find((m) => m.id === memoryId)?.likes ?? 0,
+				liked: false,
+			};
+			if (state.liked || getLocalLiked().has(memoryId)) {
+				state.liked = true;
+				likesMap.set(memoryId, state);
+				setLikeUI(btn, state.count, true);
+				return;
+			}
+
+			likingInProgress.add(memoryId);
 			const prevCount = state.count;
 			state.count += 1;
-			state.liked  = true;
+			state.liked = true;
 			likesMap.set(memoryId, state);
-			addLocalLiked(memoryId);
 			setLikeUI(btn, state.count, true);
 
 			try {
+				let nextCount: number | null = null;
+
 				const res = await fetch(LIKE_URL, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ memoryId }),
 				});
-				if (!res.ok) throw new Error(`Like failed (${res.status})`);
-				const data = await res.json() as { likes?: number };
-				if (typeof data.likes === 'number') {
-					state.count = data.likes;
+
+				if (res.ok) {
+					const data = await res.json() as { likes?: number; alreadyLiked?: boolean };
+					if (typeof data.likes === 'number') nextCount = data.likes;
+				} else if (res.status === 404) {
+					// Local astro-only / function missing — fall back to client Firestore write
+					nextCount = await likeMemory(memoryId);
+				} else {
+					const errBody = await res.json().catch(() => ({})) as { error?: string };
+					throw new Error(errBody.error || `Like failed (${res.status})`);
+				}
+
+				if (typeof nextCount === 'number') {
+					state.count = nextCount;
+					state.liked = true;
 					likesMap.set(memoryId, state);
+					addLocalLiked(memoryId);
 					setLikeUI(btn, state.count, true);
+				} else {
+					throw new Error('Like response missing count');
 				}
 			} catch (err) {
-				// Revert on failure
 				console.error('[SDM] like failed:', err);
 				state.count = prevCount;
 				state.liked = false;
 				likesMap.set(memoryId, state);
-				try { const s = getLocalLiked(); s.delete(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
+				removeLocalLiked(memoryId);
 				setLikeUI(btn, prevCount, false);
+			} finally {
+				likingInProgress.delete(memoryId);
 			}
 		}
 
@@ -335,19 +365,29 @@ import Lighthouse from '../components/Lighthouse.astro';
 			const card = document.getElementById('tt-card');
 			if (!card) return;
 
-			// Like
-			card.querySelectorAll('[data-action="like"]').forEach((btn) => {
-				btn.addEventListener('click', () => handleLike((btn as HTMLElement).dataset.memoryId!, btn as HTMLElement));
-			});
-
-			// Toggle comments (both the bubble button and the ✕ close button)
-			card.querySelectorAll('[data-action="toggle-comments"]').forEach((btn) => {
-				btn.addEventListener('click', () => toggleComments((btn as HTMLElement).dataset.memoryId!));
-			});
+			// Event delegation so like/comment clicks always reach the handler
+			card.onclick = (e) => {
+				const target = e.target as Element | null;
+				if (!target) return;
+				const likeBtn = target.closest('[data-action="like"]') as HTMLElement | null;
+				if (likeBtn) {
+					e.preventDefault();
+					e.stopPropagation();
+					handleLike(likeBtn.dataset.memoryId || '', likeBtn);
+					return;
+				}
+				const cmtBtn = target.closest('[data-action="toggle-comments"]') as HTMLElement | null;
+				if (cmtBtn) {
+					e.preventDefault();
+					e.stopPropagation();
+					toggleComments(cmtBtn.dataset.memoryId || '');
+				}
+			};
 
 			// Comment form
 			const commentForm = document.getElementById('tt-comment-form') as HTMLFormElement | null;
-			commentForm?.addEventListener('submit', async (e) => {
+			if (commentForm) {
+				commentForm.onsubmit = async (e) => {
 				e.preventDefault();
 				const memId  = commentForm.dataset.memoryId!;
 				const textEl = document.getElementById('tt-cmt-text') as HTMLInputElement;
@@ -384,17 +424,18 @@ import Lighthouse from '../components/Lighthouse.astro';
 					postBtn.disabled = false;
 					postBtn.textContent = 'Post';
 				}
-			});
+				};
+			}
 
 			// Vertical swipe + double-tap on the whole slide
 			const slide = card.querySelector('.reel-slide') as HTMLElement | null;
 			if (slide) {
 				let touchY = 0;
-				slide.addEventListener('touchstart', (e) => { touchY = (e as TouchEvent).changedTouches[0].clientY; }, { passive: true });
-				slide.addEventListener('touchend', (e) => {
-					const diff = touchY - (e as TouchEvent).changedTouches[0].clientY;
+				slide.ontouchstart = (e) => { touchY = e.changedTouches[0].clientY; };
+				slide.ontouchend = (e) => {
+					const diff = touchY - e.changedTouches[0].clientY;
 					if (Math.abs(diff) > 50) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'left' : 'right');
-				}, { passive: true });
+				};
 
 				let lastTap = 0;
 				slide.addEventListener('click', (e) => {
@@ -800,7 +841,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 	:global(.reel-sidebar) {
 		position: absolute; right: 10px; bottom: 80px;
 		display: flex; flex-direction: column; align-items: center;
-		gap: 20px; z-index: 5;
+		gap: 20px; z-index: 40;
+		pointer-events: auto;
 	}
 	:global(.reel-like-btn),
 	:global(.reel-cmt-btn) {
