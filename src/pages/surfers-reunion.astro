@@ -697,8 +697,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 	:global(.reel-sidebar) {
 		position: absolute; right: 10px; bottom: 80px;
 		display: flex; flex-direction: column; align-items: center;
-		gap: 20px; z-index: 40;
+		gap: 20px; z-index: 5;
 		pointer-events: auto;
+		transition: opacity 0.2s ease;
+	}
+	/* Keep sidebar under the comments sheet so icons don't sit on top of it */
+	:global(.reel-slide:has(.reel-comments-panel.open) .reel-sidebar) {
+		opacity: 0;
+		pointer-events: none;
 	}
 	:global(.reel-cmt-btn) {
 		background: none; border: none; cursor: pointer;
