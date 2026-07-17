@@ -70,7 +70,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 						<div class="admin-memory-meta">
 							<p><strong>${escapeHtml(m.caption || '—')}</strong></p>
 							<p>${escapeHtml(m.name || '—')} · ${escapeHtml(dateStr)}</p>
-							<p>Likes: ${m.likes ?? 0}</p>
 							<p class="admin-memory-status">${approved ? 'Visible' : 'Hidden'}</p>
 							<div class="admin-memory-actions">
 								${!approved ? `<button type="button" class="btn btn-sm btn-approve">Approve</button>` : ''}

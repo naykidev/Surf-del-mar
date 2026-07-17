@@ -3,7 +3,7 @@
  * Set PUBLIC_FIREBASE_* in .env and Netlify for this to work.
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, runTransaction } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 import type { SiteConfigDoc } from './site-config-types';
 
 const firebaseConfig = {
@@ -120,21 +120,6 @@ export interface SharedMemory {
   likes: number;
   /** If false, hidden from public; missing or true = shown */
   approved?: boolean;
-}
-
-/** Client fallback: set likes to current+1 (handles docs missing likes). Prefer Netlify like-memory in the UI. */
-export async function likeMemory(memoryId: string): Promise<number> {
-  if (!import.meta.env.PUBLIC_FIREBASE_PROJECT_ID) throw new Error('Firebase not configured');
-  const db = getFirestore(getFirebaseApp());
-  const ref = doc(db, 'sharedMemories', memoryId);
-  return runTransaction(db, async (tx) => {
-    const snap = await tx.get(ref);
-    if (!snap.exists()) throw new Error('Memory not found');
-    const data = snap.data() || {};
-    const next = (typeof data.likes === 'number' ? data.likes : Number(data.likes) || 0) + 1;
-    tx.update(ref, { likes: next });
-    return next;
-  });
 }
 
 export interface MemoryComment {

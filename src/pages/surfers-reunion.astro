@@ -115,16 +115,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		import { getSharedMemories, getMemoryComments, likeMemory } from '../lib/firebase';
+		import { getSharedMemories, getMemoryComments } from '../lib/firebase';
 		import type { SharedMemory, MemoryComment } from '../lib/firebase';
 
 		const SUBMIT_URL      = '/.netlify/functions/submit-memory';
 		const COMMENT_URL     = '/.netlify/functions/add-comment';
-		const LIKE_URL        = '/.netlify/functions/like-memory';
 		const MAX_IMAGE_SIZE  = 700 * 1024;
 		const MAX_DIMENSION   = 1200;
-		// v3: only store after server confirms (clears stuck IDs from failed optimistic likes)
-		const LIKED_LS_KEY    = 'sdm_liked_v3';
 
 		// Share modal refs
 		const openBtn      = document.getElementById('reunion-share-memories-btn');
@@ -142,22 +139,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 		let currentIndex = 0;
 		let isAnimating  = false;
 
-		// Per-memory likes state (count + whether user has liked)
-		const likesMap = new Map<string, { count: number; liked: boolean }>();
-		const likingInProgress = new Set<string>();
 		// Per-memory comments cache
 		const commentsCache = new Map<string, MemoryComment[]>();
-
-		// ── localStorage helpers ──────────────────────────────────
-		function getLocalLiked(): Set<string> {
-			try { return new Set(JSON.parse(localStorage.getItem(LIKED_LS_KEY) || '[]')); } catch { return new Set(); }
-		}
-		function addLocalLiked(memoryId: string) {
-			try { const s = getLocalLiked(); s.add(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
-		}
-		function removeLocalLiked(memoryId: string) {
-			try { const s = getLocalLiked(); s.delete(memoryId); localStorage.setItem(LIKED_LS_KEY, JSON.stringify([...s])); } catch {}
-		}
 
 		// ── Share modal ───────────────────────────────────────────
 		function openShareModal() {
@@ -182,15 +165,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 		function slideHTML(idx: number): string {
 			const m     = memoriesList[idx];
 			const total = memoriesList.length;
-			const localLiked = getLocalLiked();
-			const liked = localLiked.has(m.id);
-			const count = likesMap.get(m.id)?.count ?? m.likes ?? 0;
 
 			return `
 <div class="reel-slide" data-index="${idx}" data-memory-id="${esc(m.id)}">
   <img class="reel-photo" src="${esc(m.imageUrl)}" alt="Shared memory ${idx + 1} of ${total}" />
   <div class="reel-gradient" aria-hidden="true"></div>
-  <div class="reel-dbl-heart" id="reel-heart-${esc(m.id)}" aria-hidden="true">❤️</div>
 
   <div class="reel-info">
     <p class="reel-username">🏄 <strong>surf_del_mar</strong></p>
@@ -200,13 +179,7 @@ import Lighthouse from '../components/Lighthouse.astro';
   </div>
 
   <div class="reel-sidebar">
-    <button type="button" class="reel-like-btn${liked ? ' reel-liked' : ''}" data-action="like" data-memory-id="${esc(m.id)}" aria-label="Like">
-      <svg viewBox="0 0 24 24" width="30" height="30" fill="${liked ? '#e0245e' : 'none'}" stroke="${liked ? '#e0245e' : '#fff'}" stroke-width="1.75">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-      </svg>
-      <span id="ig-like-count-${esc(m.id)}">${count}</span>
-    </button>
-    <button class="reel-cmt-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Comments">
+    <button type="button" class="reel-cmt-btn" data-action="toggle-comments" data-memory-id="${esc(m.id)}" aria-label="Comments">
       <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.75">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
@@ -287,95 +260,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 			if (opening) loadAndRenderComments(memoryId);
 		}
 
-		// ── Likes ─────────────────────────────────────────────────
-		function setLikeUI(btn: HTMLElement, count: number, liked: boolean) {
-			const svg = btn.querySelector('svg');
-			if (svg) { svg.setAttribute('fill', liked ? '#e0245e' : 'none'); svg.setAttribute('stroke', liked ? '#e0245e' : '#fff'); }
-			btn.classList.toggle('reel-liked', liked);
-			if (liked) { btn.classList.remove('tt-like-pop'); void btn.offsetWidth; btn.classList.add('tt-like-pop'); }
-			const memId = btn.dataset.memoryId!;
-			const likesEl = document.getElementById(`ig-like-count-${memId}`);
-			if (likesEl) likesEl.textContent = String(count);
-		}
-
-		async function handleLike(memoryId: string, btn: HTMLElement) {
-			if (!memoryId || likingInProgress.has(memoryId)) return;
-
-			const state = likesMap.get(memoryId) ?? {
-				count: memoriesList.find((m) => m.id === memoryId)?.likes ?? 0,
-				liked: false,
-			};
-			if (state.liked || getLocalLiked().has(memoryId)) {
-				state.liked = true;
-				likesMap.set(memoryId, state);
-				setLikeUI(btn, state.count, true);
-				return;
-			}
-
-			likingInProgress.add(memoryId);
-			const prevCount = state.count;
-			state.count += 1;
-			state.liked = true;
-			likesMap.set(memoryId, state);
-			setLikeUI(btn, state.count, true);
-
-			try {
-				let nextCount: number | null = null;
-
-				const res = await fetch(LIKE_URL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ memoryId }),
-				});
-
-				if (res.ok) {
-					const data = await res.json() as { likes?: number; alreadyLiked?: boolean };
-					if (typeof data.likes === 'number') nextCount = data.likes;
-				} else if (res.status === 404) {
-					// Local astro-only / function missing — fall back to client Firestore write
-					nextCount = await likeMemory(memoryId);
-				} else {
-					const errBody = await res.json().catch(() => ({})) as { error?: string };
-					throw new Error(errBody.error || `Like failed (${res.status})`);
-				}
-
-				if (typeof nextCount === 'number') {
-					state.count = nextCount;
-					state.liked = true;
-					likesMap.set(memoryId, state);
-					addLocalLiked(memoryId);
-					setLikeUI(btn, state.count, true);
-				} else {
-					throw new Error('Like response missing count');
-				}
-			} catch (err) {
-				console.error('[SDM] like failed:', err);
-				state.count = prevCount;
-				state.liked = false;
-				likesMap.set(memoryId, state);
-				removeLocalLiked(memoryId);
-				setLikeUI(btn, prevCount, false);
-			} finally {
-				likingInProgress.delete(memoryId);
-			}
-		}
-
 		// ── Attach event listeners to current slide ───────────────
 		function attachSlideListeners() {
 			const card = document.getElementById('tt-card');
 			if (!card) return;
 
-			// Event delegation so like/comment clicks always reach the handler
 			card.onclick = (e) => {
 				const target = e.target as Element | null;
 				if (!target) return;
-				const likeBtn = target.closest('[data-action="like"]') as HTMLElement | null;
-				if (likeBtn) {
-					e.preventDefault();
-					e.stopPropagation();
-					handleLike(likeBtn.dataset.memoryId || '', likeBtn);
-					return;
-				}
 				const cmtBtn = target.closest('[data-action="toggle-comments"]') as HTMLElement | null;
 				if (cmtBtn) {
 					e.preventDefault();
@@ -427,7 +319,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 				};
 			}
 
-			// Vertical swipe + double-tap on the whole slide
+			// Vertical swipe on the whole slide
 			const slide = card.querySelector('.reel-slide') as HTMLElement | null;
 			if (slide) {
 				let touchY = 0;
@@ -436,20 +328,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 					const diff = touchY - e.changedTouches[0].clientY;
 					if (Math.abs(diff) > 50) goTo(currentIndex + (diff > 0 ? 1 : -1), diff > 0 ? 'left' : 'right');
 				};
-
-				let lastTap = 0;
-				slide.addEventListener('click', (e) => {
-					if ((e.target as Element).closest('button, a, form, input')) return;
-					const now = Date.now();
-					if (now - lastTap < 350) {
-						const memId = slide.dataset.memoryId!;
-						const likeBtn = slide.querySelector(`[data-action="like"]`) as HTMLElement | null;
-						if (likeBtn) handleLike(memId, likeBtn);
-						const heartEl = document.getElementById(`reel-heart-${memId}`);
-						if (heartEl) { heartEl.classList.remove('reel-heart-pop'); void heartEl.offsetWidth; heartEl.classList.add('reel-heart-pop'); }
-					}
-					lastTap = now;
-				});
 			}
 		}
 
@@ -554,11 +432,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 			if (memoriesList.length === 0) {
 				containerEl.innerHTML = '<p class="shared-memories-msg">No memories yet — be the first to share!</p>';
 				return;
-			}
-			// Seed likes state from Firestore data + localStorage
-			const localLiked = getLocalLiked();
-			for (const m of memoriesList) {
-				likesMap.set(m.id, { count: m.likes ?? 0, liked: localLiked.has(m.id) });
 			}
 			currentIndex = 0;
 			renderFeed();
@@ -798,23 +671,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 		pointer-events: none;
 	}
 
-	/* Double-tap heart burst */
-	:global(.reel-dbl-heart) {
-		position: absolute; top: 50%; left: 50%;
-		transform: translate(-50%,-50%) scale(0);
-		font-size: 5rem; pointer-events: none;
-		opacity: 0; z-index: 20;
-	}
-	:global(.reel-heart-pop) {
-		animation: reel-heart-burst 0.65s cubic-bezier(0.36,0.07,0.19,0.97) forwards;
-	}
-	@keyframes reel-heart-burst {
-		0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.9; }
-		40%  { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
-		70%  { transform: translate(-50%,-50%) scale(1.05); }
-		100% { transform: translate(-50%,-50%) scale(1.1); opacity: 0; }
-	}
-
 	/* Bottom-left info */
 	:global(.reel-info) {
 		position: absolute; bottom: 80px; left: 12px; right: 90px;
@@ -844,7 +700,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 		gap: 20px; z-index: 40;
 		pointer-events: auto;
 	}
-	:global(.reel-like-btn),
 	:global(.reel-cmt-btn) {
 		background: none; border: none; cursor: pointer;
 		display: flex; flex-direction: column; align-items: center;
@@ -853,8 +708,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 		text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 		transition: opacity 0.15s;
 	}
-	:global(.reel-like-btn:hover), :global(.reel-cmt-btn:hover) { opacity: 0.75; }
-	:global(.reel-like-btn span), :global(.reel-cmt-btn span) { font-size: 0.7rem; line-height: 1; }
+	:global(.reel-cmt-btn:hover) { opacity: 0.75; }
+	:global(.reel-cmt-btn span) { font-size: 0.7rem; line-height: 1; }
 	:global(.reel-save-btn) {
 		display: flex; flex-direction: column; align-items: center;
 		gap: 3px; color: #fff; text-decoration: none;
@@ -865,15 +720,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 	:global(.reel-save-btn:hover) { opacity: 0.75; }
 	:global(.reel-counter) { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.85); line-height: 1; }
 	:global(.reel-counter span) { font-weight: 400; opacity: 0.65; }
-
-	/* Like pop animation */
-	:global(.tt-like-pop) { animation: ig-pop 0.35s cubic-bezier(0.36,0.07,0.19,0.97); }
-	@keyframes ig-pop {
-		0%   { transform: scale(1); }
-		35%  { transform: scale(1.35); }
-		65%  { transform: scale(0.9); }
-		100% { transform: scale(1); }
-	}
 
 	/* Comments bottom sheet */
 	:global(.reel-comments-panel) {
@@ -1008,7 +854,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	@media (max-width: 640px) {
 		.reunion-intro-grid { grid-template-columns: 1fr; gap: 1.25rem; }
-		:global(.reel-like-btn), :global(.reel-cmt-btn) { min-width: 44px; min-height: 44px; justify-content: center; }
+		:global(.reel-cmt-btn) { min-width: 44px; min-height: 44px; justify-content: center; }
 		:global(.reel-info) { font-size: 0.85rem; }
 		.share-memories-box { padding: 1.25rem 1rem; }
 	}
