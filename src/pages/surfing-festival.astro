@@ -212,7 +212,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.festival-content .container {
 		display: flex;
 		flex-direction: column;
-		max-width: 960px;
+		max-width: 1100px;
 		margin: 0 auto;
 	}
 
@@ -441,7 +441,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.event-card-vintage .photo-frame {
 		width: 100%;
-		max-width: 400px;
+		max-width: 520px;
 	}
 
 	.event-card-vintage .festival-vintage-img {
@@ -451,8 +451,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 		object-fit: cover;
 	}
 
-	/* Portrait override — same height box, full image visible */
+	/* Portrait posters: natural height, full graphic visible */
 	.event-card-vintage .festival-portrait-img {
+		aspect-ratio: auto;
 		object-fit: contain;
 		background: #fff;
 	}
