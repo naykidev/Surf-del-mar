@@ -32,41 +32,47 @@ import Lighthouse from '../components/Lighthouse.astro';
 				We are deeply grateful for their commitment to the history, the sport and culture, and the spirit of surfing and the ocean.
 			</p>
 			<div class="sponsors-logos">
-				<div class="sponsor-tile">
-					<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo sponsor-logo-ogr" width="320" height="128" />
+				<div class="sponsors-row sponsors-row-5">
+					<div class="sponsor-tile">
+						<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo sponsor-logo-ogr" width="320" height="128" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/randeturnerlogo.png" alt="Rande Turner Collective" class="sponsor-logo sponsor-logo-rande" width="420" height="103" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/delmarcalilogo.jpg" alt="Del Mar California" class="sponsor-logo sponsor-logo-delmar" width="360" height="360" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo sponsor-logo-willis" width="3665" height="638" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo sponsor-logo-plaza" width="676" height="672" />
+					</div>
 				</div>
-				<div class="sponsor-tile">
-					<img src="/randeturnerlogo.png" alt="Rande Turner Collective" class="sponsor-logo sponsor-logo-rande" width="420" height="103" />
+				<div class="sponsors-row sponsors-row-4">
+					<div class="sponsor-tile">
+						<img src="/jimmyos.png" alt="Jimmy O's" class="sponsor-logo sponsor-logo-jimmyos" width="1375" height="1375" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/Sbicca.png" alt="Sbicca" class="sponsor-logo sponsor-logo-sbicca" width="306" height="100" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/fbn.png" alt="FBN" class="sponsor-logo sponsor-logo-fbn" width="800" height="600" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/DMTC.png" alt="Del Mar Thoroughbred Club" class="sponsor-logo sponsor-logo-dmtc" width="2097" height="1710" />
+					</div>
 				</div>
-				<div class="sponsor-tile">
-					<img src="/delmarcalilogo.jpg" alt="Del Mar California" class="sponsor-logo sponsor-logo-delmar" width="360" height="360" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo sponsor-logo-willis" width="3665" height="638" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo sponsor-logo-plaza" width="676" height="672" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/jimmyos.png" alt="Jimmy O's" class="sponsor-logo sponsor-logo-jimmyos" width="1375" height="1375" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/Sbicca.png" alt="Sbicca" class="sponsor-logo sponsor-logo-sbicca" width="306" height="100" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/fbn.png" alt="FBN" class="sponsor-logo sponsor-logo-fbn" width="800" height="600" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/DMTC.png" alt="Del Mar Thoroughbred Club" class="sponsor-logo sponsor-logo-dmtc" width="2097" height="1710" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/brigatine.png" alt="Brigantine Seafood & Oyster Bar" class="sponsor-logo sponsor-logo-brigatine" width="320" height="179" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/del-mar-auto.png" alt="Del Mar Auto" class="sponsor-logo sponsor-logo-delmarauto" width="640" height="640" />
-				</div>
-				<div class="sponsor-tile">
-					<img src="/board-and-brew.png" alt="Board & Brew" class="sponsor-logo sponsor-logo-bnb" width="1200" height="927" />
+				<div class="sponsors-row sponsors-row-3">
+					<div class="sponsor-tile">
+						<img src="/brigatine.png" alt="Brigantine Seafood & Oyster Bar" class="sponsor-logo sponsor-logo-brigatine" width="320" height="179" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/del-mar-auto.png" alt="Del Mar Auto" class="sponsor-logo sponsor-logo-delmarauto" width="640" height="640" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/board-and-brew.png" alt="Board & Brew" class="sponsor-logo sponsor-logo-bnb" width="1200" height="927" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -117,7 +123,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 
 	.sponsors-inner {
-		max-width: 1100px;
+		max-width: 1200px;
 		margin: 0 auto;
 		text-align: center;
 	}
@@ -137,20 +143,43 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.sponsors-logos {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
+		flex-direction: column;
 		align-items: center;
-		gap: 2.5rem 3rem;
+		gap: 2rem;
 		padding-top: 1rem;
 	}
 
+	.sponsors-row {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-items: center;
+		gap: 1.75rem 2rem;
+		width: 100%;
+	}
+
 	.sponsor-tile {
-		flex: 0 0 auto;
-		width: 260px;
-		height: 160px;
+		flex: 0 1 auto;
+		width: 180px;
+		height: 120px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.sponsors-row-5 .sponsor-tile {
+		width: 170px;
+		height: 110px;
+	}
+
+	.sponsors-row-4 .sponsor-tile {
+		width: 190px;
+		height: 125px;
+	}
+
+	.sponsors-row-3 .sponsor-tile {
+		width: 210px;
+		height: 140px;
 	}
 
 	.sponsor-logo {
@@ -187,6 +216,19 @@ import Lighthouse from '../components/Lighthouse.astro';
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 	}
 
+	@media (max-width: 900px) {
+		.sponsors-row {
+			flex-wrap: wrap;
+			gap: 1.25rem 1.5rem;
+		}
+		.sponsors-row-5 .sponsor-tile,
+		.sponsors-row-4 .sponsor-tile,
+		.sponsors-row-3 .sponsor-tile {
+			width: 140px;
+			height: 100px;
+		}
+	}
+
 	@media (max-width: 768px) {
 		.hero {
 			padding: 3rem 1rem;
@@ -199,11 +241,16 @@ import Lighthouse from '../components/Lighthouse.astro';
 			font-size: 1rem;
 		}
 		.sponsors-logos {
-			gap: 1.5rem 1.75rem;
+			gap: 1.25rem;
 		}
-		.sponsor-tile {
-			width: 220px;
-			height: 130px;
+		.sponsors-row {
+			gap: 1rem 1.25rem;
+		}
+		.sponsors-row-5 .sponsor-tile,
+		.sponsors-row-4 .sponsor-tile,
+		.sponsors-row-3 .sponsor-tile {
+			width: 120px;
+			height: 90px;
 		}
 		.btn {
 			min-height: 48px;
