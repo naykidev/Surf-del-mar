@@ -36,7 +36,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		<div class="credits-bar" role="contentinfo">
 			We are deeply indebted to the creators of this website: Torrey Pines students Aaron Nayki, Jervis Fernandes, Keshav Bhaskar and Cole Chapman.
 		</div>
-		<header>
+		<header class="nav-is-compact" id="site-header">
 			<nav>
 				<div class="nav-brand">
 					<a
@@ -55,7 +55,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 					<span class="nav-toggle-bar"></span>
 					<span class="nav-toggle-bar"></span>
 				</button>
-				<div class="nav-right nav-menu-desktop">
+				<div class="nav-right nav-menu-desktop" id="nav-menu-desktop">
 					<ul>
 						<li>
 							<div class="tower-container">
@@ -348,9 +348,17 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 				window.showAdminToast(e.detail?.message ?? 'Saved.');
 			});
 			(function() {
+				const header = document.getElementById('site-header');
+				const nav = header?.querySelector('nav');
+				const brand = header?.querySelector('.nav-brand');
+				const menu = document.getElementById('nav-menu-desktop');
 				const toggle = document.getElementById('nav-toggle');
 				const drawer = document.getElementById('nav-drawer');
 				const backdrop = document.getElementById('nav-drawer-backdrop');
+				const GAP = 16;
+				const EXPAND_BUFFER = 32;
+				let checking = false;
+
 				function open() {
 					if (!drawer || !toggle) return;
 					drawer.classList.add('nav-drawer-open');
@@ -367,6 +375,26 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 					toggle.setAttribute('aria-label', 'Open menu');
 					document.body.classList.remove('nav-drawer-body-open');
 				}
+
+				function updateNavMode() {
+					if (!header || !nav || !brand || !menu || checking) return;
+					checking = true;
+					const wasCompact = header.classList.contains('nav-is-compact');
+					// Measure the full desktop row even while currently compact
+					header.classList.add('nav-measuring');
+					header.classList.remove('nav-is-compact');
+					const available = nav.clientWidth - brand.offsetWidth - GAP;
+					const needed = menu.scrollWidth;
+					header.classList.remove('nav-measuring');
+					// Hysteresis: require spare room to expand back to desktop
+					const shouldCompact = wasCompact
+						? !(needed > 0 && needed <= available - EXPAND_BUFFER)
+						: !(needed > 0 && needed <= available);
+					header.classList.toggle('nav-is-compact', shouldCompact);
+					if (shouldCompact) close();
+					checking = false;
+				}
+
 				toggle?.addEventListener('click', function() {
 					if (drawer?.classList.contains('nav-drawer-open')) close(); else open();
 				});
@@ -374,6 +402,12 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 				drawer?.querySelectorAll('a').forEach(function(a) {
 					a.addEventListener('click', close);
 				});
+
+				updateNavMode();
+				window.addEventListener('resize', updateNavMode);
+				if (typeof ResizeObserver !== 'undefined' && nav) {
+					new ResizeObserver(updateNavMode).observe(nav);
+				}
 			})();
 		</script>
 		<AccessFlowInit />
@@ -510,6 +544,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: none;
 		align-items: center;
 		justify-content: center;
+		position: relative;
 		width: 44px;
 		height: 44px;
 		padding: 0;
@@ -519,6 +554,28 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		cursor: pointer;
 		flex-shrink: 0;
 		border-radius: 8px;
+		margin-left: auto;
+	}
+
+	/* Compact mode: hamburger + drawer (also default before JS measures) */
+	header.nav-is-compact .nav-toggle {
+		display: flex;
+	}
+	header.nav-is-compact .nav-menu-desktop {
+		display: none !important;
+	}
+
+	/* Temporarily show desktop menu off-screen so overflow can be measured */
+	header.nav-measuring .nav-toggle {
+		display: none !important;
+	}
+	header.nav-measuring .nav-menu-desktop {
+		display: flex !important;
+		position: absolute;
+		visibility: hidden;
+		pointer-events: none;
+		left: 0;
+		top: 0;
 	}
 	.nav-toggle-bar {
 		position: absolute;
@@ -531,9 +588,6 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-toggle .nav-toggle-bar:nth-child(1) { top: 14px; left: 50%; transform: translateX(-50%); }
 	.nav-toggle .nav-toggle-bar:nth-child(2) { top: 21px; left: 50%; transform: translateX(-50%); }
 	.nav-toggle .nav-toggle-bar:nth-child(3) { bottom: 14px; left: 50%; transform: translateX(-50%); }
-	.nav-toggle {
-		position: relative;
-	}
 	.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
 		top: 21px;
 		transform: translateX(-50%) rotate(45deg);
@@ -634,39 +688,18 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		overflow: hidden;
 	}
 
-	/* Switch to hamburger when decorative nav can't fit in one row */
-	@media (max-width: 1480px) {
-		.nav-toggle {
-			display: flex;
-		}
-		.nav-menu-desktop {
-			display: none !important;
-		}
+	@media (max-width: 768px) {
 		header {
-			padding: 0.5rem 1.5rem;
-		}
-	}
-
-	/* Give the full desktop row a bit more room just above the breakpoint */
-	@media (min-width: 1481px) and (max-width: 1640px) {
-		.logo-text {
-			font-size: 1.05rem;
-		}
-		.logo {
-			gap: 0.4rem;
-		}
-		.logo-placeholder {
-			width: 40px;
-			height: 40px;
+			padding: 0.5rem 1rem;
 		}
 	}
 
 	.nav-right {
 		display: flex;
 		align-items: center;
-		gap: 0.65rem;
+		gap: 0.5rem;
 		min-width: 0;
-		flex: 1 1 auto;
+		flex: 0 0 auto;
 		justify-content: flex-end;
 	}
 
