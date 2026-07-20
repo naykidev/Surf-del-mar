@@ -456,7 +456,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	header {
 		background: var(--color-sand-dark);
 		color: var(--color-cream);
-		padding: 0.5rem 3rem;
+		padding: 0.5rem 1.25rem;
 		position: sticky;
 		top: 0;
 		z-index: 100;
@@ -469,14 +469,16 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		flex-wrap: nowrap;
+		gap: 0.75rem;
 	}
 
 	.nav-brand {
 		display: flex;
 		align-items: center;
 		gap: 0.25rem;
+		flex-shrink: 0;
+		min-width: 0;
 	}
 
 	.logo {
@@ -632,8 +634,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		overflow: hidden;
 	}
 
-	/* Switch to hamburger at 1024px — too many nav items to fit at mid widths */
-	@media (max-width: 1024px) {
+	/* Switch to hamburger when decorative nav can't fit in one row */
+	@media (max-width: 1480px) {
 		.nav-toggle {
 			display: flex;
 		}
@@ -645,10 +647,27 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		}
 	}
 
+	/* Give the full desktop row a bit more room just above the breakpoint */
+	@media (min-width: 1481px) and (max-width: 1640px) {
+		.logo-text {
+			font-size: 1.05rem;
+		}
+		.logo {
+			gap: 0.4rem;
+		}
+		.logo-placeholder {
+			width: 40px;
+			height: 40px;
+		}
+	}
+
 	.nav-right {
 		display: flex;
 		align-items: center;
-		gap: 1.5rem;
+		gap: 0.65rem;
+		min-width: 0;
+		flex: 1 1 auto;
+		justify-content: flex-end;
 	}
 
 	/* Ensure Admin Login button is always visible (layout owns critical styles so it shows even if component CSS loads late) */
@@ -662,10 +681,12 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	nav ul {
 		display: flex;
 		list-style: none;
-		gap: 1.25rem;
+		gap: 0.4rem;
 		align-items: flex-end;
 		padding: 0;
 		margin: 0;
+		min-width: 0;
+		flex-wrap: nowrap;
 	}
 
 	nav ul li {
@@ -690,8 +711,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-donate {
 		display: inline-flex;
 		align-items: center;
-		padding: 0.35rem 0.9rem;
-		font-size: 0.8rem;
+		padding: 0.35rem 0.75rem;
+		font-size: 0.72rem;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.07em;
@@ -701,6 +722,8 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		border-radius: 999px;
 		text-decoration: none;
 		transition: background 0.2s ease, opacity 0.2s;
+		flex-shrink: 0;
+		white-space: nowrap;
 	}
 	.nav-donate:hover {
 		opacity: 1;
@@ -773,9 +796,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		flex-direction: column;
 		align-items: center;
 		justify-content: flex-start;
-		padding: 0.45rem 1.1rem 0.55rem;
-		min-width: 108px;
-		min-height: 52px;
+		padding: 0.4rem 0.85rem 0.5rem;
+		min-width: 88px;
+		min-height: 48px;
 		transform: translateY(0);
 		color: var(--color-ink) !important;
 		font-weight: 800;
@@ -867,9 +890,10 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.35rem;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		gap: 0.3rem;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -919,8 +943,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -952,9 +977,10 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.35rem;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		gap: 0.3rem;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -993,9 +1019,10 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.35rem;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		gap: 0.3rem;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -1047,9 +1074,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem 0.5rem 0.5rem;
-		min-width: 100px;
-		min-height: 55px;
+		padding: 0.85rem 0.4rem 0.4rem;
+		min-width: 72px;
+		min-height: 50px;
 		/* Transparent top zone (handle area) → solid pink bag body */
 		background: linear-gradient(to bottom, transparent 25%, #d81b60 25%);
 		color: #ffffff !important;
@@ -1120,9 +1147,10 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.4rem;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		gap: 0.3rem;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -1168,8 +1196,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
@@ -1203,8 +1232,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.5rem 2rem;
-		min-width: 160px;
+		padding: 0.4rem 1.1rem;
+		min-width: 0;
+		white-space: nowrap;
 		margin-bottom: 0;
 		position: relative;
 		z-index: 2;
