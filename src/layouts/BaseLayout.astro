@@ -55,86 +55,6 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 					<span class="nav-toggle-bar"></span>
 					<span class="nav-toggle-bar"></span>
 				</button>
-				<div class="nav-right nav-menu-desktop">
-					<ul class="nav-row nav-row-1">
-						<li>
-							<div class="tower-container">
-								<a href="/" class="nav-tower"><span class="nav-tower-text">Home</span></a>
-							</div>
-						</li>
-						<li>
-							<div class="surf-container">
-								<a href="/surfing-festival/" class="nav-surfboard"><span class="nav-surfboard-text">About the Festival</span></a>
-							</div>
-						</li>
-						<li>
-							<div class="reunion-container">
-								<a href="/surfers-reunion/" class="nav-reunion"><span class="nav-reunion-text">Surfers Reunion</span></a>
-							</div>
-						</li>
-						<li>
-							<div class="schedule-container">
-								<a href="/schedule/" class="nav-schedule">
-									<span class="nav-schedule-icon" aria-hidden="true">
-										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
-											<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
-											<path d="m9 16 2 2 4-4"/>
-										</svg>
-									</span>
-									<span class="nav-schedule-text">Schedule</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="sponsors-container">
-								<a href="/sponsors/" class="nav-sponsors">
-									<span class="nav-sponsors-star" aria-hidden="true">★</span>
-									<span class="nav-sponsors-text">Sponsors</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="news-container">
-								<a href="/in-the-news/" class="nav-news">
-									<span class="nav-news-icon" aria-hidden="true">
-										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
-											<path d="M4 4h16v16H4z"/>
-											<path d="M8 8h8M8 12h8M8 16h5"/>
-										</svg>
-									</span>
-									<span class="nav-news-text">In The News</span>
-								</a>
-							</div>
-						</li>
-					</ul>
-					<ul class="nav-row nav-row-2">
-						<li>
-							<div class="collectors-container">
-								<a href="/collectors-items/" class="nav-collectors">
-									<span class="nav-collectors-text">Shop</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="auction-container">
-								<a href="/silent-auction/" class="nav-auction">
-									<span class="nav-auction-gavel" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 4.5l6 6c.6.6.6 1.5 0 2.1l-1.4 1.4c-.6.6-1.5.6-2.1 0l-6-6c-.6-.6-.6-1.5 0-2.1l1.4-1.4c.6-.6 1.5-.6 2.1 0z"/><path d="M8.5 12.5l-5.3 5.3c-.4.4-.4 1 0 1.4l.7.7c.4.4 1 .4 1.4 0l5.3-5.3-2.1-2.1z"/><path d="M13 21h8v2h-8z" opacity="0.5"/></svg></span>
-									<span class="nav-auction-text">Silent Auction</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="faces-container">
-								<a href="/faces-of-festival/" class="nav-faces">
-									<span class="nav-faces-text">Faces of the Festival</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<a href={ZEFFY_DONATION_URL} class="nav-donate" target="_blank" rel="noopener noreferrer">Donate</a>
-						</li>
-					</ul>
-				</div>
 			</nav>
 			<div class="nav-drawer" id="nav-drawer" aria-hidden="true">
 				<div class="nav-drawer-backdrop" id="nav-drawer-backdrop"></div>
@@ -511,7 +431,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	}
 
 	.nav-toggle {
-		display: none;
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		position: relative;
@@ -525,19 +445,6 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		flex-shrink: 0;
 		border-radius: 8px;
 		margin-left: auto;
-	}
-
-	/* Compact / mobile: hamburger + drawer */
-	@media (max-width: 900px) {
-		.nav-toggle {
-			display: flex;
-		}
-		.nav-menu-desktop {
-			display: none !important;
-		}
-		header {
-			padding: 0.5rem 1rem;
-		}
 	}
 	.nav-toggle-bar {
 		position: absolute;
@@ -654,49 +561,6 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		header {
 			padding: 0.5rem 1rem;
 		}
-	}
-
-	.nav-right {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.45rem;
-		min-width: 0;
-		flex: 1 1 auto;
-	}
-
-	/* Ensure Admin Login button is always visible (layout owns critical styles so it shows even if component CSS loads late) */
-	.nav-right :global(.admin-login-btn) {
-		margin-top: 0;
-		display: inline-block;
-		min-height: 2.25rem;
-		flex-shrink: 0;
-	}
-
-	nav ul.nav-row,
-	nav ul {
-		display: flex;
-		list-style: none;
-		gap: 0.55rem;
-		align-items: center;
-		justify-content: center;
-		padding: 0;
-		margin: 0;
-		min-width: 0;
-		flex-wrap: nowrap;
-	}
-
-	nav ul li {
-		display: flex;
-		align-items: center;
-		height: auto;
-	}
-
-	.nav-row-2 .nav-donate {
-		align-self: center;
-		min-height: 2.5rem;
-		padding: 0.45rem 1.1rem;
-		font-size: 0.75rem;
 	}
 
 	nav a {
