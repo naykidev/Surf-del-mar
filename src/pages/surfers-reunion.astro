@@ -71,22 +71,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 			<article class="doyle-remember" aria-labelledby="doyle-remember-heading">
 				<figure class="doyle-figure">
-					<img
-						src="/mike-doyle-larry-brooks.png"
-						alt="Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle"
-						class="doyle-photo"
-						width="1024"
-						height="683"
-					/>
+					<div class="reunion-img-wrap doyle-img-wrap">
+						<img
+							src="/mike-doyle-larry-brooks.png"
+							alt="Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle"
+							class="reunion-section-img"
+							width="1024"
+							height="683"
+						/>
+						<div class="tape-element"></div>
+					</div>
 					<figcaption class="doyle-caption">
 						Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle.
 					</figcaption>
 				</figure>
 
-				<header class="doyle-header">
+				<div class="doyle-heading-block">
 					<h2 id="doyle-remember-heading" class="doyle-title">I Remember<br />Mike Doyle</h2>
 					<p class="doyle-subtitle">World Champion surfer — 1969 — Lima, Peru</p>
-				</header>
+				</div>
 
 				<div class="doyle-body">
 					<p>
@@ -603,25 +606,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.doyle-figure {
 		margin: 0 0 1.75rem;
 	}
-	.doyle-photo {
-		display: block;
-		width: 100%;
-		height: auto;
-		border-radius: 4px;
-		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+	.doyle-img-wrap {
+		width: 80%;
+		margin: 0 auto 0.75rem;
 	}
 	.doyle-caption {
 		font-family: var(--font-body);
 		font-size: 0.95rem;
 		font-style: italic;
-		color: var(--color-sepia);
+		color: var(--color-ink);
 		line-height: 1.5;
-		margin-top: 0.75rem;
+		margin-top: 0.25rem;
 		text-align: center;
 	}
-	.doyle-header {
+	.doyle-heading-block {
 		text-align: center;
-		margin-bottom: 1.5rem;
+		margin: 0 0 1.75rem;
+		padding: 0;
+		background: none;
+		color: inherit;
 	}
 	.doyle-title {
 		font-family: var(--font-display);
@@ -634,10 +637,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.doyle-subtitle {
 		font-family: var(--font-body);
 		font-size: 0.95rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
+		font-weight: 700;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--color-sepia);
+		color: var(--color-ink);
+		opacity: 0.75;
 		margin: 0;
 	}
 	.doyle-body p {
