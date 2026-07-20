@@ -68,18 +68,20 @@ import Lighthouse from '../components/Lighthouse.astro';
 				<img src="/surferreunion4.jpg" alt="Surfers Reunion" class="reunion-section-img" width="3600" height="2448" />
 				<div class="tape-element"></div>
 			</div>
+		</div>
 
+		<div class="doyle-shell">
 			<article class="doyle-remember" aria-labelledby="doyle-remember-heading">
 				<figure class="doyle-figure">
-					<div class="reunion-img-wrap doyle-img-wrap">
+					<div class="doyle-img-wrap">
 						<img
 							src="/mike-doyle-larry-brooks.png"
 							alt="Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle"
-							class="reunion-section-img"
+							class="doyle-photo"
 							width="1024"
 							height="683"
 						/>
-						<div class="tape-element"></div>
+						<div class="tape-element" aria-hidden="true"></div>
 					</div>
 					<figcaption class="doyle-caption">
 						Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle.
@@ -106,7 +108,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 				</div>
 			</article>
+		</div>
 
+		<div class="container">
 			<h2 class="reunion-subhead" data-editable="reunion.subhead2">BE PART OF THE REUNION:</h2>
 			<article class="event-card">
 				<p class="reunion-body" data-editable="reunion.body2">
@@ -601,29 +605,57 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.reunion-list li { margin-bottom: 0.35rem; }
 	.reunion-body    { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0; }
 
+	.doyle-shell {
+		width: 100%;
+		max-width: 1120px;
+		margin: 2.5rem auto 2rem;
+		padding: 0 1.25rem;
+		box-sizing: border-box;
+	}
 	.doyle-remember {
-		display: grid;
-		grid-template-columns: minmax(240px, 0.95fr) minmax(260px, 1.1fr);
-		gap: 1.75rem 2rem;
-		align-items: start;
-		width: min(1100px, calc(100vw - 2rem));
-		margin: 3rem 0 2.5rem;
-		margin-left: 50%;
-		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		align-items: stretch;
+		margin: 0;
 		padding: 0;
 	}
 	.doyle-figure {
 		margin: 0;
-		position: sticky;
-		top: 5.5rem;
+		max-width: 480px;
+		width: 100%;
+		align-self: center;
 	}
 	.doyle-img-wrap {
+		position: relative;
 		width: 100%;
 		margin: 0 0 0.75rem;
+		padding: 14px 14px 44px;
+		background: #fff;
+		box-shadow: 0 12px 32px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
 		transform: rotate(-1.5deg);
+		transition: transform 0.35s ease, box-shadow 0.35s ease;
 	}
 	.doyle-img-wrap:hover {
 		transform: rotate(0deg) scale(1.01);
+		box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+	}
+	.doyle-img-wrap .tape-element {
+		position: absolute;
+		top: -14px;
+		left: 50%;
+		transform: translateX(-50%) rotate(-2deg);
+		width: 100px;
+		height: 30px;
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(2px);
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		z-index: 2;
+	}
+	.doyle-photo {
+		display: block;
+		width: 100%;
+		height: auto;
 	}
 	.doyle-caption {
 		font-family: var(--font-body);
@@ -636,9 +668,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 	.doyle-copy {
 		min-width: 0;
+		flex: 1;
 	}
 	.doyle-heading-block {
-		text-align: left;
+		text-align: center;
 		margin: 0 0 1.25rem;
 		padding: 0;
 		background: none;
@@ -676,6 +709,29 @@ import Lighthouse from '../components/Lighthouse.astro';
 		font-style: italic;
 		text-align: right;
 		margin: 1.25rem 0 0 !important;
+	}
+
+	/* Desktop: photo left, article right */
+	@media (min-width: 900px) {
+		.doyle-remember {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 2.5rem 3rem;
+		}
+		.doyle-figure {
+			flex: 0 0 42%;
+			max-width: 460px;
+			align-self: flex-start;
+			position: sticky;
+			top: 5.5rem;
+		}
+		.doyle-heading-block {
+			text-align: left;
+		}
+		.doyle-copy {
+			flex: 1 1 0;
+			padding-top: 0.25rem;
+		}
 	}
 
 	.event-card {
@@ -971,21 +1027,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.reunion-content { padding: 2.5rem 1rem 2rem; }
 		.share-memories-cancel, .share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
 		.reunion-share-btn { min-height: 44px; padding: 0.6rem 1.5rem; }
-		.doyle-remember {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
-			width: 100%;
-			margin-left: 0;
-			transform: none;
-		}
-		.doyle-figure {
-			position: static;
-			max-width: 420px;
-			margin: 0 auto;
-		}
-		.doyle-heading-block {
-			text-align: center;
-		}
+		.doyle-shell { padding: 0 1rem; }
 	}
 
 	@media (max-width: 640px) {
