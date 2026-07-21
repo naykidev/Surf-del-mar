@@ -76,23 +76,28 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 		<div class="doyle-shell">
 			<article class="doyle-remember" aria-labelledby="doyle-remember-heading">
-				<figure class="doyle-figure">
-					<div class="doyle-img-wrap">
-						<img
-							src="/mike-doyle-larry-brooks.png"
-							alt="Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle"
-							class="doyle-photo"
-							width="1024"
-							height="683"
-							loading="lazy"
-							decoding="async"
-						/>
-						<div class="tape-element" aria-hidden="true"></div>
-					</div>
-					<figcaption class="doyle-caption">
-						Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle.
-					</figcaption>
-				</figure>
+				<div class="doyle-media">
+					<figure class="doyle-figure">
+						<div class="doyle-img-wrap">
+							<img
+								src="/mike-doyle-larry-brooks.png"
+								alt="Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle"
+								class="doyle-photo"
+								width="1024"
+								height="683"
+								loading="lazy"
+								decoding="async"
+							/>
+							<div class="tape-element" aria-hidden="true"></div>
+						</div>
+						<figcaption class="doyle-caption">
+							Del Mar Historical Society President Larry Brooks with legendary surfer Mike Doyle.
+						</figcaption>
+					</figure>
+					<p class="doyle-lede">
+						I grew up in L.A. Both of my parents worked in the aircraft business, my mother at Northrop and my father at Longdon Aluminum Forging. In the early 50's we would take trips to the San Diego Zoo and T.J. I would always remember three things, the oil wells in Huntington Beach, the Date Shake Place in Laguna and the piece of beach in Del Mar they now call Dog Beach, where they used to work the race horses in the surf. I said then at the tender age of 12 I would live there someday.
+					</p>
+				</div>
 
 				<div class="doyle-copy">
 					<div class="doyle-heading-block">
@@ -101,9 +106,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 
 					<div class="doyle-body">
-						<p>
-							I grew up in L.A. Both of my parents worked in the aircraft business, my mother at Northrop and my father at Longdon Aluminum Forging. In the early 50's we would take trips to the San Diego Zoo and T.J. I would always remember three things, the oil wells in Huntington Beach, the Date Shake Place in Laguna and the piece of beach in Del Mar they now call Dog Beach, where they used to work the race horses in the surf. I said then at the tender age of 12 I would live there someday.
-						</p>
 						<p>
 							In the very early 60s, Bill Bahne and Tony Chanan both surfboard builders had their manufacturing shops in the old Del Mar power house, and I worked for them before getting together with Don Hansen. I loved the surf break there and I was friends with Gardner Stevens, the Del Mar Lifeguard Captain. I knew him when he worked for L.A. City Lifeguards, and I worked for Santa Monica. He asked me to come down to Del Mar and work for him but a deal with Don Hansen sounded more like my style.
 						</p>
@@ -658,6 +660,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 		max-width: 640px;
 		justify-self: center;
 	}
+	.doyle-media {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		width: 100%;
+		max-width: 640px;
+		justify-self: center;
+	}
+	.doyle-media .doyle-figure {
+		max-width: none;
+		justify-self: stretch;
+	}
+	.doyle-lede {
+		font-family: var(--font-body);
+		font-size: 1.05rem;
+		color: var(--color-ink);
+		line-height: 1.7;
+		margin: 0;
+	}
 	.doyle-img-wrap {
 		position: relative;
 		width: 100%;
@@ -751,7 +772,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		margin: 0.5rem 0 0 !important;
 	}
 
-	/* Desktop: ~48% image / remaining text, sticky photo */
+	/* Desktop: photo + lede left, headline + rest right */
 	@media (min-width: 900px) {
 		.doyle-shell {
 			padding: 0 1.5rem;
@@ -760,7 +781,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
 			gap: 2.5rem 2.75rem;
 		}
-		.doyle-figure {
+		.doyle-media {
 			max-width: none;
 			justify-self: stretch;
 			position: sticky;
