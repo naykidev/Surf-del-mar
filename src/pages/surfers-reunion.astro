@@ -80,6 +80,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 							class="doyle-photo"
 							width="1024"
 							height="683"
+							loading="lazy"
+							decoding="async"
 						/>
 						<div class="tape-element" aria-hidden="true"></div>
 					</div>
@@ -88,22 +90,24 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</figcaption>
 				</figure>
 
-				<div class="doyle-heading-block">
-					<h2 id="doyle-remember-heading" class="doyle-title">I Remember<br />Mike Doyle</h2>
-					<p class="doyle-subtitle">World Champion surfer — 1969 — Lima, Peru</p>
-				</div>
+				<div class="doyle-copy">
+					<div class="doyle-heading-block">
+						<h2 id="doyle-remember-heading" class="doyle-title">I Remember<br />Mike Doyle</h2>
+						<p class="doyle-subtitle">World Champion surfer — 1969 — Lima, Peru</p>
+					</div>
 
-				<div class="doyle-body">
-					<p>
-						I grew up in L.A. Both of my parents worked in the aircraft business, my mother at Northrop and my father at Longdon Aluminum Forging. In the early 50's we would take trips to the San Diego Zoo and T.J. I would always remember three things, the oil wells in Huntington Beach, the Date Shake Place in Laguna and the piece of beach in Del Mar they now call Dog Beach, where they used to work the race horses in the surf. I said then at the tender age of 12 I would live there someday.
-					</p>
-					<p>
-						In the very early 60s, Bill Bahne and Tony Chanan both surfboard builders had their manufacturing shops in the old Del Mar power house, and I worked for them before getting together with Don Hansen. I loved the surf break there and I was friends with Gardner Stevens, the Del Mar Lifeguard Captain. I knew him when he worked for L.A. City Lifeguards, and I worked for Santa Monica. He asked me to come down to Del Mar and work for him but a deal with Don Hansen sounded more like my style.
-					</p>
-					<p>
-						In 1961 Don Hansen and I with the help of Del Mar resident Bob Driver opened the first surf shop in North County, Hansen Surfboards. Hansen was the organizer, Bob was the money, and I was the famous talent. I came from L.A. and North County was like a Hawaiian California for me. No people and great surf. I moved to Del Mar back behind the beach hill and up against the north slope of the Del Mar Hill. I loved it there. The water in those early 60's went low and left the tidal flats flat as a pancake. We set up a motorcycle flat track there and had weekend friendly races. This is before the freeway. We had celebs like Bruce Brown, the Hoffman brothers and Steve McQueen. The Hansen Surfboards was where the present Kraken Bar is and our manufacturing was right next door across from the present Chart House. Across the street where the Chart house is was the Proving Grounds, where if you wanted to make the Hansen Surf Team you had to go out and show your stuff. It was a golden time period for me coming from L.A. and having miles of open, not-crowded surfing. To me the special spots now and in that era were La Jolla, Del Mar, Laguna Beach, Malibu and Santa Barbara. It's still as beautiful as ever just more people. My slogan was "evolve or dissolve" so I moved to the tip of Baja and saw the whole program do it again.
-					</p>
-					<p class="doyle-signoff">Mike Doyle</p>
+					<div class="doyle-body">
+						<p>
+							I grew up in L.A. Both of my parents worked in the aircraft business, my mother at Northrop and my father at Longdon Aluminum Forging. In the early 50's we would take trips to the San Diego Zoo and T.J. I would always remember three things, the oil wells in Huntington Beach, the Date Shake Place in Laguna and the piece of beach in Del Mar they now call Dog Beach, where they used to work the race horses in the surf. I said then at the tender age of 12 I would live there someday.
+						</p>
+						<p>
+							In the very early 60s, Bill Bahne and Tony Chanan both surfboard builders had their manufacturing shops in the old Del Mar power house, and I worked for them before getting together with Don Hansen. I loved the surf break there and I was friends with Gardner Stevens, the Del Mar Lifeguard Captain. I knew him when he worked for L.A. City Lifeguards, and I worked for Santa Monica. He asked me to come down to Del Mar and work for him but a deal with Don Hansen sounded more like my style.
+						</p>
+						<p>
+							In 1961 Don Hansen and I with the help of Del Mar resident Bob Driver opened the first surf shop in North County, Hansen Surfboards. Hansen was the organizer, Bob was the money, and I was the famous talent. I came from L.A. and North County was like a Hawaiian California for me. No people and great surf. I moved to Del Mar back behind the beach hill and up against the north slope of the Del Mar Hill. I loved it there. The water in those early 60's went low and left the tidal flats flat as a pancake. We set up a motorcycle flat track there and had weekend friendly races. This is before the freeway. We had celebs like Bruce Brown, the Hoffman brothers and Steve McQueen. The Hansen Surfboards was where the present Kraken Bar is and our manufacturing was right next door across from the present Chart House. Across the street where the Chart house is was the Proving Grounds, where if you wanted to make the Hansen Surf Team you had to go out and show your stuff. It was a golden time period for me coming from L.A. and having miles of open, not-crowded surfing. To me the special spots now and in that era were La Jolla, Del Mar, Laguna Beach, Malibu and Santa Barbara. It's still as beautiful as ever just more people. My slogan was "evolve or dissolve" so I moved to the tip of Baja and saw the whole program do it again.
+						</p>
+						<p class="doyle-signoff">Mike Doyle</p>
+					</div>
 				</div>
 			</article>
 		</div>
@@ -605,25 +609,26 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.doyle-shell {
 		width: 100%;
-		max-width: 72rem;
+		max-width: 1200px;
 		margin: 3rem auto 2.5rem;
-		padding: 0 1.5rem;
+		padding: 0 1.25rem;
 		box-sizing: border-box;
 	}
 	.doyle-remember {
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
+		display: grid;
+		grid-template-columns: 1fr;
 		gap: 2rem;
-		max-width: 65ch;
+		align-items: start;
 		width: 100%;
-		margin: 0 auto;
+		max-width: none;
+		margin: 0;
 		padding: 0;
 	}
 	.doyle-figure {
 		margin: 0;
 		width: 100%;
-		max-width: 100%;
+		max-width: 640px;
+		justify-self: center;
 	}
 	.doyle-img-wrap {
 		position: relative;
@@ -655,6 +660,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: block;
 		width: 100%;
 		height: auto;
+		max-width: 100%;
+		object-fit: contain;
+		object-position: center;
 	}
 	.doyle-caption {
 		font-family: var(--font-body);
@@ -665,9 +673,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 		margin: 0;
 		text-align: left;
 	}
+	.doyle-copy {
+		min-width: 0;
+		width: 100%;
+	}
 	.doyle-heading-block {
 		text-align: left;
-		margin: 0;
+		margin: 0 0 1.25rem;
 		padding: 0;
 		background: none;
 		color: inherit;
@@ -697,7 +709,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	}
 	.doyle-body p {
 		font-family: var(--font-body);
-		font-size: 1.02rem;
+		font-size: 1.05rem;
 		color: var(--color-ink);
 		line-height: 1.7;
 		margin: 0;
@@ -709,6 +721,27 @@ import Lighthouse from '../components/Lighthouse.astro';
 		font-style: italic;
 		text-align: right;
 		margin: 0.5rem 0 0 !important;
+	}
+
+	/* Desktop: ~48% image / remaining text, sticky photo */
+	@media (min-width: 900px) {
+		.doyle-shell {
+			padding: 0 1.5rem;
+		}
+		.doyle-remember {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+			gap: 2.5rem 2.75rem;
+		}
+		.doyle-figure {
+			max-width: none;
+			justify-self: stretch;
+			position: sticky;
+			top: 5.5rem;
+			align-self: start;
+		}
+		.doyle-copy {
+			padding-top: 0.15rem;
+		}
 	}
 
 	.event-card {
