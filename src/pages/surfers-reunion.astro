@@ -30,24 +30,28 @@ import Lighthouse from '../components/Lighthouse.astro';
 				<p class="reunion-intro" data-editable="reunion.intro1">
 					For decades, surfers have gathered along our local beaches to ride the waves, and share stories, building a unique coastal culture. SURF DEL MAR FESTIVAL brings these generations together again.
 				</p>
-				<div class="reunion-img-wrap">
-					<img src="/surferreunion1.png" alt="Surfers Reunion" class="reunion-section-img" width="1136" height="752" />
-					<div class="tape-element"></div>
-				</div>
-				<div class="reunion-img-wrap">
-					<img src="/surferreunion5.png" alt="Surfers Reunion" class="reunion-section-img" width="1228" height="746" />
-					<div class="tape-element"></div>
+				<div class="reunion-img-row">
+					<div class="reunion-img-wrap">
+						<img src="/surferreunion1.png" alt="15th St reef Del Mar Surf Club Contest 1981" class="reunion-section-img" width="1136" height="752" />
+						<div class="tape-element"></div>
+					</div>
+					<div class="reunion-img-wrap">
+						<img src="/surferreunion5.png" alt="Surfboard shaping building at Jake's Restaurant Del Mar property, 1965-1971" class="reunion-section-img" width="1228" height="746" />
+						<div class="tape-element"></div>
+					</div>
 				</div>
 				<p class="reunion-intro">
 					From the pioneers who surfed here in the 1930s and into the 1950s and 60s, to today's surfers and young riders, this reunion invites everyone connected to Del Mar and the surrounding surf communities to come together and celebrate.
 				</p>
-				<div class="reunion-img-wrap">
-					<img src="/surferreunion2.png" alt="Surfers Reunion" class="reunion-section-img" width="1330" height="748" />
-					<div class="tape-element"></div>
-				</div>
-				<div class="reunion-img-wrap">
-					<img src="/surferreunion3.png" alt="Surfers Reunion" class="reunion-section-img" width="1212" height="752" />
-					<div class="tape-element"></div>
+				<div class="reunion-img-row">
+					<div class="reunion-img-wrap">
+						<img src="/surferreunion2.png" alt="Surfers Reunion" class="reunion-section-img" width="1330" height="748" />
+						<div class="tape-element"></div>
+					</div>
+					<div class="reunion-img-wrap">
+						<img src="/surferreunion3.png" alt="Surfers Reunion" class="reunion-section-img" width="1212" height="752" />
+						<div class="tape-element"></div>
+					</div>
 				</div>
 			</div>
 
@@ -566,6 +570,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.reunion-intro-body {
 		margin-bottom: 0.5rem;
 	}
+	.reunion-img-row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.75rem;
+		align-items: start;
+		margin: 1.5rem 0 2.5rem;
+	}
 	.reunion-img-wrap {
 		position: relative;
 		width: 80%;
@@ -575,10 +586,20 @@ import Lighthouse from '../components/Lighthouse.astro';
 		box-shadow: 0 12px 32px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
 		transition: transform 0.35s ease, box-shadow 0.35s ease;
 	}
+	.reunion-img-row .reunion-img-wrap {
+		width: 100%;
+		margin: 0;
+	}
 
 	.reunion-img-wrap:nth-child(odd)  { transform: rotate(-1.5deg); }
 	.reunion-img-wrap:nth-child(even) { transform: rotate(1deg); }
-	.reunion-img-wrap:hover { transform: rotate(0deg) scale(1.01); box-shadow: 0 18px 40px rgba(0,0,0,0.16); }
+	.reunion-img-row .reunion-img-wrap:nth-child(1) { transform: rotate(-1.5deg); }
+	.reunion-img-row .reunion-img-wrap:nth-child(2) { transform: rotate(1deg); }
+	.reunion-img-wrap:hover,
+	.reunion-img-row .reunion-img-wrap:hover {
+		transform: rotate(0deg) scale(1.01);
+		box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+	}
 
 	.reunion-img-wrap .tape-element {
 		position: absolute;
@@ -597,6 +618,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: block;
 		width: 100%;
 		height: auto;
+	}
+
+	@media (min-width: 768px) {
+		.reunion-img-row {
+			grid-template-columns: 1fr 1fr;
+			gap: 1.5rem 2rem;
+		}
 	}
 	.reunion-intro   { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0 0 1rem; }
 	.reunion-intro-body > .reunion-intro:first-child { font-size: 1.25rem; line-height: 1.7; }
