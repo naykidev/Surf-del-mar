@@ -50,12 +50,71 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 						<span class="logo-text">Del Mar Historical Society</span>
 					</a>
 				</div>
+				<a href={ZEFFY_DONATION_URL} class="nav-donate nav-donate-top" target="_blank" rel="noopener noreferrer">Donate</a>
 				<button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
 					<span class="nav-toggle-bar"></span>
 					<span class="nav-toggle-bar"></span>
 					<span class="nav-toggle-bar"></span>
 				</button>
 			</nav>
+			<!-- Desktop nav band: page titles across the top; collapses to the hamburger drawer on smaller screens -->
+			<div class="nav-band">
+				<nav class="nav-band-inner" aria-label="Primary">
+					<div class="tower-container">
+						<a href="/" class="nav-tower"><span class="nav-tower-text">Home</span></a>
+					</div>
+					<div class="surf-container">
+						<a href="/surfing-festival/" class="nav-surfboard"><span class="nav-surfboard-text">About the Festival</span></a>
+					</div>
+					<div class="reunion-container">
+						<a href="/surfers-reunion/" class="nav-reunion"><span class="nav-reunion-text">Surfers Reunion</span></a>
+					</div>
+					<div class="schedule-container">
+						<a href="/schedule/" class="nav-schedule">
+							<span class="nav-schedule-icon" aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
+									<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+									<path d="m9 16 2 2 4-4"/>
+								</svg>
+							</span>
+							<span class="nav-schedule-text">Schedule</span>
+						</a>
+					</div>
+					<div class="sponsors-container">
+						<a href="/sponsors/" class="nav-sponsors">
+							<span class="nav-sponsors-star" aria-hidden="true">★</span>
+							<span class="nav-sponsors-text">Sponsors</span>
+						</a>
+					</div>
+					<div class="news-container">
+						<a href="/in-the-news/" class="nav-news">
+							<span class="nav-news-icon" aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" focusable="false">
+									<path d="M4 4h16v16H4z"/>
+									<path d="M8 8h8M8 12h8M8 16h5"/>
+								</svg>
+							</span>
+							<span class="nav-news-text">In The News</span>
+						</a>
+					</div>
+					<div class="collectors-container">
+						<a href="/collectors-items/" class="nav-collectors">
+							<span class="nav-collectors-text">Shop</span>
+						</a>
+					</div>
+					<div class="auction-container">
+						<a href="/silent-auction/" class="nav-auction">
+							<span class="nav-auction-gavel" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 4.5l6 6c.6.6.6 1.5 0 2.1l-1.4 1.4c-.6.6-1.5.6-2.1 0l-6-6c-.6-.6-.6-1.5 0-2.1l1.4-1.4c.6-.6 1.5-.6 2.1 0z"/><path d="M8.5 12.5l-5.3 5.3c-.4.4-.4 1 0 1.4l.7.7c.4.4 1 .4 1.4 0l5.3-5.3-2.1-2.1z"/><path d="M13 21h8v2h-8z" opacity="0.5"/></svg></span>
+							<span class="nav-auction-text">Silent Auction</span>
+						</a>
+					</div>
+					<div class="faces-container">
+						<a href="/faces-of-festival/" class="nav-faces">
+							<span class="nav-faces-text">Faces of the Festival</span>
+						</a>
+					</div>
+				</nav>
+			</div>
 			<div class="nav-drawer" id="nav-drawer" aria-hidden="true">
 				<div class="nav-drawer-backdrop" id="nav-drawer-backdrop"></div>
 				<div class="nav-drawer-panel">
@@ -604,6 +663,39 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		margin-top: 0.5rem;
 		padding: 0.75rem;
 		border-radius: 10px;
+	}
+
+	/* Desktop nav band: page-title tiles across the top */
+	.nav-donate-top {
+		display: none;
+	}
+	.nav-band {
+		display: none;
+	}
+	.nav-band-inner {
+		max-width: 1600px;
+		margin: 0 auto;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: flex-end;
+		gap: 0.4rem 0.55rem;
+		padding: 0.15rem 1rem 0.2rem;
+	}
+
+	/* Show the band + inline Donate on wider screens; hamburger takes over below */
+	@media (min-width: 860px) {
+		.nav-band {
+			display: block;
+			background: var(--color-sand-dark);
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+		}
+		.nav-donate-top {
+			display: inline-flex;
+		}
+		.nav-toggle {
+			display: none;
+		}
 	}
 
 	/* Shared container baseline for Home, About Surf Del Mar, Surfers Reunion, Schedule, Sponsors, In The News, Shop, Auction, and Faces */
