@@ -44,6 +44,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 						class="logo"
 						target="_blank"
 						rel="noopener noreferrer"
+						title="Del Mar Historical Society"
 					>
 						<img src="/logo.png" alt="" class="logo-placeholder" width="48" height="48" />
 						<span class="logo-text">Del Mar Historical Society</span>
@@ -775,11 +776,15 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-tower-text {
 		display: block;
 		position: relative;
-		z-index: 3;
+		z-index: 2;
+		align-self: flex-start;
+		width: 58%;
 		margin-top: auto;
+		margin-left: 6%;
 		padding-top: 0.15rem;
 		line-height: 1.1;
-		transform: translateY(-4px);
+		text-align: center;
+		transform: translateY(-9px);
 	}
 
 	.nav-tower {
@@ -815,35 +820,33 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.12);
 	}
 
-	/* Square Window — upper wall, clear of “HOME” label */
+	/* Square Window — lower-left, vertically aligned with “HOME” */
 	.nav-tower::before {
 		content: '';
 		position: absolute;
-		top: 26%;
-		left: 14%;
-		width: 14%;
-		height: 11%;
+		top: 44%;
+		left: 10%;
+		width: 17%;
+		height: 14%;
 		background: linear-gradient(165deg, #4a7c9e 0%, #2d5a7a 35%, #1a3d52 100%);
 		border: 1px solid rgba(0,0,0,0.2);
 		box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
 		pointer-events: none;
-		z-index: 1;
 	}
 
-	/* RECTANGULAR Double doorway - right wing, below the label */
+	/* RECTANGULAR Double doorway - right wing */
 	.nav-tower::after {
 		content: '';
 		position: absolute;
-		bottom: 8%;
-		right: 12%;
-		width: 12%;
-		height: 22%;
+		bottom: 12%; /* Sits on foundation line */
+		right: 18%; /* Inset from building edge - visible stucco gap */
+		width: 14%; /* Stucco gap on both sides */
+		height: 32%; /* Fits between roof and foundation */
 		background:
 			linear-gradient(to right, var(--color-sepia) 0%, var(--color-sepia) 47%, var(--color-ink) 48%, var(--color-ink) 52%, var(--color-sepia) 53%, var(--color-sepia) 100%);
-		border-radius: 0;
+		border-radius: 0; /* Clean rectangle */
 		border: 1px solid rgba(0,0,0,0.3);
 		pointer-events: none;
-		z-index: 1;
 	}
 
 	/* Schedule nav button - badge style matching Sponsors */
