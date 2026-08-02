@@ -33,6 +33,38 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		</div>
 	</section>
 
+	<!-- Highlights of the Festival -->
+	<section class="highlights-section" aria-labelledby="highlights-heading">
+		<div class="highlights-inner">
+			<h2 id="highlights-heading" class="highlights-heading" data-editable="home.highlights.heading">Highlights of the Festival</h2>
+			<div class="highlights-divider"></div>
+
+			<!-- En Fuego party -->
+			<article class="highlight-card">
+				<div class="highlight-media">
+					<img src="/enfuego.jpg" alt="En Fuego Cantina in Del Mar" class="highlight-img" width="1400" height="1050" loading="lazy" />
+				</div>
+				<div class="highlight-body">
+					<p class="highlight-kicker" data-editable="home.highlight.enfuego.kicker">Friday Night · October 9th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.enfuego.title">Surf Del Mar Party at En Fuego</h3>
+					<p class="highlight-text" data-editable="home.highlight.enfuego.body">Join us for a Surf Del Mar Party at En Fuego Restaurant, Friday night, October 9th from 5:00 to 9:00 pm. Tower 7 will be providing the music!</p>
+				</div>
+			</article>
+
+			<!-- Endless Summer screening -->
+			<article class="highlight-card highlight-card-reverse">
+				<div class="highlight-media">
+					<img src="/filmfestival.jpg" alt="The Endless Summer film poster by Bruce Brown" class="highlight-img highlight-img-poster" width="178" height="252" loading="lazy" />
+				</div>
+				<div class="highlight-body">
+					<p class="highlight-kicker" data-editable="home.highlight.endlesssummer.kicker">Saturday Night · October 10th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.endlesssummer.title">The Endless Summer on the Lawn</h3>
+					<p class="highlight-text" data-editable="home.highlight.endlesssummer.body">Bring your friends, family and a picnic for a screening of Bruce Brown's classic film, The Endless Summer, Saturday night, October 10th, on the lawn at Powerhouse Park, Del Mar. The show starts between 6:30 and 7:00 pm…as soon as it's dark! Free Admission!</p>
+				</div>
+			</article>
+		</div>
+	</section>
+
 	<!-- Reunion: two-column -->
 	<section class="reunion-section">
 		<div class="reunion-container">
@@ -55,37 +87,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		</div>
 	</section>
 
-	<!-- Don Hansen Tribute -->
-	<section class="hansen-section">
-		<div class="hansen-container">
-			<h2 class="hansen-heading">A Tribute to Don Hansen</h2>
-
-			<div class="hansen-content">
-				<div class="hansen-photo-frame">
-					<img src="/hanson.png" alt="Don Hansen" class="hansen-photo" width="942" height="910" />
-					<span class="photo-caption">Don Hansen (1936–2026)</span>
-				</div>
-
-				<p class="hansen-body">Donald Hansen, an entrepreneur, athlete and adventurer whose life stretched far beyond any one calling, passed away on March 28th, 2026 at the age of 89.</p>
-
-				<p class="hansen-body">To write about Don Hansen is to write about motion: prairie wind, Pacific swell, open sky, mountain trails and the forward pull of a man who never stopped testing the edges of life. Don leaves behind a legacy rooted not only in adventure, but in kindness, mentorship and family.</p>
-
-				<p class="hansen-body">Born in 1936 in Aberdeen, South Dakota, to Fred and Violet Hansen, Don was raised in nearby Redfield where he spent his youth hunting, fishing, working and later dreaming of California. It was in his early years on the prairie that Don was introduced to California, where he discovered the sport that would forever mark his path: surfing. In 1960, Don founded Hansen Surfboards near Cardiff Reef in Encinitas. The shop became one of the best-known names in California surf culture. For generations of surfers, skaters, skiers and local families, Hansen's was a gathering place and Don was its heart. He had an instinct not only for business, but for people. He helped sponsor top surfers, mentored young workers and earned the respect of the broader surfing world.</p>
-
-				<p class="hansen-body">Don chased challenge everywhere. He surfed big Hawaiian waves when that frontier was still young. In those Pacific swells, Don found his Kulia (koo-lee-ah), stepping into something bigger, pushing past comfort and the thrill of chasing adventure.</p>
-
-				<p class="hansen-body">That appetite for challenge never stopped at the shoreline; it carried him into the open sky. As captain of the Airfreight skydiving team, he helped lead a squad that won national titles and set world records in ten-man speed star competition. Later, on Montana mountain trails, Don "let her buck"–a phrase once used by World War I soldiers from Montana as they charged into battle–and he brought that same spirit to the mountains while living in Big Sky, taking up team roping with enthusiasm and grit.</p>
-
-				<p class="hansen-body">What set Don apart was not just his willingness to take risks, but his willingness to care. He carried a strong spirit, a memorable sense of humor and an infectious laugh. Don moved through life with faith and gratitude, meeting moments with humor and believing in people before they fully believed in themselves.</p>
-			</div>
-			<img src="/surfboards.png" alt="Surfboards" class="hansen-surfboards" width="1920" height="1080" />
-			<div class="hansen-polaroid">
-				<img src="/hansensurfing.png" alt="Hansen surfing" class="hansen-polaroid-img" width="1000" height="752" />
-				<div class="tape-element"></div>
-			</div>
-		</div>
-	</section>
-
 	<DynamicPageBlocks pageKey="home" />
 
 	<!-- Support / donate (Zeffy); copy editable when logged in as admin -->
@@ -103,6 +104,21 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 			>
 				Donate with Zeffy
 			</a>
+		</div>
+	</section>
+
+	<!-- Don Hansen Tribute (compact) -->
+	<section class="hansen-compact" aria-labelledby="hansen-heading">
+		<div class="hansen-compact-inner">
+			<div class="hansen-compact-photo">
+				<img src="/hanson.png" alt="Don Hansen" width="942" height="910" loading="lazy" />
+				<span class="hansen-compact-caption">Don Hansen (1936–2026)</span>
+			</div>
+			<div class="hansen-compact-text">
+				<h2 id="hansen-heading" class="hansen-compact-heading">A Tribute to Don Hansen</h2>
+				<p>Donald Hansen — entrepreneur, athlete and adventurer — passed away on March 28th, 2026 at the age of 89. Born in 1936 in Aberdeen, South Dakota, Don discovered surfing in his early California years and, in 1960, founded Hansen Surfboards near Cardiff Reef in Encinitas. The shop became one of the best-known names in California surf culture — a gathering place for generations of surfers, skaters, skiers and local families, with Don at its heart.</p>
+				<p>He chased challenge everywhere: big Hawaiian waves when that frontier was still young, national titles and world records as captain of the Airfreight skydiving team, and team roping on the mountain trails of Big Sky, Montana. What set Don apart was not just his willingness to take risks, but his willingness to care — a strong spirit, a memorable sense of humor, and a habit of believing in people before they fully believed in themselves.</p>
+			</div>
 		</div>
 	</section>
 
@@ -325,130 +341,191 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		line-height: 1.35;
 	}
 
-	/* --- Don Hansen Tribute: Editorial Style --- */
-	.hansen-section {
-		background: var(--color-cream);
-		padding: 6rem 2rem;
-		border-bottom: 1px solid rgba(0,0,0,0.05);
+	/* --- Highlights of the Festival --- */
+	.highlights-section {
+		background: linear-gradient(180deg, var(--color-foam) 0%, var(--color-cream) 100%);
+		padding: 4.5rem 2rem;
 	}
 
-	.hansen-container {
-		max-width: 900px;
+	.highlights-inner {
+		max-width: 1000px;
 		margin: 0 auto;
 	}
 
-	.hansen-heading {
+	.highlights-heading {
 		font-family: var(--font-display);
-		font-size: clamp(2.5rem, 5vw, 3.5rem);
+		font-size: clamp(2rem, 5vw, 3rem);
 		font-weight: 600;
 		color: var(--color-ink);
-		margin-bottom: 3rem;
 		text-align: center;
-		position: relative;
+		margin: 0;
 		line-height: 1.2;
 	}
 
-	.hansen-heading::after {
-		content: '';
-		display: block;
+	.highlights-divider {
 		width: 60px;
 		height: 3px;
 		background: #c9a227;
-		margin: 1rem auto 0;
+		margin: 1rem auto 3rem;
 	}
 
-	.hansen-content {
-		display: block;
+	.highlight-card {
+		display: grid;
+		grid-template-columns: 0.9fr 1.1fr;
+		gap: 2.5rem;
+		align-items: center;
+		background: var(--color-cream);
+		border-radius: 12px;
+		padding: 1.75rem;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+		border: 1px solid rgba(0,0,0,0.05);
 	}
 
-	.hansen-content::after {
-		content: '';
-		display: table;
-		clear: both;
+	.highlight-card + .highlight-card {
+		margin-top: 2.5rem;
 	}
 
-	.hansen-photo-frame {
-		float: left;
-		width: 40%;
-		margin: 0 3rem 2rem 0;
+	.highlight-card-reverse .highlight-media {
+		order: 2;
 	}
 
-	.hansen-photo {
+	.highlight-media {
+		display: flex;
+		justify-content: center;
+	}
+
+	.highlight-img {
 		width: 100%;
 		height: auto;
-		border-radius: 4px;
-		box-shadow: 15px 15px 0px var(--color-sand);
-		border: 1px solid rgba(0,0,0,0.1);
-	}
-
-	.photo-caption {
-		display: block;
-		font-family: var(--font-body);
-		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		margin-top: 1.5rem;
-		padding-left: 0.75rem;
-		color: var(--color-sepia);
-	}
-
-	.hansen-body {
-		font-family: var(--font-body);
-		font-size: 1.15rem;
-		line-height: 1.8;
-		color: var(--color-ink);
-		margin-bottom: 1.5rem;
-	}
-
-	.hansen-surfboards {
-		display: block;
-		width: calc(100% + 8rem);
-		margin-left: -4rem;
-		height: auto;
-		clear: both;
-		margin-top: 1.25rem;
 		border-radius: 8px;
+		box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+		object-fit: cover;
 	}
 
-	.hansen-polaroid {
-		position: relative;
-		width: 55%;
-		margin: 2rem auto 1rem;
-		padding: 14px 14px 44px;
-		background: #fff;
-		box-shadow: 0 12px 32px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
-		transform: rotate(1.5deg);
-		transition: transform 0.35s ease, box-shadow 0.35s ease;
-		clear: both;
+	.highlight-img-poster {
+		max-width: 300px;
+		box-shadow: 0 16px 36px rgba(0,0,0,0.22);
 	}
 
-	.hansen-polaroid:hover {
-		transform: rotate(0deg) scale(1.01);
-		box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+	.highlight-kicker {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-sand-dark);
+		margin: 0 0 0.5rem 0;
 	}
 
-	.hansen-polaroid .tape-element {
-		position: absolute;
-		top: -14px;
-		left: 50%;
-		transform: translateX(-50%) rotate(-2deg);
-		width: 100px;
-		height: 30px;
-		background: rgba(184, 220, 228, 0.55);
-		backdrop-filter: blur(2px);
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-		z-index: 2;
+	.highlight-title {
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 3.5vw, 2rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 0.9rem 0;
+		line-height: 1.2;
 	}
 
-	.hansen-polaroid-img {
-		display: block;
-		width: 100%;
-		height: auto;
+	.highlight-text {
+		font-family: var(--font-body);
+		font-size: 1.1rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+		margin: 0;
 	}
 
 	@media (max-width: 768px) {
-		.hansen-polaroid {
-			width: 80%;
+		.highlights-section {
+			padding: 3rem 1rem;
+		}
+		.highlight-card,
+		.highlight-card-reverse {
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
+			padding: 1.25rem;
+		}
+		.highlight-card-reverse .highlight-media {
+			order: 0;
+		}
+		.highlight-img-poster {
+			max-width: 220px;
+		}
+		.highlight-text {
+			font-size: 1rem;
+		}
+	}
+
+	/* --- Don Hansen Tribute (compact) --- */
+	.hansen-compact {
+		background: var(--color-cream);
+		padding: 3.5rem 2rem;
+		border-top: 1px solid rgba(0,0,0,0.06);
+		border-bottom: 1px solid rgba(0,0,0,0.05);
+	}
+
+	.hansen-compact-inner {
+		max-width: 900px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 220px 1fr;
+		gap: 2.5rem;
+		align-items: start;
+	}
+
+	.hansen-compact-photo {
+		text-align: center;
+	}
+
+	.hansen-compact-photo img {
+		width: 100%;
+		height: auto;
+		border-radius: 4px;
+		box-shadow: 10px 10px 0px var(--color-sand);
+		border: 1px solid rgba(0,0,0,0.1);
+	}
+
+	.hansen-compact-caption {
+		display: block;
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		margin-top: 1rem;
+		color: var(--color-sepia);
+	}
+
+	.hansen-compact-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 1rem 0;
+		line-height: 1.2;
+	}
+
+	.hansen-compact-text p {
+		font-family: var(--font-body);
+		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+		margin: 0 0 1rem 0;
+	}
+
+	.hansen-compact-text p:last-child {
+		margin-bottom: 0;
+	}
+
+	@media (max-width: 768px) {
+		.hansen-compact {
+			padding: 2.5rem 1rem;
+		}
+		.hansen-compact-inner {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+		.hansen-compact-photo {
+			max-width: 240px;
+			margin: 0 auto;
 		}
 	}
 
@@ -576,23 +653,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		.calendar-callout-dates {
 			font-size: 1.1rem;
 		}
-		.hansen-section {
-			padding: 4rem 1rem;
-		}
-		.hansen-photo-frame {
-			float: none;
-			width: 100%;
-			margin: 0 0 2rem 0;
-			text-align: center;
-		}
-		.hansen-photo {
-			max-width: 300px;
-			margin: 0 auto;
-			box-shadow: 10px 10px 0px var(--color-sand);
-		}
-		.hansen-heading {
-			font-size: 2rem;
-		}
 		.support-section {
 			padding: 2.5rem 1rem;
 		}
@@ -621,9 +681,6 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		}
 		.reunion-section {
 			padding: 2rem 1rem;
-		}
-		.hansen-section {
-			padding: 3rem 1rem;
 		}
 		.support-section,
 		.cta-section {
