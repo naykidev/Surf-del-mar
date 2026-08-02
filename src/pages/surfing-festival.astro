@@ -156,235 +156,235 @@ import Lighthouse from '../components/Lighthouse.astro';
 			<a href="/schedule/" class="event-schedule-full-link">See full festival schedule</a>
 		</div>
 	</div>
-</BaseLayout>
 
-<script>
-	type ScheduleLine = { label: string; value: string };
-	type ScheduleBlock = { heading?: string; lines: ScheduleLine[] };
-	type EventSchedule = {
-		title: string;
-		day: string;
-		blurb: string;
-		blocks: ScheduleBlock[];
-	};
+	<script>
+		type ScheduleLine = { label: string; value: string };
+		type ScheduleBlock = { heading?: string; lines: ScheduleLine[] };
+		type EventSchedule = {
+			title: string;
+			day: string;
+			blurb: string;
+			blocks: ScheduleBlock[];
+		};
 
-	const EVENT_SCHEDULES: Record<string, EventSchedule> = {
-		'surfers-reunion': {
-			title: 'Surfers Reunion',
-			day: 'Saturday, October 10',
-			blurb: 'Celebrating decades of Del Mar surf history with classic Woody wagons, live music by the Mar Dels, and more.',
-			blocks: [
-				{
-					heading: "Surfer's Reunion",
-					lines: [
-						{ label: 'Venue', value: 'Powerhouse Park' },
-						{ label: 'Time', value: '11:00 am to 9:30 pm' },
-					],
-				},
-				{
-					heading: 'Woody Wagon Parade Through Del Mar and Display',
-					lines: [
-						{ label: 'Venue', value: 'Del Mar Train Station' },
-						{ label: 'Time', value: '12:00 pm to 3:00 pm' },
-					],
-				},
-				{
-					heading: 'Afternoon Concert with the Mar Dels',
-					lines: [
-						{ label: 'Venue', value: 'Powerhouse Park' },
-						{ label: 'Time', value: '2:00 pm to 5:00 pm' },
-					],
-				},
-				{
-					heading: 'VIP Reception',
-					lines: [
-						{ label: 'Venue', value: 'Community Room at Powerhouse Park' },
-						{ label: 'Time', value: '5:00 pm to 7:30 pm' },
-					],
-				},
-			],
-		},
-		'opening-night': {
-			title: 'Opening Night Reunion',
-			day: 'Thursday, October 8',
-			blurb: 'Live music by Peter Sprague and his group at Del Mar Plaza, with Legends & Champions Awards Ceremony.',
-			blocks: [
-				{
-					heading: 'Opening Reception: Surfers Meet and Greet',
-					lines: [
-						{ label: 'Venue', value: 'Del Mar Plaza' },
-						{ label: 'Time', value: '3:00 pm to 7:30 pm' },
-						{ label: 'Music', value: '5:00 pm to 7:30 pm' },
-					],
-				},
-			],
-		},
-		'film-festival': {
-			title: 'Film Festival',
-			day: 'Friday, October 9',
-			blurb: "Celebrating the films that shaped surf culture, featuring Bustin' Down the Door.",
-			blocks: [
-				{
-					heading: 'Surfing Film Festival',
-					lines: [
-						{ label: 'Venue', value: "St Peter's Hall" },
-						{ label: 'Daytime Session', value: '11:00 am to 5:00 pm' },
-						{ label: 'Evening Session', value: '6:00 pm to 9:00 pm' },
-					],
-				},
-			],
-		},
-		'book-fair': {
-			title: "Surfwriter's Book Fair",
-			day: 'Saturday & Sunday, October 10–11',
-			blurb: 'Featuring authors and publications dedicated to surfing.',
-			blocks: [
-				{
-					heading: 'Saturday, October 10',
-					lines: [
-						{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
-						{ label: 'Time', value: '10:00 am to 3:00 pm' },
-					],
-				},
-				{
-					heading: 'Sunday, October 11',
-					lines: [
-						{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
-						{ label: 'Time', value: '10:00 am to 3:00 pm' },
-					],
-				},
-			],
-		},
-		'art-walk': {
-			title: 'Art Walk',
-			day: 'Thursday, October 8',
-			blurb: 'Meet the artists and discover original art by local and regional creators.',
-			blocks: [
-				{
-					lines: [
-						{ label: 'Venue', value: "Del Mar Plaza's Canyon View Garden Patio" },
-						{ label: 'Time', value: '1:00 pm to 6:30 pm' },
-					],
-				},
-			],
-		},
-		'student-art-walk': {
-			title: 'Student Art Walk',
-			day: 'Sunday, October 11',
-			blurb: 'Celebrating the next generation of artists keeping the art of surfing alive.',
-			blocks: [
-				{
-					lines: [
-						{ label: 'Venue', value: "L'Auberge/Jim Watkins Outdoor Amphitheater" },
-						{ label: 'Time', value: '11:00 am to 3:00 pm' },
-					],
-				},
-			],
-		},
-		sustainability: {
-			title: 'Surfing and Sustainability',
-			day: 'Thursday, October 8',
-			blurb: 'Protecting the places we surf for generations to come—hands-on activities, education, and community solutions.',
-			blocks: [
-				{
-					heading: 'Climate Change/Conservation Symposium',
-					lines: [
-						{ label: 'Venue', value: "St. Peter's Parish Hall" },
-						{ label: 'Time', value: '11:00 am to 4:00 pm' },
-					],
-				},
-			],
-		},
-		'woman-and-water': {
-			title: 'Woman and Water',
-			day: 'Sunday, October 11',
-			blurb: 'Celebrating women in and inspired by the water—artists, authors, scientists, surfers, and filmmakers. Presented in collaboration with the California Surf Museum.',
-			blocks: [
-				{
-					heading: 'Celebrating Women, Water and Waves',
-					lines: [
-						{ label: 'Venue', value: "St Peter's Parish Hall and Patio" },
-						{ label: 'Time', value: '1:00 pm to 8:00 pm' },
-					],
-				},
-			],
-		},
-	};
+		const EVENT_SCHEDULES: Record<string, EventSchedule> = {
+			'surfers-reunion': {
+				title: 'Surfers Reunion',
+				day: 'Saturday, October 10',
+				blurb: 'Celebrating decades of Del Mar surf history with classic Woody wagons, live music by the Mar Dels, and more.',
+				blocks: [
+					{
+						heading: "Surfer's Reunion",
+						lines: [
+							{ label: 'Venue', value: 'Powerhouse Park' },
+							{ label: 'Time', value: '11:00 am to 9:30 pm' },
+						],
+					},
+					{
+						heading: 'Woody Wagon Parade Through Del Mar and Display',
+						lines: [
+							{ label: 'Venue', value: 'Del Mar Train Station' },
+							{ label: 'Time', value: '12:00 pm to 3:00 pm' },
+						],
+					},
+					{
+						heading: 'Afternoon Concert with the Mar Dels',
+						lines: [
+							{ label: 'Venue', value: 'Powerhouse Park' },
+							{ label: 'Time', value: '2:00 pm to 5:00 pm' },
+						],
+					},
+					{
+						heading: 'VIP Reception',
+						lines: [
+							{ label: 'Venue', value: 'Community Room at Powerhouse Park' },
+							{ label: 'Time', value: '5:00 pm to 7:30 pm' },
+						],
+					},
+				],
+			},
+			'opening-night': {
+				title: 'Opening Night Reunion',
+				day: 'Thursday, October 8',
+				blurb: 'Live music by Peter Sprague and his group at Del Mar Plaza, with Legends & Champions Awards Ceremony.',
+				blocks: [
+					{
+						heading: 'Opening Reception: Surfers Meet and Greet',
+						lines: [
+							{ label: 'Venue', value: 'Del Mar Plaza' },
+							{ label: 'Time', value: '3:00 pm to 7:30 pm' },
+							{ label: 'Music', value: '5:00 pm to 7:30 pm' },
+						],
+					},
+				],
+			},
+			'film-festival': {
+				title: 'Film Festival',
+				day: 'Friday, October 9',
+				blurb: "Celebrating the films that shaped surf culture, featuring Bustin' Down the Door.",
+				blocks: [
+					{
+						heading: 'Surfing Film Festival',
+						lines: [
+							{ label: 'Venue', value: "St Peter's Hall" },
+							{ label: 'Daytime Session', value: '11:00 am to 5:00 pm' },
+							{ label: 'Evening Session', value: '6:00 pm to 9:00 pm' },
+						],
+					},
+				],
+			},
+			'book-fair': {
+				title: "Surfwriter's Book Fair",
+				day: 'Saturday & Sunday, October 10–11',
+				blurb: 'Featuring authors and publications dedicated to surfing.',
+				blocks: [
+					{
+						heading: 'Saturday, October 10',
+						lines: [
+							{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
+							{ label: 'Time', value: '10:00 am to 3:00 pm' },
+						],
+					},
+					{
+						heading: 'Sunday, October 11',
+						lines: [
+							{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
+							{ label: 'Time', value: '10:00 am to 3:00 pm' },
+						],
+					},
+				],
+			},
+			'art-walk': {
+				title: 'Art Walk',
+				day: 'Thursday, October 8',
+				blurb: 'Meet the artists and discover original art by local and regional creators.',
+				blocks: [
+					{
+						lines: [
+							{ label: 'Venue', value: "Del Mar Plaza's Canyon View Garden Patio" },
+							{ label: 'Time', value: '1:00 pm to 6:30 pm' },
+						],
+					},
+				],
+			},
+			'student-art-walk': {
+				title: 'Student Art Walk',
+				day: 'Sunday, October 11',
+				blurb: 'Celebrating the next generation of artists keeping the art of surfing alive.',
+				blocks: [
+					{
+						lines: [
+							{ label: 'Venue', value: "L'Auberge/Jim Watkins Outdoor Amphitheater" },
+							{ label: 'Time', value: '11:00 am to 3:00 pm' },
+						],
+					},
+				],
+			},
+			sustainability: {
+				title: 'Surfing and Sustainability',
+				day: 'Thursday, October 8',
+				blurb: 'Protecting the places we surf for generations to come—hands-on activities, education, and community solutions.',
+				blocks: [
+					{
+						heading: 'Climate Change/Conservation Symposium',
+						lines: [
+							{ label: 'Venue', value: "St. Peter's Parish Hall" },
+							{ label: 'Time', value: '11:00 am to 4:00 pm' },
+						],
+					},
+				],
+			},
+			'woman-and-water': {
+				title: 'Woman and Water',
+				day: 'Sunday, October 11',
+				blurb: 'Celebrating women in and inspired by the water—artists, authors, scientists, surfers, and filmmakers. Presented in collaboration with the California Surf Museum.',
+				blocks: [
+					{
+						heading: 'Celebrating Women, Water and Waves',
+						lines: [
+							{ label: 'Venue', value: "St Peter's Parish Hall and Patio" },
+							{ label: 'Time', value: '1:00 pm to 8:00 pm' },
+						],
+					},
+				],
+			},
+		};
 
-	const modal = document.getElementById('event-schedule-modal');
-	const overlay = document.getElementById('event-schedule-overlay');
-	const closeBtn = document.getElementById('event-schedule-close');
-	const dayEl = document.getElementById('event-schedule-day');
-	const titleEl = document.getElementById('event-schedule-title');
-	const blurbEl = document.getElementById('event-schedule-blurb');
-	const itemsEl = document.getElementById('event-schedule-items');
-	const cards = document.querySelectorAll<HTMLElement>('.event-card-vintage[data-event-id]');
+		const modal = document.getElementById('event-schedule-modal');
+		const overlay = document.getElementById('event-schedule-overlay');
+		const closeBtn = document.getElementById('event-schedule-close');
+		const dayEl = document.getElementById('event-schedule-day');
+		const titleEl = document.getElementById('event-schedule-title');
+		const blurbEl = document.getElementById('event-schedule-blurb');
+		const itemsEl = document.getElementById('event-schedule-items');
+		const cards = document.querySelectorAll<HTMLElement>('.event-card-vintage[data-event-id]');
 
-	function esc(text: string): string {
-		const d = document.createElement('div');
-		d.textContent = text;
-		return d.innerHTML;
-	}
+		function esc(text: string): string {
+			const d = document.createElement('div');
+			d.textContent = text;
+			return d.innerHTML;
+		}
 
-	function openEventSchedule(eventId: string) {
-		const data = EVENT_SCHEDULES[eventId];
-		if (!data || !modal || !dayEl || !titleEl || !blurbEl || !itemsEl) return;
+		function openEventSchedule(eventId: string) {
+			const data = EVENT_SCHEDULES[eventId];
+			if (!data || !modal || !dayEl || !titleEl || !blurbEl || !itemsEl) return;
 
-		dayEl.textContent = data.day;
-		titleEl.textContent = data.title;
-		blurbEl.textContent = data.blurb;
-		itemsEl.innerHTML = data.blocks
-			.map((block) => {
-				const heading = block.heading
-					? `<h3 class="event-schedule-block-title">${esc(block.heading)}</h3>`
-					: '';
-				const lines = block.lines
-					.map(
-						(line) =>
-							`<p class="event-schedule-line"><span class="event-schedule-label">${esc(line.label)}</span> ${esc(line.value)}</p>`
-					)
-					.join('');
-				return `<div class="event-schedule-block">${heading}${lines}</div>`;
-			})
-			.join('');
+			dayEl.textContent = data.day;
+			titleEl.textContent = data.title;
+			blurbEl.textContent = data.blurb;
+			itemsEl.innerHTML = data.blocks
+				.map((block) => {
+					const heading = block.heading
+						? `<h3 class="event-schedule-block-title">${esc(block.heading)}</h3>`
+						: '';
+					const lines = block.lines
+						.map(
+							(line) =>
+								`<p class="event-schedule-line"><span class="event-schedule-label">${esc(line.label)}</span> ${esc(line.value)}</p>`
+						)
+						.join('');
+					return `<div class="event-schedule-block">${heading}${lines}</div>`;
+				})
+				.join('');
 
-		modal.hidden = false;
-		document.body.style.overflow = 'hidden';
-		closeBtn?.focus();
-	}
+			modal.hidden = false;
+			document.body.style.overflow = 'hidden';
+			closeBtn?.focus();
+		}
 
-	function closeEventSchedule() {
-		if (!modal) return;
-		modal.hidden = true;
-		document.body.style.overflow = '';
-	}
+		function closeEventSchedule() {
+			if (!modal) return;
+			modal.hidden = true;
+			document.body.style.overflow = '';
+		}
 
-	cards.forEach((card) => {
-		const eventId = card.dataset.eventId;
-		if (!eventId) return;
-		card.addEventListener('click', (e) => {
-			if (
-				document.body.classList.contains('admin-text-editable') &&
-				(e.target as HTMLElement).closest('[data-editable]')
-			) {
-				return;
-			}
-			openEventSchedule(eventId);
-		});
-		card.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter' || e.key === ' ') {
-				e.preventDefault();
+		cards.forEach((card) => {
+			const eventId = card.dataset.eventId;
+			if (!eventId) return;
+			card.addEventListener('click', (e) => {
+				if (
+					document.body.classList.contains('admin-text-editable') &&
+					(e.target as HTMLElement).closest('[data-editable]')
+				) {
+					return;
+				}
 				openEventSchedule(eventId);
-			}
+			});
+			card.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					openEventSchedule(eventId);
+				}
+			});
 		});
-	});
 
-	overlay?.addEventListener('click', closeEventSchedule);
-	closeBtn?.addEventListener('click', closeEventSchedule);
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape' && modal && !modal.hidden) closeEventSchedule();
-	});
-</script>
+		overlay?.addEventListener('click', closeEventSchedule);
+		closeBtn?.addEventListener('click', closeEventSchedule);
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && modal && !modal.hidden) closeEventSchedule();
+		});
+	</script>
+</BaseLayout>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
