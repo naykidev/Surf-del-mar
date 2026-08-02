@@ -42,7 +42,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			</div>
 			<h2 class="festival-subhead" data-editable="festival.subhead">SURF DEL MAR FESTIVAL brings together many aspects of surf culture in one vibrant, festive event:</h2>
 			<div class="event-cards">
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="surfers-reunion" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Surfers Reunion schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/surfers-reunion.png" alt="Surfers Reunion — Woody Station Wagons and the Mar Dels" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -51,8 +51,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.surfers-reunion.title">Surfers Reunion</h3>
 					<p data-editable="festival.events.surfers-reunion.description">Celebrating decades of Del Mar surf history with classic Woody wagons, live music by the Mar Dels, and more</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="opening-night" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Opening Night Reunion schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/opening-night-reunion.png" alt="Opening Night Reunion — Peter Sprague and his group at Del Mar Plaza" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -61,8 +62,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.opening-night.title">Opening Night Reunion</h3>
 					<p data-editable="festival.events.opening-night.description">Live music by Peter Sprague and his group at Del Mar Plaza, with Legends & Champions Awards Ceremony</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="film-festival" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Film Festival schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/film-festival.png" alt="Film Festival" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -71,8 +73,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.film-festival.title">Film Festival</h3>
 					<p data-editable="festival.events.film-festival.description">Celebrating the films that shaped surf culture, featuring Bustin' Down the Door</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="book-fair" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Surfwriter's Book Fair schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/surfwriters-book-fair.png" alt="Surfwriter's Book Fair" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -81,8 +84,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.book-fair.title">Surfwriter's Book Fair</h3>
 					<p data-editable="festival.events.book-fair.description">Featuring authors and publications dedicated to surfing</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="art-walk" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Art Walk schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/art-walk.png" alt="Art Walk" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -91,8 +95,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.art-walk.title">Art Walk</h3>
 					<p data-editable="festival.events.art-walk.description">Meet the artists and discover original art by local and regional creators</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="student-art-walk" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Student Art Walk schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/student-art-walk.png" alt="Student Art Walk" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -101,8 +106,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.student-art-walk.title">Student Art Walk</h3>
 					<p data-editable="festival.events.student-art-walk.description">Celebrating the next generation of artists keeping the art of surfing alive</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage event-card-advocacy">
+				<article class="event-card event-card-vintage event-card-advocacy" data-event-id="sustainability" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Surfing and Sustainability schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/sustainability-symposium.png" alt="Surfing and Sustainability" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -111,8 +117,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.sustainability.title">Surfing and Sustainability</h3>
 					<p data-editable="festival.events.sustainability.description">Protecting the places we surf for generations to come—hands-on activities, education, and community solutions</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
-				<article class="event-card event-card-vintage">
+				<article class="event-card event-card-vintage" data-event-id="woman-and-water" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Woman and Water schedule">
 					<div class="event-card-photo">
 						<div class="photo-frame photo-frame-with-caption">
 							<img src="/festival/woman-and-water.png" alt="Women on Waves" class="festival-vintage-img festival-portrait-img" width="682" height="1024" />
@@ -121,6 +128,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<h3 data-editable="festival.events.woman-and-water.title">Woman and Water</h3>
 					<p data-editable="festival.events.woman-and-water.description">Celebrating women in and inspired by the water—artists, authors, scientists, surfers, and filmmakers. Presented in collaboration with the California Surf Museum. Sunday, October 11, 2026.</p>
+					<span class="event-card-hint">View schedule</span>
 				</article>
 			</div>
 			<article class="event-card event-card-free">
@@ -136,7 +144,247 @@ import Lighthouse from '../components/Lighthouse.astro';
 			</article>
 		</div>
 	</section>
+
+	<div id="event-schedule-modal" class="event-schedule-modal" role="dialog" aria-labelledby="event-schedule-title" aria-modal="true" hidden>
+		<div class="event-schedule-overlay" id="event-schedule-overlay"></div>
+		<div class="event-schedule-box">
+			<button type="button" class="event-schedule-close" id="event-schedule-close" aria-label="Close schedule">&times;</button>
+			<p class="event-schedule-day" id="event-schedule-day"></p>
+			<h2 id="event-schedule-title" class="event-schedule-title"></h2>
+			<p class="event-schedule-blurb" id="event-schedule-blurb"></p>
+			<div class="event-schedule-items" id="event-schedule-items"></div>
+			<a href="/schedule/" class="event-schedule-full-link">See full festival schedule</a>
+		</div>
+	</div>
 </BaseLayout>
+
+<script>
+	type ScheduleLine = { label: string; value: string };
+	type ScheduleBlock = { heading?: string; lines: ScheduleLine[] };
+	type EventSchedule = {
+		title: string;
+		day: string;
+		blurb: string;
+		blocks: ScheduleBlock[];
+	};
+
+	const EVENT_SCHEDULES: Record<string, EventSchedule> = {
+		'surfers-reunion': {
+			title: 'Surfers Reunion',
+			day: 'Saturday, October 10',
+			blurb: 'Celebrating decades of Del Mar surf history with classic Woody wagons, live music by the Mar Dels, and more.',
+			blocks: [
+				{
+					heading: "Surfer's Reunion",
+					lines: [
+						{ label: 'Venue', value: 'Powerhouse Park' },
+						{ label: 'Time', value: '11:00 am to 9:30 pm' },
+					],
+				},
+				{
+					heading: 'Woody Wagon Parade Through Del Mar and Display',
+					lines: [
+						{ label: 'Venue', value: 'Del Mar Train Station' },
+						{ label: 'Time', value: '12:00 pm to 3:00 pm' },
+					],
+				},
+				{
+					heading: 'Afternoon Concert with the Mar Dels',
+					lines: [
+						{ label: 'Venue', value: 'Powerhouse Park' },
+						{ label: 'Time', value: '2:00 pm to 5:00 pm' },
+					],
+				},
+				{
+					heading: 'VIP Reception',
+					lines: [
+						{ label: 'Venue', value: 'Community Room at Powerhouse Park' },
+						{ label: 'Time', value: '5:00 pm to 7:30 pm' },
+					],
+				},
+			],
+		},
+		'opening-night': {
+			title: 'Opening Night Reunion',
+			day: 'Thursday, October 8',
+			blurb: 'Live music by Peter Sprague and his group at Del Mar Plaza, with Legends & Champions Awards Ceremony.',
+			blocks: [
+				{
+					heading: 'Opening Reception: Surfers Meet and Greet',
+					lines: [
+						{ label: 'Venue', value: 'Del Mar Plaza' },
+						{ label: 'Time', value: '3:00 pm to 7:30 pm' },
+						{ label: 'Music', value: '5:00 pm to 7:30 pm' },
+					],
+				},
+			],
+		},
+		'film-festival': {
+			title: 'Film Festival',
+			day: 'Friday, October 9',
+			blurb: "Celebrating the films that shaped surf culture, featuring Bustin' Down the Door.",
+			blocks: [
+				{
+					heading: 'Surfing Film Festival',
+					lines: [
+						{ label: 'Venue', value: "St Peter's Hall" },
+						{ label: 'Daytime Session', value: '11:00 am to 5:00 pm' },
+						{ label: 'Evening Session', value: '6:00 pm to 9:00 pm' },
+					],
+				},
+			],
+		},
+		'book-fair': {
+			title: "Surfwriter's Book Fair",
+			day: 'Saturday & Sunday, October 10–11',
+			blurb: 'Featuring authors and publications dedicated to surfing.',
+			blocks: [
+				{
+					heading: 'Saturday, October 10',
+					lines: [
+						{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
+						{ label: 'Time', value: '10:00 am to 3:00 pm' },
+					],
+				},
+				{
+					heading: 'Sunday, October 11',
+					lines: [
+						{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
+						{ label: 'Time', value: '10:00 am to 3:00 pm' },
+					],
+				},
+			],
+		},
+		'art-walk': {
+			title: 'Art Walk',
+			day: 'Thursday, October 8',
+			blurb: 'Meet the artists and discover original art by local and regional creators.',
+			blocks: [
+				{
+					lines: [
+						{ label: 'Venue', value: "Del Mar Plaza's Canyon View Garden Patio" },
+						{ label: 'Time', value: '1:00 pm to 6:30 pm' },
+					],
+				},
+			],
+		},
+		'student-art-walk': {
+			title: 'Student Art Walk',
+			day: 'Sunday, October 11',
+			blurb: 'Celebrating the next generation of artists keeping the art of surfing alive.',
+			blocks: [
+				{
+					lines: [
+						{ label: 'Venue', value: "L'Auberge/Jim Watkins Outdoor Amphitheater" },
+						{ label: 'Time', value: '11:00 am to 3:00 pm' },
+					],
+				},
+			],
+		},
+		sustainability: {
+			title: 'Surfing and Sustainability',
+			day: 'Thursday, October 8',
+			blurb: 'Protecting the places we surf for generations to come—hands-on activities, education, and community solutions.',
+			blocks: [
+				{
+					heading: 'Climate Change/Conservation Symposium',
+					lines: [
+						{ label: 'Venue', value: "St. Peter's Parish Hall" },
+						{ label: 'Time', value: '11:00 am to 4:00 pm' },
+					],
+				},
+			],
+		},
+		'woman-and-water': {
+			title: 'Woman and Water',
+			day: 'Sunday, October 11',
+			blurb: 'Celebrating women in and inspired by the water—artists, authors, scientists, surfers, and filmmakers. Presented in collaboration with the California Surf Museum.',
+			blocks: [
+				{
+					heading: 'Celebrating Women, Water and Waves',
+					lines: [
+						{ label: 'Venue', value: "St Peter's Parish Hall and Patio" },
+						{ label: 'Time', value: '1:00 pm to 8:00 pm' },
+					],
+				},
+			],
+		},
+	};
+
+	const modal = document.getElementById('event-schedule-modal');
+	const overlay = document.getElementById('event-schedule-overlay');
+	const closeBtn = document.getElementById('event-schedule-close');
+	const dayEl = document.getElementById('event-schedule-day');
+	const titleEl = document.getElementById('event-schedule-title');
+	const blurbEl = document.getElementById('event-schedule-blurb');
+	const itemsEl = document.getElementById('event-schedule-items');
+	const cards = document.querySelectorAll<HTMLElement>('.event-card-vintage[data-event-id]');
+
+	function esc(text: string): string {
+		const d = document.createElement('div');
+		d.textContent = text;
+		return d.innerHTML;
+	}
+
+	function openEventSchedule(eventId: string) {
+		const data = EVENT_SCHEDULES[eventId];
+		if (!data || !modal || !dayEl || !titleEl || !blurbEl || !itemsEl) return;
+
+		dayEl.textContent = data.day;
+		titleEl.textContent = data.title;
+		blurbEl.textContent = data.blurb;
+		itemsEl.innerHTML = data.blocks
+			.map((block) => {
+				const heading = block.heading
+					? `<h3 class="event-schedule-block-title">${esc(block.heading)}</h3>`
+					: '';
+				const lines = block.lines
+					.map(
+						(line) =>
+							`<p class="event-schedule-line"><span class="event-schedule-label">${esc(line.label)}</span> ${esc(line.value)}</p>`
+					)
+					.join('');
+				return `<div class="event-schedule-block">${heading}${lines}</div>`;
+			})
+			.join('');
+
+		modal.hidden = false;
+		document.body.style.overflow = 'hidden';
+		closeBtn?.focus();
+	}
+
+	function closeEventSchedule() {
+		if (!modal) return;
+		modal.hidden = true;
+		document.body.style.overflow = '';
+	}
+
+	cards.forEach((card) => {
+		const eventId = card.dataset.eventId;
+		if (!eventId) return;
+		card.addEventListener('click', (e) => {
+			if (
+				document.body.classList.contains('admin-text-editable') &&
+				(e.target as HTMLElement).closest('[data-editable]')
+			) {
+				return;
+			}
+			openEventSchedule(eventId);
+		});
+		card.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				openEventSchedule(eventId);
+			}
+		});
+	});
+
+	overlay?.addEventListener('click', closeEventSchedule);
+	closeBtn?.addEventListener('click', closeEventSchedule);
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && modal && !modal.hidden) closeEventSchedule();
+	});
+</script>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
@@ -412,6 +660,30 @@ import Lighthouse from '../components/Lighthouse.astro';
 		padding: 1.5rem 1.25rem 1.75rem;
 		border-left-width: 6px;
 		overflow: visible;
+		cursor: pointer;
+	}
+
+	.event-card-hint {
+		display: inline-block;
+		margin-top: auto;
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-accent);
+		opacity: 0.85;
+		transition: opacity 0.2s ease;
+	}
+
+	.event-card-vintage:hover .event-card-hint,
+	.event-card-vintage:focus-visible .event-card-hint {
+		opacity: 1;
+	}
+
+	.event-card-vintage:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
 	}
 
 	.event-card-vintage .event-card-photo {
@@ -544,5 +816,144 @@ import Lighthouse from '../components/Lighthouse.astro';
 		color: var(--color-ink);
 		line-height: 1.75;
 		margin: 0;
+	}
+
+	.event-schedule-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+	}
+
+	.event-schedule-modal[hidden] {
+		display: none;
+	}
+
+	.event-schedule-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(26, 46, 46, 0.55);
+	}
+
+	.event-schedule-box {
+		position: relative;
+		background: linear-gradient(180deg, var(--color-foam) 0%, var(--color-cream) 100%);
+		border-radius: 14px;
+		padding: 1.75rem 1.75rem 1.5rem;
+		box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+		border: 1px solid rgba(255, 255, 255, 0.6);
+		width: 100%;
+		max-width: 480px;
+		max-height: min(88vh, 720px);
+		overflow-y: auto;
+	}
+
+	.event-schedule-close {
+		position: absolute;
+		top: 0.65rem;
+		right: 0.75rem;
+		width: 2.25rem;
+		height: 2.25rem;
+		border: none;
+		background: transparent;
+		color: var(--color-ink);
+		font-size: 1.75rem;
+		line-height: 1;
+		cursor: pointer;
+		border-radius: 6px;
+		opacity: 0.7;
+	}
+
+	.event-schedule-close:hover,
+	.event-schedule-close:focus-visible {
+		opacity: 1;
+		background: rgba(0, 0, 0, 0.06);
+	}
+
+	.event-schedule-day {
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-accent);
+		margin: 0 0 0.4rem;
+	}
+
+	.event-schedule-title {
+		font-family: var(--font-display);
+		font-size: clamp(1.35rem, 3vw, 1.7rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 2rem 0.75rem 0;
+		line-height: 1.25;
+	}
+
+	.event-schedule-blurb {
+		font-family: var(--font-body);
+		font-size: 0.98rem;
+		color: var(--color-ink);
+		line-height: 1.6;
+		margin: 0 0 1.25rem;
+		opacity: 0.9;
+	}
+
+	.event-schedule-items {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-bottom: 1.35rem;
+	}
+
+	.event-schedule-block {
+		padding: 0.9rem 1rem;
+		background: rgba(184, 220, 228, 0.45);
+		border-radius: 10px;
+		border-left: 4px solid var(--color-accent);
+	}
+
+	.event-schedule-block-title {
+		font-family: var(--font-display);
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 0.45rem;
+		line-height: 1.3;
+	}
+
+	.event-schedule-line {
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		color: var(--color-ink);
+		line-height: 1.5;
+		margin: 0.2rem 0 0;
+	}
+
+	.event-schedule-label {
+		font-weight: 700;
+		color: var(--color-sepia);
+	}
+
+	.event-schedule-full-link {
+		display: inline-block;
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.event-schedule-full-link:hover {
+		color: var(--color-ink);
+	}
+
+	@media (max-width: 768px) {
+		.event-schedule-box {
+			padding: 1.5rem 1.15rem 1.25rem;
+		}
 	}
 </style>
