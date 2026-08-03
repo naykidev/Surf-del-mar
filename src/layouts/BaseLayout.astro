@@ -812,14 +812,15 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.12);
 	}
 
-	/* Square Window — upper-left, clear of centered HOME label */
+	/* Square Window — vertical center aligned with HOME text */
 	.nav-tower::before {
 		content: '';
 		position: absolute;
-		top: 22%;
+		top: 50%;
 		left: 12%;
 		width: 14%;
 		height: 12%;
+		transform: translateY(-50%);
 		background: linear-gradient(165deg, #4a7c9e 0%, #2d5a7a 35%, #1a3d52 100%);
 		border: 1px solid rgba(0,0,0,0.2);
 		box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
@@ -827,14 +828,14 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		z-index: 1;
 	}
 
-	/* Double doorway — lower-right foundation, below the label */
+	/* Double doorway — bottom flush with house wall (foundation line at 88%) */
 	.nav-tower::after {
 		content: '';
 		position: absolute;
-		bottom: 10%;
+		bottom: 12%;
 		right: 12%;
 		width: 12%;
-		height: 20%;
+		height: 28%;
 		background:
 			linear-gradient(to right, var(--color-sepia) 0%, var(--color-sepia) 47%, var(--color-ink) 48%, var(--color-ink) 52%, var(--color-sepia) 53%, var(--color-sepia) 100%);
 		border-radius: 0;
