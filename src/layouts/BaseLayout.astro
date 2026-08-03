@@ -753,10 +753,9 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 	.nav-tower {
 		margin-bottom: 0;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		justify-content: flex-start;
-		padding: 0.4rem 0.85rem 0.5rem;
+		justify-content: center;
+		padding: 0.55rem 0.7rem 0.5rem;
 		min-width: 88px;
 		min-height: 48px;
 		transform: translateY(0);
@@ -764,30 +763,14 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		font-weight: 800;
 		text-transform: uppercase;
 		font-size: 0.7rem;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.06em;
 		text-decoration: none;
+		text-align: center;
 		position: relative;
 		z-index: 2;
 		text-shadow: 0 1px 1px rgba(255,255,255,0.5);
 		transition: transform 0.4s var(--ease-coastal), box-shadow 0.4s var(--ease-coastal);
 		animation: building-idle 6s var(--ease-coastal) infinite;
-	}
-
-	.nav-tower-text {
-		display: block;
-		position: relative;
-		z-index: 2;
-		align-self: flex-start;
-		width: 58%;
-		margin-top: auto;
-		margin-left: 6%;
-		padding-top: 0.15rem;
-		line-height: 1.1;
-		text-align: center;
-		transform: translateY(-9px);
-	}
-
-	.nav-tower {
 		clip-path: polygon(5% 0%, 38% 0%, 42% 8%, 88% 8%, 92% 12%, 92% 90%, 88% 100%, 12% 100%, 5% 90%, 5% 12%);
 		background:
 			linear-gradient(to bottom, transparent 88%, #9a8c7a 88%, #8a7c6a 100%),
@@ -797,6 +780,15 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		background-size: 100% 100%, 8px 20%, 100% 100%, 100% 100%;
 		background-position: 0 0, 0 0, 0 0, 0 0;
 		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.08);
+	}
+
+	.nav-tower-text {
+		position: relative;
+		z-index: 2;
+		display: block;
+		line-height: 1;
+		text-align: center;
+		pointer-events: none;
 	}
 
 	@keyframes building-idle {
@@ -820,33 +812,35 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.12);
 	}
 
-	/* Square Window — lower-left, vertically aligned with “HOME” */
+	/* Square Window — upper-left, clear of centered HOME label */
 	.nav-tower::before {
 		content: '';
 		position: absolute;
-		top: 44%;
-		left: 10%;
-		width: 17%;
-		height: 14%;
+		top: 22%;
+		left: 12%;
+		width: 14%;
+		height: 12%;
 		background: linear-gradient(165deg, #4a7c9e 0%, #2d5a7a 35%, #1a3d52 100%);
 		border: 1px solid rgba(0,0,0,0.2);
 		box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
 		pointer-events: none;
+		z-index: 1;
 	}
 
-	/* RECTANGULAR Double doorway - right wing */
+	/* Double doorway — lower-right foundation, below the label */
 	.nav-tower::after {
 		content: '';
 		position: absolute;
-		bottom: 12%; /* Sits on foundation line */
-		right: 18%; /* Inset from building edge - visible stucco gap */
-		width: 14%; /* Stucco gap on both sides */
-		height: 32%; /* Fits between roof and foundation */
+		bottom: 10%;
+		right: 12%;
+		width: 12%;
+		height: 20%;
 		background:
 			linear-gradient(to right, var(--color-sepia) 0%, var(--color-sepia) 47%, var(--color-ink) 48%, var(--color-ink) 52%, var(--color-sepia) 53%, var(--color-sepia) 100%);
-		border-radius: 0; /* Clean rectangle */
+		border-radius: 0;
 		border: 1px solid rgba(0,0,0,0.3);
 		pointer-events: none;
+		z-index: 1;
 	}
 
 	/* Schedule nav button - badge style matching Sponsors */
