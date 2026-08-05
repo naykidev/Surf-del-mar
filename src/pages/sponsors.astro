@@ -74,7 +74,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 						<img src="/board-and-brew.png" alt="Board & Brew" class="sponsor-logo" width="1200" height="927" />
 					</div>
 				</div>
-				<div class="sponsors-row sponsors-row-4">
+				<div class="sponsors-row sponsors-row-5">
 					<div class="sponsor-tile">
 						<img src="/instinct.png" alt="Instinct" class="sponsor-logo sponsor-logo-instinct" width="1024" height="379" />
 					</div>
@@ -86,6 +86,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 					</div>
 					<div class="sponsor-tile">
 						<img src="/en-fuego.png" alt="En Fuego Cantina" class="sponsor-logo" width="1024" height="1024" />
+					</div>
+					<div class="sponsor-tile">
+						<a href="https://ranchandcoast.com/" target="_blank" rel="noopener noreferrer" class="sponsor-link" aria-label="Ranch & Coast Magazine">
+							<img src="/ranch-and-coast.png" alt="Ranch & Coast Magazine" class="sponsor-logo sponsor-logo-ranch" width="479" height="147" />
+						</a>
 					</div>
 				</div>
 			</div>
@@ -206,6 +211,25 @@ import Lighthouse from '../components/Lighthouse.astro';
 		max-height: 80px;
 		max-width: 100%;
 		width: auto;
+		border-radius: 8px;
+	}
+
+	.sponsor-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		text-decoration: none;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	.sponsor-link:hover {
+		transform: translateY(-2px);
+		opacity: 0.9;
+	}
+
+	.sponsor-logo-ranch {
 		border-radius: 8px;
 	}
 
