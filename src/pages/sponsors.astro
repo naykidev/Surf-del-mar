@@ -32,6 +32,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 				We are deeply grateful for their commitment to the history, the sport and culture, and the spirit of surfing and the ocean.
 			</p>
 			<div class="sponsors-logos">
+				<div class="sponsors-row sponsors-row-featured">
+					<div class="sponsor-tile sponsor-tile-featured">
+						<img src="/del-mar-foundation.png" alt="Del Mar Foundation" class="sponsor-logo sponsor-logo-featured" width="1024" height="268" />
+					</div>
+				</div>
 				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo" width="320" height="128" />
@@ -184,6 +189,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 		max-width: 1100px;
 	}
 
+	.sponsors-row-featured {
+		grid-template-columns: 1fr;
+		max-width: 640px;
+		justify-items: center;
+	}
+
 	.sponsor-tile {
 		width: 100%;
 		max-width: 200px;
@@ -191,6 +202,18 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.sponsor-tile-featured {
+		max-width: 520px;
+		height: auto;
+		min-height: 140px;
+	}
+
+	.sponsor-logo-featured {
+		max-width: 100%;
+		max-height: 160px;
+		width: auto;
 	}
 
 	.sponsor-logo {
@@ -262,9 +285,21 @@ import Lighthouse from '../components/Lighthouse.astro';
 			max-width: 640px;
 			gap: 1.25rem 1.5rem;
 		}
+		.sponsors-row-featured {
+			grid-template-columns: 1fr;
+			max-width: 480px;
+		}
 		.sponsor-tile {
 			max-width: 160px;
 			height: 100px;
+		}
+		.sponsor-tile-featured {
+			max-width: 420px;
+			height: auto;
+			min-height: 110px;
+		}
+		.sponsor-logo-featured {
+			max-height: 130px;
 		}
 	}
 
@@ -288,9 +323,21 @@ import Lighthouse from '../components/Lighthouse.astro';
 			max-width: 420px;
 			gap: 1rem 1.25rem;
 		}
+		.sponsors-row-featured {
+			grid-template-columns: 1fr;
+			max-width: 340px;
+		}
 		.sponsor-tile {
 			max-width: 150px;
 			height: 90px;
+		}
+		.sponsor-tile-featured {
+			max-width: 320px;
+			height: auto;
+			min-height: 90px;
+		}
+		.sponsor-logo-featured {
+			max-height: 110px;
 		}
 		.btn {
 			min-height: 48px;
