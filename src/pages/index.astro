@@ -134,6 +134,15 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		</div>
 	</section>
 
+	<!-- Free admission note -->
+	<section class="free-note-section" aria-label="Admission">
+		<p class="home-free" data-editable="home.free">
+			ALL EVENTS WILL BE FREE AND OPEN TO THE PUBLIC, WELCOMING RESIDENTS, VISITORS, SURFERS, FAMILIES AND ANYONE WHO SHARES A LOVE OF THE OCEAN
+			<br /><br />
+			(The Party at En Fuego Restaurant is open to everyone, but for food and drinks, you're on your own!)
+		</p>
+	</section>
+
 	<!-- Final CTA -->
 	<section class="cta-section">
 		<a href="/schedule/" class="btn-schedule">VIEW FULL EVENT SCHEDULE</a>
@@ -602,6 +611,24 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		text-align: center;
 	}
 
+	.free-note-section {
+		background: var(--color-foam);
+		padding: 2.5rem 2rem 0;
+		text-align: center;
+	}
+
+	.home-free {
+		max-width: 720px;
+		margin: 0 auto;
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		line-height: 1.5;
+	}
+
 	.btn-schedule {
 		display: inline-block;
 		padding: 1rem 2.25rem;
@@ -695,8 +722,12 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 			padding: 2rem 1rem;
 		}
 		.support-section,
+		.free-note-section,
 		.cta-section {
 			padding: 2rem 1rem;
+		}
+		.free-note-section {
+			padding-bottom: 0;
 		}
 		.calendar-callout-dates {
 			font-size: 1rem;
