@@ -98,6 +98,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 						</a>
 					</div>
 				</div>
+				<div class="sponsors-row sponsors-row-2">
+					<div class="sponsor-tile">
+						<img src="/lauberge-del-mar.png" alt="L'Auberge Del Mar" class="sponsor-logo" width="1024" height="582" />
+					</div>
+					<div class="sponsor-tile">
+						<img src="/jakes-del-mar.png" alt="Jake's Del Mar" class="sponsor-logo" width="600" height="547" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -187,6 +195,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.sponsors-row-5 {
 		grid-template-columns: repeat(5, minmax(0, 1fr));
 		max-width: 1100px;
+	}
+
+	.sponsors-row-2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 460px;
 	}
 
 	.sponsors-row-featured {
@@ -284,6 +297,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			max-width: 640px;
 			gap: 1.25rem 1.5rem;
+		}
+		.sponsors-row-2 {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			max-width: 360px;
 		}
 		.sponsors-row-featured {
 			grid-template-columns: 1fr;
