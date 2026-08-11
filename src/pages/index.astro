@@ -74,6 +74,21 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 					<p class="highlight-text" data-editable="home.highlight.endlesssummer.body">Bring your friends, family and a picnic for a screening of Bruce Brown's classic film, The Endless Summer, Saturday night, October 10th, on the lawn at Powerhouse Park, Del Mar. The show starts between 6:30 and 7:00 pm…as soon as it's dark! Free Admission!</p>
 				</div>
 			</article>
+
+			<!-- Jeff Divine book signing -->
+			<article class="highlight-card highlight-card-triple">
+				<div class="highlight-media">
+					<img src="/jeff-divine-highlight.png" alt="Jeff Divine" class="highlight-img highlight-img-poster" width="819" height="1024" loading="lazy" />
+				</div>
+				<div class="highlight-body">
+					<p class="highlight-kicker" data-editable="home.highlight.jeffdivine.kicker">Sunday · October 11th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.jeffdivine.title">Jeff Divine Book Signing</h3>
+					<p class="highlight-text" data-editable="home.highlight.jeffdivine.body">Meet legendary surf Photographer Jeff Divine and get a copy of his newest book "Divine Surf!" Sunday, October 11th at L'Auberge Hotel, 11:00 am.</p>
+				</div>
+				<div class="highlight-media highlight-media-book">
+					<img src="/divine-surf-book.png" alt="Divine Surf by Jeff Divine book cover" class="highlight-img highlight-img-poster highlight-img-book" width="819" height="1024" loading="lazy" />
+				</div>
+			</article>
 		</div>
 	</section>
 
@@ -410,6 +425,17 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		order: 2;
 	}
 
+	.highlight-card-triple {
+		grid-template-columns: 0.85fr 1.15fr 0.85fr;
+		gap: 1.75rem;
+	}
+
+	.highlight-img-book {
+		object-fit: contain;
+		background: transparent;
+		box-shadow: none;
+	}
+
 	.highlight-media {
 		display: flex;
 		justify-content: center;
@@ -460,7 +486,8 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 			padding: 3rem 1rem;
 		}
 		.highlight-card,
-		.highlight-card-reverse {
+		.highlight-card-reverse,
+		.highlight-card-triple {
 			grid-template-columns: 1fr;
 			gap: 1.25rem;
 			padding: 1.25rem;
