@@ -4,6 +4,9 @@
  */
 export const HISTORICAL_SOCIETY_URL = 'https://delmarhistoricalsociety.org/';
 
+export const AARON_NAYKI_LINKEDIN_URL = 'https://www.linkedin.com/in/aaron-nayki';
+export const KESHAV_BHASKAR_LINKEDIN_URL = 'https://www.linkedin.com/in/keshav-bhaskar-60a764416';
+
 const ZEFFY_FALLBACK = 'https://www.zeffy.com/en-US/ticketing/del-mar-surf-reunion';
 
 export function getZeffyDonationUrl(): string {
