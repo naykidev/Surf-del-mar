@@ -20,7 +20,7 @@ title: Festival Schedule
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
   Time: 1:00 pm to 6:30 pm  
-  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emerick, Any Wright Jim McConlogue and others.
+  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emerick, Andy Wright, Jim McConlogue and others.
 
 ## Friday, October 9
 
