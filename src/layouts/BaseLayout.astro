@@ -2,7 +2,7 @@
 import AdminLoginButton from '../components/AdminLoginButton.astro';
 import AdminBar from '../components/AdminBar.astro';
 import AccessFlowInit from '../components/AccessFlowInit.astro';
-import { HISTORICAL_SOCIETY_URL, getZeffyDonationUrl, AARON_NAYKI_LINKEDIN_URL, KESHAV_BHASKAR_LINKEDIN_URL } from '../config/siteLinks';
+import { HISTORICAL_SOCIETY_URL, getZeffyDonationUrl, AARON_NAYKI_URL, KESHAV_BHASKAR_LINKEDIN_URL } from '../config/siteLinks';
 
 interface Props {
 	title: string;
@@ -224,7 +224,7 @@ const ZEFFY_DONATION_URL = getZeffyDonationUrl();
 					</p>
 					<p class="footer-credits">
 						Developed by
-						<a href={AARON_NAYKI_LINKEDIN_URL} class="footer-credit-link" target="_blank" rel="noopener noreferrer">Aaron Nayki</a>,
+						<a href={AARON_NAYKI_URL} class="footer-credit-link" target="_blank" rel="noopener noreferrer">Aaron Nayki</a>,
 						Jervis Fernandes,
 						<a href={KESHAV_BHASKAR_LINKEDIN_URL} class="footer-credit-link" target="_blank" rel="noopener noreferrer">Keshav Bhaskar</a>,
 						&amp; Cole Chapman
