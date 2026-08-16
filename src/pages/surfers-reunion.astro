@@ -53,6 +53,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 						<div class="tape-element"></div>
 					</div>
 				</div>
+				<figure class="reunion-img-wrap reunion-img-captioned">
+					<img src="/victoria-duprat-surfing.png" alt="17 year-old Junior USA Team Surfer Victoria Du Prat" class="reunion-section-img" width="1024" height="669" />
+					<div class="tape-element"></div>
+					<figcaption class="reunion-photo-caption">17 year-old Junior USA Team Surfer Victoria Du Prat.</figcaption>
+				</figure>
 			</div>
 
 			<h2 class="reunion-subhead" data-editable="reunion.subhead1">REMEMBERING THE WAVES</h2>
@@ -619,6 +624,22 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: block;
 		width: 100%;
 		height: auto;
+	}
+
+	.reunion-img-captioned {
+		margin-top: 0.5rem;
+		margin-bottom: 2.5rem;
+		padding-bottom: 18px;
+	}
+
+	.reunion-photo-caption {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-style: italic;
+		color: var(--color-ink);
+		line-height: 1.45;
+		margin: 0.75rem 0 0;
+		text-align: left;
 	}
 
 	@media (min-width: 768px) {
