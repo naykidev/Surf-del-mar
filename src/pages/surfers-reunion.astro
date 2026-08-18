@@ -79,6 +79,71 @@ import Lighthouse from '../components/Lighthouse.astro';
 			</div>
 		</div>
 
+		<div class="hotcurl-shell">
+			<h2 class="reunion-subhead hotcurl-kicker">Hot Curl</h2>
+			<div class="hotcurl-cartoons">
+				<figure class="reunion-img-wrap">
+					<img
+						src="/hot-curl-1.png"
+						alt="Hot Curl cartoon by Mike Dormer, standing on the beach with a beer and a surfboard covered in surf-spot names"
+						class="reunion-section-img hotcurl-cartoon-img"
+						width="544"
+						height="1024"
+						loading="lazy"
+						decoding="async"
+					/>
+					<div class="tape-element" aria-hidden="true"></div>
+				</figure>
+				<figure class="reunion-img-wrap">
+					<img
+						src="/hot-curl-2.png"
+						alt="Hot Curl cartoon by Mike Dormer, looking out at a breaking wave with a beer in hand"
+						class="reunion-section-img hotcurl-cartoon-img"
+						width="826"
+						height="1024"
+						loading="lazy"
+						decoding="async"
+					/>
+					<div class="tape-element" aria-hidden="true"></div>
+				</figure>
+			</div>
+
+			<article class="hotcurl-story" aria-labelledby="hotcurl-heading">
+				<figure class="hotcurl-figure">
+					<div class="hotcurl-img-wrap">
+						<img
+							src="/mike-dormer-hot-curl.png"
+							alt="Mike Dormer standing beside a Hot Curl statue"
+							class="hotcurl-photo"
+							width="788"
+							height="1024"
+							loading="lazy"
+							decoding="async"
+						/>
+						<div class="tape-element" aria-hidden="true"></div>
+					</div>
+					<figcaption class="hotcurl-caption">Mike Dormer with his creation, Hot Curl.</figcaption>
+				</figure>
+				<div class="hotcurl-copy">
+					<div class="hotcurl-heading-block">
+						<h2 id="hotcurl-heading" class="hotcurl-title">Mike Dormer</h2>
+						<p class="hotcurl-subtitle">Artist, Writer, Cartoonist, Sculptor</p>
+					</div>
+					<div class="hotcurl-body">
+						<p>
+							Mike Dormer lived in Del Mar in the 1950s and 1960s before relocating to La Jolla. He won his first art award at the age of 12, and was creating art full-time by the age of 18.
+						</p>
+						<p>
+							In the 1960s, Dormer, with his life-long friend and collaborator Lee Teacher, created a counter-culture sculpture <em>Hot Curl</em>, a 400-pound concrete statue, and installed it on the rocks near the surf shack at <em>Windansea Beach</em> in <em>La Jolla</em>. The sculpture of a mop-haired, 6-foot-tall, knobby-kneed surfer gazed out at the sea with a beer in his hand. The pot-bellied surf god quickly became a nationwide sensation, appearing in <em>SurfToons</em> comics and as a plastic model kit, selling hundreds of thousands of copies. <em>Hot Curl</em> appeared regularly in <em>Surfer</em> magazine.
+						</p>
+						<p>
+							In 1964 Dormer's art was featured in the opening credits of <em>Muscle Beach Party</em>, which featured the first film appearance of <em>Hot Curl</em>. He also doubled as a talent scout for that film and subsequent surf films, recruiting actual surfers and surfer girls off the beaches of La Jolla to serve as extras.
+						</p>
+					</div>
+				</div>
+			</article>
+		</div>
+
 		<div class="doyle-shell">
 			<article class="doyle-remember" aria-labelledby="doyle-remember-heading">
 				<div class="doyle-media">
@@ -657,12 +722,134 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.reunion-list li { margin-bottom: 0.35rem; }
 	.reunion-body    { font-family: var(--font-body); font-size: 1.0625rem; color: var(--color-ink); line-height: 1.75; margin: 0; }
 
+	.hotcurl-shell,
 	.doyle-shell {
 		width: 100%;
 		max-width: 1200px;
 		margin: 3rem auto 2.5rem;
 		padding: 0 1.25rem;
 		box-sizing: border-box;
+	}
+	.hotcurl-shell {
+		margin-bottom: 1.5rem;
+	}
+	.hotcurl-kicker {
+		margin-top: 0;
+		text-align: center;
+	}
+	.hotcurl-cartoons {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: flex-end;
+		gap: 1.75rem 2rem;
+		margin: 0 0 2.75rem;
+	}
+	.hotcurl-cartoons .reunion-img-wrap {
+		width: auto;
+		max-width: min(100%, 400px);
+		margin: 0;
+		flex: 1 1 240px;
+	}
+	.hotcurl-cartoon-img {
+		width: 100%;
+		height: auto;
+		max-height: 540px;
+		object-fit: contain;
+	}
+	.hotcurl-story {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		align-items: start;
+		width: 100%;
+	}
+	.hotcurl-figure {
+		margin: 0;
+		width: 100%;
+		max-width: 420px;
+		justify-self: center;
+	}
+	.hotcurl-img-wrap {
+		position: relative;
+		width: 100%;
+		margin: 0 0 0.75rem;
+		padding: 14px 14px 44px;
+		background: #fff;
+		box-shadow: 0 12px 32px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
+		transform: rotate(1.25deg);
+		transition: transform 0.35s ease, box-shadow 0.35s ease;
+	}
+	.hotcurl-img-wrap:hover {
+		transform: rotate(0deg) scale(1.01);
+		box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+	}
+	.hotcurl-img-wrap .tape-element {
+		position: absolute;
+		top: -14px;
+		left: 50%;
+		transform: translateX(-50%) rotate(-2deg);
+		width: 100px;
+		height: 30px;
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(2px);
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		z-index: 2;
+	}
+	.hotcurl-photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-width: 100%;
+		object-fit: contain;
+		object-position: center;
+	}
+	.hotcurl-caption {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-style: italic;
+		color: var(--color-ink);
+		line-height: 1.45;
+		margin: 0;
+		text-align: left;
+	}
+	.hotcurl-copy {
+		min-width: 0;
+		width: 100%;
+	}
+	.hotcurl-heading-block {
+		text-align: left;
+		margin: 0 0 1.25rem;
+	}
+	.hotcurl-title {
+		font-family: var(--font-display);
+		font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		line-height: 1.15;
+		margin: 0 0 0.5rem;
+	}
+	.hotcurl-subtitle {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		opacity: 0.75;
+		margin: 0;
+	}
+	.hotcurl-body {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.hotcurl-body p {
+		font-family: var(--font-body);
+		font-size: 1.05rem;
+		color: var(--color-ink);
+		line-height: 1.7;
+		margin: 0;
 	}
 	.doyle-remember {
 		display: grid;
@@ -786,8 +973,20 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	/* Desktop: photo + lede left, headline + rest right */
 	@media (min-width: 900px) {
+		.hotcurl-shell,
 		.doyle-shell {
 			padding: 0 1.5rem;
+		}
+		.hotcurl-story {
+			grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+			gap: 2.5rem 2.75rem;
+		}
+		.hotcurl-figure {
+			max-width: none;
+			justify-self: stretch;
+			position: sticky;
+			top: 5.5rem;
+			align-self: start;
 		}
 		.doyle-remember {
 			grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -1098,6 +1297,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.reunion-content { padding: 2.5rem 1rem 2rem; }
 		.share-memories-cancel, .share-memories-submit { min-height: 48px; padding: 0.85rem 1.25rem; }
 		.reunion-share-btn { min-height: 44px; padding: 0.6rem 1.5rem; }
+		.hotcurl-shell,
 		.doyle-shell { padding: 0 1rem; }
 	}
 
