@@ -14,13 +14,13 @@ title: Festival Schedule
 - **Surfing and Sustainability Climate Symposium**  
   Venue: St. Peter's Parish Hall  
   Time: 11:00 am to 4:00 pm  
-  Hear leaders in the field of sustainability like Kevin Whildon of Sea Trees, Serge Dedina of WildCoast, speakers from Algenesis and others. Moderated by Del Mar TV personality Jeff Lehmann.  
+  Hear leaders in the field of sustainability like Kevin Whildon of Sea Trees, Yehuda Ben-Hamo, Adam Young, speakers from Algenesis and others. Moderated by Del Mar TV personality Jeff Lehmann.  
   Stay tuned for schedule of speakers.
 
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
   Time: 1:00 pm to 6:30 pm  
-  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emerick, Andy Wright, Jim McConlogue and others.
+  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emerick, Andy Wright, Jim McConlogue, Norm Daniels and others.
 
 ## Friday, October 9
 
@@ -46,7 +46,7 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  Featuring top surfing writers and photographers like Shaun Tomson, Chris Ahrens, Todd Glaser, Kim Dwinell and others.  
+  Featuring top surfing writers and photographers like Shaun Tomson, Chris Ahrens, Todd Glaser, Kim Dwinell, T. Jefferson Parker and others.  
   In collaboration with Camino Books of Del Mar — stay tuned for the exact schedule.
 
 - **Woody Wagon Parade Through Del Mar and Display**  
@@ -68,7 +68,7 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  Featuring legendary surf photographer Jeff Divine and photo editor Grant Ellis, launching the new book "Divine Surf."  
+  Featuring legendary surf photographer Jeff Divine and photo editor Grant Ellis, launching the new book "Divine Surf," and author Patrick Moser.  
   In collaboration with Camino Books of Del Mar — stay tuned for the exact schedule.
 
 - **Student Art Walk**  

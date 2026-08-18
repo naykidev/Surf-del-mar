@@ -51,15 +51,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 						<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo" width="3665" height="638" />
 					</div>
 				</div>
-				<div class="sponsors-row sponsors-row-4">
+				<div class="sponsors-row sponsors-row-3">
 					<div class="sponsor-tile">
 						<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo" width="676" height="672" />
 					</div>
 					<div class="sponsor-tile">
 						<img src="/jimmyos.png" alt="Jimmy O's" class="sponsor-logo" width="1375" height="1375" />
-					</div>
-					<div class="sponsor-tile">
-						<img src="/Sbicca.png" alt="Sbicca" class="sponsor-logo" width="306" height="100" />
 					</div>
 					<div class="sponsor-tile">
 						<img src="/fbn.png" alt="FBN" class="sponsor-logo" width="800" height="600" />
@@ -89,8 +86,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/peter-sprague.png" alt="Peter Sprague" class="sponsor-logo" width="201" height="44" />
 					</div>
-					<div class="sponsor-tile">
-						<img src="/en-fuego.png" alt="En Fuego Cantina" class="sponsor-logo" width="1024" height="1024" />
+					<div class="sponsor-tile sponsor-tile-enfuego">
+						<img src="/en-fuego.png" alt="En Fuego Cantina" class="sponsor-logo sponsor-logo-enfuego" width="486" height="487" />
 					</div>
 					<div class="sponsor-tile">
 						<a href="https://ranchandcoast.com/" target="_blank" rel="noopener noreferrer" class="sponsor-link" aria-label="Ranch & Coast Magazine">
@@ -208,6 +205,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 		max-width: 460px;
 	}
 
+	.sponsors-row-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		max-width: 700px;
+	}
+
 	.sponsors-row-featured {
 		grid-template-columns: 1fr;
 		max-width: 640px;
@@ -254,6 +256,16 @@ import Lighthouse from '../components/Lighthouse.astro';
 		max-width: 100%;
 		width: auto;
 		border-radius: 8px;
+	}
+
+	.sponsor-tile-enfuego {
+		max-width: 240px;
+		height: 170px;
+	}
+
+	.sponsor-logo-enfuego {
+		max-height: 170px;
+		max-width: 170px;
 	}
 
 	.sponsor-link {
@@ -304,6 +316,10 @@ import Lighthouse from '../components/Lighthouse.astro';
 			max-width: 640px;
 			gap: 1.25rem 1.5rem;
 		}
+		.sponsors-row-3 {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			max-width: 520px;
+		}
 		.sponsors-row-2 {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			max-width: 360px;
@@ -315,6 +331,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.sponsor-tile {
 			max-width: 160px;
 			height: 100px;
+		}
+		.sponsor-tile-enfuego {
+			max-width: 200px;
+			height: 140px;
+		}
+		.sponsor-logo-enfuego {
+			max-height: 140px;
+			max-width: 140px;
 		}
 		.sponsor-tile-featured {
 			max-width: 420px;
@@ -341,6 +365,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			gap: 1.5rem;
 		}
 		.sponsors-row,
+		.sponsors-row-3,
 		.sponsors-row-5 {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			max-width: 420px;
@@ -353,6 +378,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.sponsor-tile {
 			max-width: 150px;
 			height: 90px;
+		}
+		.sponsor-tile-enfuego {
+			max-width: 180px;
+			height: 130px;
+		}
+		.sponsor-logo-enfuego {
+			max-height: 130px;
+			max-width: 130px;
 		}
 		.sponsor-tile-featured {
 			max-width: 320px;
