@@ -280,8 +280,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 				</article>
 
 				<article class="bio-card event-card">
-					<div class="bio-photo-wrap">
-						<img src="/victoria-valerie-duprat.png" alt="Victoria and Valerie Duprat" width="1024" height="682" />
+					<div class="bio-photo-wrap bio-photo-wrap--pair">
+						<img src="/victoria-valerie-duprat.png" alt="Victoria and Valerie Duprat" width="682" height="682" />
 					</div>
 					<div class="bio-body">
 						<h2 class="bio-name">Victoria and Valerie Duprat</h2>
@@ -498,6 +498,17 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: block;
 	}
 
+	/* Side-by-side subjects: keep a square frame so both faces stay visible */
+	.bio-photo-wrap--pair {
+		align-self: flex-start;
+		aspect-ratio: 1 / 1;
+		height: auto;
+	}
+
+	.bio-photo-wrap--pair img {
+		object-position: center 35%;
+	}
+
 
 	.bio-body {
 		padding: 1.25rem 1.25rem 1.5rem;
@@ -578,6 +589,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 			height: 100%;
 			object-fit: cover;
 			object-position: center 20%;
+		}
+		.bio-photo-wrap--pair {
+			height: auto;
+			aspect-ratio: 1 / 1;
+		}
+		.bio-photo-wrap--pair img {
+			object-position: center 35%;
 		}
 		.hero-tagline {
 			font-size: 1rem;
