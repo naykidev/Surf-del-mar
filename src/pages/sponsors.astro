@@ -37,7 +37,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 						<img src="/del-mar-foundation.png" alt="Del Mar Foundation" class="sponsor-logo sponsor-logo-featured" width="1024" height="268" />
 					</div>
 				</div>
-				<div class="sponsors-row sponsors-row-4">
+				<div class="sponsors-row sponsors-row-7">
 					<div class="sponsor-tile">
 						<img src="/oldguysrule.png" alt="Old Guys Rule" class="sponsor-logo" width="320" height="128" />
 					</div>
@@ -50,8 +50,6 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/willisallen.png" alt="Willis Allen Real Estate" class="sponsor-logo" width="3665" height="638" />
 					</div>
-				</div>
-				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/plaza.png" alt="Del Mar Plaza" class="sponsor-logo" width="676" height="672" />
 					</div>
@@ -61,11 +59,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/fbn.png" alt="FBN" class="sponsor-logo" width="800" height="600" />
 					</div>
+				</div>
+				<div class="sponsors-row sponsors-row-6">
 					<div class="sponsor-tile sponsor-tile-wildcoast">
 						<img src="/wildcoast.png" alt="WILDCOAST COSTASALVAJE" class="sponsor-logo sponsor-logo-wildcoast" width="1024" height="256" />
 					</div>
-				</div>
-				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/DMTC.png" alt="Del Mar Thoroughbred Club" class="sponsor-logo" width="2097" height="1710" />
 					</div>
@@ -78,11 +76,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/board-and-brew.png" alt="Board & Brew" class="sponsor-logo" width="1200" height="927" />
 					</div>
-				</div>
-				<div class="sponsors-row sponsors-row-5">
 					<div class="sponsor-tile">
 						<img src="/instinct.png" alt="Instinct" class="sponsor-logo sponsor-logo-instinct" width="1024" height="379" />
 					</div>
+				</div>
+				<div class="sponsors-row sponsors-row-5">
 					<div class="sponsor-tile">
 						<img src="/seatrees.png" alt="Seatrees" class="sponsor-logo" width="681" height="188" />
 					</div>
@@ -97,11 +95,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 							<img src="/ranch-and-coast.png" alt="Ranch & Coast Magazine" class="sponsor-logo sponsor-logo-ranch" width="479" height="147" />
 						</a>
 					</div>
-				</div>
-				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/lauberge-del-mar.png" alt="L'Auberge Del Mar" class="sponsor-logo" width="1024" height="582" />
 					</div>
+				</div>
+				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/jakes-del-mar.png" alt="Jake's Del Mar" class="sponsor-logo" width="600" height="547" />
 					</div>
@@ -111,11 +109,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/powerhouse-properties.png" alt="Powerhouse Properties" class="sponsor-logo" width="1024" height="1024" />
 					</div>
-				</div>
-				<div class="sponsors-row sponsors-row-4">
 					<div class="sponsor-tile">
 						<img src="/tower-7.png" alt="Tower 7" class="sponsor-logo" width="871" height="1007" />
 					</div>
+				</div>
+				<div class="sponsors-row sponsors-row-3">
 					<div class="sponsor-tile">
 						<img src="/hansen-surfboards.png" alt="Hansen Surfboards" class="sponsor-logo" width="962" height="460" />
 					</div>
@@ -126,7 +124,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 						<img src="/coverco-inc.png" alt="CoverCo Inc" class="sponsor-logo" width="648" height="510" />
 					</div>
 				</div>
-				<div class="sponsors-row sponsors-row-3">
+				<div class="sponsors-row sponsors-row-2">
 					<div class="sponsor-tile">
 						<a href="https://delmarhistoricalsociety.org/" target="_blank" rel="noopener noreferrer" class="sponsor-link" aria-label="Del Mar Historical Society">
 							<img src="/del-mar-historical-society.png" alt="Del Mar Historical Society" class="sponsor-logo" width="1024" height="750" />
@@ -135,6 +133,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 					<div class="sponsor-tile">
 						<img src="/pegasus.png" alt="Pegasus" class="sponsor-logo" width="1000" height="236" />
 					</div>
+				</div>
+				<div class="sponsors-row sponsors-row-1">
 					<div class="sponsor-tile">
 						<img src="/camino-books.png" alt="Camino Books" class="sponsor-logo sponsor-logo-camino" width="1024" height="349" />
 					</div>
@@ -217,27 +217,47 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	.sponsors-row {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 1.75rem 2rem;
 		align-items: center;
 		justify-items: center;
+		justify-content: center;
 		width: 100%;
-		max-width: 920px;
+		margin-inline: auto;
+	}
+
+	.sponsors-row-7 {
+		grid-template-columns: repeat(7, minmax(0, 1fr));
+		max-width: 1240px;
+	}
+
+	.sponsors-row-6 {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		max-width: 1080px;
 	}
 
 	.sponsors-row-5 {
 		grid-template-columns: repeat(5, minmax(0, 1fr));
-		max-width: 1100px;
+		max-width: 960px;
 	}
 
-	.sponsors-row-2 {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		max-width: 460px;
+	.sponsors-row-4 {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		max-width: 820px;
 	}
 
 	.sponsors-row-3 {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		max-width: 700px;
+		max-width: 640px;
+	}
+
+	.sponsors-row-2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 440px;
+	}
+
+	.sponsors-row-1 {
+		grid-template-columns: minmax(0, 1fr);
+		max-width: 220px;
 	}
 
 	.sponsors-row-featured {
@@ -357,7 +377,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	@media (max-width: 900px) {
 		.sponsors-row,
+		.sponsors-row-7,
+		.sponsors-row-6,
 		.sponsors-row-5 {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			max-width: 640px;
+			gap: 1.25rem 1.5rem;
+		}
+		.sponsors-row-4 {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			max-width: 640px;
 			gap: 1.25rem 1.5rem;
@@ -369,6 +396,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 		.sponsors-row-2 {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			max-width: 360px;
+		}
+		.sponsors-row-1 {
+			max-width: 200px;
 		}
 		.sponsors-row-featured {
 			grid-template-columns: 1fr;
@@ -411,11 +441,18 @@ import Lighthouse from '../components/Lighthouse.astro';
 			gap: 1.5rem;
 		}
 		.sponsors-row,
+		.sponsors-row-7,
+		.sponsors-row-6,
 		.sponsors-row-3,
-		.sponsors-row-5 {
+		.sponsors-row-5,
+		.sponsors-row-4 {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			max-width: 420px;
 			gap: 1rem 1.25rem;
+		}
+		.sponsors-row-2,
+		.sponsors-row-1 {
+			max-width: 340px;
 		}
 		.sponsors-row-featured {
 			grid-template-columns: 1fr;
