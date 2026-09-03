@@ -138,6 +138,42 @@ import Lighthouse from '../components/Lighthouse.astro';
 					(The Party at En Fuego Restaurant is open to everyone, but for food and drinks, you're on your own!)
 				</p>
 			</article>
+			<section class="honorees-section">
+				<h2 class="honorees-heading">Legends &amp; Champions Awards Ceremony</h2>
+				<p class="honorees-intro">The following people will be honored at the Legends and Champions Awards Ceremony on Opening Night, October 8, 2026. Please join us in celebrating their creative contributions to the sport and culture of surfing.</p>
+				<ul class="honorees-list">
+					<li>Chris Ahrens</li>
+					<li>Bill Bahne</li>
+					<li>Scott Bass</li>
+					<li>Debbie Beacham</li>
+					<li>Linda Benson</li>
+					<li>Tony Channin</li>
+					<li>Jeff Divine</li>
+					<li>Carl Ekstrom</li>
+					<li>Todd Glaser</li>
+					<li>Tony Hawk</li>
+					<li>Joyce Hoffman</li>
+					<li>Craig Hollingsworth</li>
+					<li>Tom Keck</li>
+					<li>Jim Kempton</li>
+					<li>Kevin Kinnear</li>
+					<li>Brian Logan</li>
+					<li>Rob Machado</li>
+					<li>Rusty Miller</li>
+					<li>Jericho Poppler</li>
+					<li>Rusty Preisendorfer</li>
+					<li>LJ Richards</li>
+					<li>Jane Schmauss</li>
+					<li>Steve Sherman</li>
+					<li>Jen Smith</li>
+					<li>Peter Sprague</li>
+					<li>Izzy Tihanyi</li>
+					<li>Shaun Tomson</li>
+					<li>Joel Tudor</li>
+					<li>Robert Wald</li>
+				</ul>
+			</section>
+
 			<h2 class="festival-tagline-heading" data-editable="festival.tagline-heading">HONORING THE PAST—INSPIRING THE FUTURE</h2>
 			<div class="photo-layout-split">
 				<article class="event-card">
@@ -881,6 +917,54 @@ import Lighthouse from '../components/Lighthouse.astro';
 		color: var(--color-ink);
 		line-height: 1.5;
 		margin: 0;
+	}
+
+	.honorees-section {
+		background: rgba(184, 220, 228, 0.55);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border-radius: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+		border-left: 6px solid var(--color-accent);
+		padding: 2rem 2rem 2rem 1.75rem;
+		margin-bottom: 2rem;
+	}
+
+	.honorees-heading {
+		font-family: var(--font-display);
+		font-size: clamp(1.35rem, 3vw, 1.75rem);
+		font-weight: 600;
+		color: var(--color-ink);
+		margin: 0 0 0.75rem;
+		line-height: 1.25;
+	}
+
+	.honorees-intro {
+		font-family: var(--font-body);
+		font-size: 1rem;
+		color: var(--color-ink);
+		line-height: 1.7;
+		margin: 0 0 1.5rem;
+	}
+
+	.honorees-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 0.5rem 1.5rem;
+	}
+
+	.honorees-list li {
+		font-family: var(--font-body);
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		letter-spacing: 0.03em;
+		padding: 0.3rem 0;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 	}
 
 	.festival-tagline-heading {
