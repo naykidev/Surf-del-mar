@@ -39,15 +39,31 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 			<h2 id="highlights-heading" class="highlights-heading" data-editable="home.highlights.heading">Highlights of the Festival</h2>
 			<div class="highlights-divider"></div>
 
-			<!-- En Fuego party -->
-			<article class="highlight-card">
+			<!-- Jeff Divine book signing -->
+			<article class="highlight-card highlight-card-triple">
 				<div class="highlight-media">
-					<img src="/enfuego.jpg" alt="En Fuego Cantina in Del Mar" class="highlight-img" width="1400" height="1050" loading="lazy" />
+					<img src="/jeff-divine-highlight.png" alt="Jeff Divine" class="highlight-img highlight-img-poster" width="819" height="1024" loading="lazy" />
 				</div>
 				<div class="highlight-body">
-					<p class="highlight-kicker" data-editable="home.highlight.enfuego.kicker">Friday Night · October 9th</p>
-					<h3 class="highlight-title" data-editable="home.highlight.enfuego.title">Surf Del Mar Party at En Fuego</h3>
-					<p class="highlight-text" data-editable="home.highlight.enfuego.body">Join us for a Surf Del Mar Party at En Fuego Restaurant, Friday night, October 9th from 5:00 to 9:00 pm. Music by Tower 7. The party at En Fuego Restaurant is open to everyone, but for food and drinks, you're on your own!</p>
+					<p class="highlight-kicker" data-editable="home.highlight.jeffdivine.kicker">Sunday · October 11th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.jeffdivine.title">Jeff Divine Book Signing</h3>
+					<p class="highlight-text" data-editable="home.highlight.jeffdivine.body">Meet legendary surf Photographer Jeff Divine and get a copy of his newest book "Divine Surf!" Sunday, October 11th at L'Auberge Hotel, 11:00 am.</p>
+				</div>
+				<div class="highlight-media highlight-media-book">
+					<img src="/divine-surf-book.png" alt="Divine Surf by Jeff Divine book cover" class="highlight-img highlight-img-poster highlight-img-book" width="819" height="1024" loading="lazy" />
+				</div>
+			</article>
+
+			<!-- Endless Summer screening -->
+			<article class="highlight-card">
+				<div class="highlight-media">
+					<img src="/filmfestival.jpg" alt="The Endless Summer film poster by Bruce Brown" class="highlight-img highlight-img-poster" width="178" height="252" loading="lazy" />
+				</div>
+				<div class="highlight-body">
+					<p class="highlight-kicker" data-editable="home.highlight.endlesssummer.kicker">Saturday Night · October 10th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.endlesssummer.title">The Endless Summer on the Lawn</h3>
+					<p class="highlight-text" data-editable="home.highlight.endlesssummer.body">Bring your friends, family and a picnic for a screening of Bruce Brown's classic film, The Endless Summer, Saturday night, October 10th, on the lawn at Powerhouse Park, Del Mar. The show starts between 6:30 and 7:00 pm…as soon as it's dark! Free Admission!</p>
+					<p class="highlight-credit" data-editable="home.highlight.endlesssummer.credit">Courtesy Bruce Brown Films LLC</p>
 				</div>
 			</article>
 
@@ -63,30 +79,15 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 				</div>
 			</article>
 
-			<!-- Endless Summer screening -->
+			<!-- En Fuego party -->
 			<article class="highlight-card">
 				<div class="highlight-media">
-					<img src="/filmfestival.jpg" alt="The Endless Summer film poster by Bruce Brown" class="highlight-img highlight-img-poster" width="178" height="252" loading="lazy" />
+					<img src="/enfuego.jpg" alt="En Fuego Cantina in Del Mar" class="highlight-img" width="1400" height="1050" loading="lazy" />
 				</div>
 				<div class="highlight-body">
-					<p class="highlight-kicker" data-editable="home.highlight.endlesssummer.kicker">Saturday Night · October 10th</p>
-					<h3 class="highlight-title" data-editable="home.highlight.endlesssummer.title">The Endless Summer on the Lawn</h3>
-					<p class="highlight-text" data-editable="home.highlight.endlesssummer.body">Bring your friends, family and a picnic for a screening of Bruce Brown's classic film, The Endless Summer, Saturday night, October 10th, on the lawn at Powerhouse Park, Del Mar. The show starts between 6:30 and 7:00 pm…as soon as it's dark! Free Admission!</p>
-				</div>
-			</article>
-
-			<!-- Jeff Divine book signing -->
-			<article class="highlight-card highlight-card-triple">
-				<div class="highlight-media">
-					<img src="/jeff-divine-highlight.png" alt="Jeff Divine" class="highlight-img highlight-img-poster" width="819" height="1024" loading="lazy" />
-				</div>
-				<div class="highlight-body">
-					<p class="highlight-kicker" data-editable="home.highlight.jeffdivine.kicker">Sunday · October 11th</p>
-					<h3 class="highlight-title" data-editable="home.highlight.jeffdivine.title">Jeff Divine Book Signing</h3>
-					<p class="highlight-text" data-editable="home.highlight.jeffdivine.body">Meet legendary surf Photographer Jeff Divine and get a copy of his newest book "Divine Surf!" Sunday, October 11th at L'Auberge Hotel, 11:00 am.</p>
-				</div>
-				<div class="highlight-media highlight-media-book">
-					<img src="/divine-surf-book.png" alt="Divine Surf by Jeff Divine book cover" class="highlight-img highlight-img-poster highlight-img-book" width="819" height="1024" loading="lazy" />
+					<p class="highlight-kicker" data-editable="home.highlight.enfuego.kicker">Friday Night · October 9th</p>
+					<h3 class="highlight-title" data-editable="home.highlight.enfuego.title">Surf Del Mar Party at En Fuego</h3>
+					<p class="highlight-text" data-editable="home.highlight.enfuego.body">Join us for a Surf Del Mar Party at En Fuego Restaurant, Friday night, October 9th from 5:00 to 9:00 pm. Music by Tower 7. The party at En Fuego Restaurant is open to everyone, but for food and drinks, you're on your own!</p>
 				</div>
 			</article>
 		</div>
@@ -486,6 +487,15 @@ const zeffyDonateUrl = getZeffyDonationUrl();
 		line-height: 1.7;
 		color: var(--color-ink);
 		margin: 0;
+	}
+
+	.highlight-credit {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		font-style: italic;
+		color: var(--color-sepia);
+		margin: 0.85rem 0 0 0;
+		line-height: 1.4;
 	}
 
 	@media (max-width: 768px) {
