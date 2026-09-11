@@ -46,8 +46,23 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  Featuring top surfing writers and photographers like Shaun Tomson, Chris Ahrens, Todd Glaser, Kim Dwinell, T. Jefferson Parker and others.  
-  In collaboration with Camino Books of Del Mar — stay tuned for the exact schedule.
+  In collaboration with Camino Books of Del Mar
+
+  **10:00 am – 10:45 am** — Chris Ahrens, author of “Windansea”  
+  Session: “Good Things Love Water”  
+  Book signing immediately following in the Ruby Room Patio
+
+  **11:00 am – 12:45 pm** — Shaun Tomson, author of “The Surfer & the Sage”  
+  Session: “The Surfer’s Code”  
+  Book signing immediately following in the Ruby Room
+
+  **1:00 pm – 1:45 pm** — T. Jefferson Parker, author of more than 30 books including “Silent Joe”  
+  Session: “Desperation Reef”  
+  Book signing immediately following in the Ruby Room Patio
+
+  **2:00 pm – 2:45 pm** — Kim Dwinell, author of “The Secret of Danger Point” and others  
+  Session: “Surfside Girls” Graphic Novel Series  
+  Book signing immediately following in the Ruby Room Patio
 
 - **Woody Wagon Parade Through Del Mar and Display**  
   Venue: Del Mar Train Station  
@@ -68,8 +83,19 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  Featuring legendary surf photographer Jeff Divine and photo editor Grant Ellis, launching the new book "Divine Surf," and author Patrick Moser.  
-  In collaboration with Camino Books of Del Mar — stay tuned for the exact schedule.
+  In collaboration with Camino Books of Del Mar
+
+  **10:00 am – 10:45 am** — Todd Glaser, author/photographer  
+  Session: “Kelly Slater – A Life of Waves”  
+  Book signing immediately following in the Ruby Room Patio
+
+  **11:00 am – 11:45 am** — Jeff Divine, author of “70s Surf Photographs”  
+  Session: “Divine Surf” in conversation with Grant Ellis  
+  Book signing immediately following in the Ruby Room
+
+  **1:00 pm – 1:45 pm** — Patrick Moser, author of “The Surfer’s Code” (with Shaun Tomson)  
+  Session: “Surf and Rescue: George Freeth and the Birth of Surf Culture”  
+  Book signing immediately following in the Ruby Room Patio
 
 - **Student Art Walk**  
   Venue: L'Auberge/Jim Watkins Outdoor Amphitheater  
