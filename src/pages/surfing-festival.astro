@@ -205,7 +205,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 	</div>
 
 	<script>
-		type ScheduleLine = { label: string; value: string };
+		type ScheduleLine = { label: string; value: string; href?: string };
 		type ScheduleBlock = { heading?: string; lines: ScheduleLine[] };
 		type EventSchedule = {
 			title: string;
@@ -316,7 +316,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			'book-fair': {
 				title: "Surfwriter's Book Fair",
 				day: 'Saturday & Sunday, October 10–11',
-				blurb: 'In collaboration with Camino Books of Del Mar—featuring top surfing writers and photographers at L\'Auberge Hotel Ruby Room and Patio.',
+				blurb: 'In collaboration with Camino Books of Del Mar—featuring top surfing writers and photographers at L\'Auberge Hotel Ruby Room and Patio. Register for the different signings at Camino Books in Del Mar: caminobks.com (look under “Events”).',
 				blocks: [
 					{
 						heading: 'Saturday, October 10',
@@ -324,6 +324,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 							{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
 							{ label: 'Hours', value: '10:00 am to 3:00 pm' },
 							{ label: 'Collaboration', value: 'Camino Books of Del Mar' },
+							{ label: 'Register', value: 'caminobks.com — look under “Events”', href: 'https://caminobks.com' },
 						],
 					},
 					{
@@ -364,6 +365,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 							{ label: 'Venue', value: "L'Auberge Hotel Ruby Room and Patio" },
 							{ label: 'Hours', value: '10:00 am to 3:00 pm' },
 							{ label: 'Collaboration', value: 'Camino Books of Del Mar' },
+							{ label: 'Register', value: 'caminobks.com — look under “Events”', href: 'https://caminobks.com' },
 						],
 					},
 					{
@@ -498,10 +500,12 @@ import Lighthouse from '../components/Lighthouse.astro';
 						? `<h3 class="event-schedule-block-title">${esc(block.heading)}</h3>`
 						: '';
 					const lines = block.lines
-						.map(
-							(line) =>
-								`<p class="event-schedule-line"><span class="event-schedule-label">${esc(line.label)}</span> ${esc(line.value)}</p>`
-						)
+						.map((line) => {
+							const value = line.href
+								? `<a href="${esc(line.href)}" target="_blank" rel="noopener noreferrer">${esc(line.value)}</a>`
+								: esc(line.value);
+							return `<p class="event-schedule-line"><span class="event-schedule-label">${esc(line.label)}</span> ${value}</p>`;
+						})
 						.join('');
 					return `<div class="event-schedule-block">${heading}${lines}</div>`;
 				})
@@ -1143,6 +1147,13 @@ import Lighthouse from '../components/Lighthouse.astro';
 	.event-schedule-items :global(.event-schedule-label) {
 		font-weight: 700;
 		color: var(--color-sepia);
+	}
+
+	.event-schedule-items :global(a) {
+		color: var(--color-accent);
+		font-weight: 600;
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 
 	.event-schedule-full-link {

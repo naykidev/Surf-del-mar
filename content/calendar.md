@@ -46,7 +46,8 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  In collaboration with Camino Books of Del Mar
+  In collaboration with Camino Books of Del Mar  
+  Register for the different signings at Camino Books in Del Mar: [caminobks.com](https://caminobks.com) (look under “Events”).
 
   **10:00 am – 10:45 am** — Chris Ahrens, author of “Windansea”  
   Session: “Good Things Love Water”  
@@ -83,7 +84,8 @@ title: Festival Schedule
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
-  In collaboration with Camino Books of Del Mar
+  In collaboration with Camino Books of Del Mar  
+  Register for the different signings at Camino Books in Del Mar: [caminobks.com](https://caminobks.com) (look under “Events”).
 
   **10:00 am – 10:45 am** — Todd Glaser, author/photographer  
   Session: “Kelly Slater – A Life of Waves”  
