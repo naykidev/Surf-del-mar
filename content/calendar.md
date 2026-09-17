@@ -13,9 +13,26 @@ title: Festival Schedule
 
 - **Surfing and Sustainability Climate Symposium**  
   Venue: St. Peter's Parish Hall  
-  Time: 11:00 am to 4:00 pm  
-  Hear leaders in the field of sustainability like Kevin Whildon of Sea Trees, Yehuda Ben-Hamo, Adam Young, speakers from Algenesis and others. Moderated by Del Mar TV personality Jeff Lehmann.  
-  Stay tuned for schedule of speakers.
+  Time: 10:00 am to 2:30 pm  
+  Bringing together the worlds of surfing and science to confront our most pressing coastal challenges.  
+  Moderated by Jeff Lehmann.
+
+  **10:00 am – 10:45 am** — Kevin Whilden, Seatrees  
+  “The Past, Present and Future of Sustainability in Surf Culture”
+
+  **10:45 am – 11:30 am** — Patrick McDonough, Coast Keepers  
+  “An Ocean of Plastic: Nurdles and the Global Plastics Crisis”
+
+  **11:30 am – 12:30 pm** — Ryan Simkovsky, Algenesis  
+  “Plastic, Reimagined: A Molecular Solution to Microplastics”
+
+  **12:30 pm – 1:00 pm** — Lunch Break
+
+  **1:00 pm – 1:45 pm** — Yehuda Ben-Hamo, WILDCOAST  
+  “Protecting Mexico’s Most Iconic Surfbreaks and Their Surrounding Habitats — The Challenges Ahead and How We Can Move Forward Together As A Global Surf Community”
+
+  **1:45 pm – 2:30 pm** — Adam Young, Scripps Institution of Oceanography  
+  “Scripps Coastal Mapping Program and Erosion Research”
 
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
