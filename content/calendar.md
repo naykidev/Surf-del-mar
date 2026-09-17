@@ -43,6 +43,11 @@ title: Festival Schedule
   Venue: Powerhouse Park  
   Time: 11:00 am to 9:30 pm
 
+- **Silent Auction**  
+  Venue: Powerhouse Park, under the Welcome/Information Canopy  
+  Bid sheets available all afternoon  
+  Bidding closes at 5:30 pm; winners announced at 6:00 pm
+
 - **Surfwriter's Book Fair**  
   Venue: L'Auberge Hotel Ruby Room and Patio  
   Time: 10:00 am to 3:00 pm  
@@ -68,7 +73,7 @@ title: Festival Schedule
 - **Woody Wagon Parade Through Del Mar and Display**  
   Venue: Del Mar Train Station  
   Time: 12:00 pm to 3:00 pm  
-  Woodies on display at the Del Mar Train Station from Noon to 3:00 pm. Festival Merchandise on sale at the Del Mar Train Station from Noon to 7:00 pm.
+  Woodies on display at the Del Mar Train Station from Noon to 3:00 pm. Festival Merchandise on sale at the Del Mar Train Station from Noon to 7:00 pm, including Festival Posters, T-shirts, beach towels, vintage shirts, a women’s wetsuit, and more.
 
 - **Afternoon Concert with the Mar Dels**  
   Venue: Powerhouse Park  
