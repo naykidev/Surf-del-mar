@@ -28,9 +28,27 @@ title: Festival Schedule
   Venue: St Peter's Hall  
   In collaboration with the California Surf Museum  
   Featuring some of the best short surfing films, highlighted by a showing of legendary surfer Shaun Tomson's film Bustin' Down The Door, with Q&A session with Shaun to follow.  
-  Daytime Films: 11:00 am to 4:30 pm  
-  Evening Session: 5:00 pm to 7:30 pm  
-  Stay tuned for the exact schedule.
+  Complimentary snacks, coffee and water will be available during the breaks between films.
+
+  **11:30 am** — Godpower (8 min)
+
+  **11:45 am** — Birth of The Endless Summer (83 min)
+
+  **1:05 pm** — Break
+
+  **1:30 pm** — The Rising Dawn (70 min)
+
+  **2:40 pm** — Break
+
+  **3:00 pm** — Wade In the Water (45 min)
+
+  **3:45 pm** — Break
+
+  **4:00 pm** — Shaped By The Sea (60 min)
+
+  **5:00 pm** — Break
+
+  **5:30 pm** — Bustin’ Down The Door (1 hr 46 min)
 
 - **Party Time at En Fuego Restaurant**  
   Time: 5:00 pm to 9:00 pm  
