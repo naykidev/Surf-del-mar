@@ -37,7 +37,7 @@ title: Festival Schedule
 - **Art Walk**  
   Venue: Del Mar Plaza's Canyon View Garden Patio  
   Time: 1:00 pm to 6:30 pm  
-  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emerick, Andy Wright, Jim McConlogue, Norm Daniels and others.
+  Featuring some of the area's best known surfing artists including: Kevin Anderson, Wade Koniakowsky, Sarah O'Connor, Michael Leyva, Jesse Martin, Mac Hillenbrand, Ted Emrick, Andy Wright, Jim McConlogue, Norm Daniels and others.
 
 ## Friday, October 9
 
@@ -66,11 +66,6 @@ title: Festival Schedule
   **5:00 pm** — Break
 
   **5:30 pm** — Bustin’ Down The Door (1 hr 46 min)
-
-- **Party Time at En Fuego Restaurant**  
-  Time: 5:00 pm to 9:00 pm  
-  Featuring music by Tower 7 and fabulous Mexican food!  
-  The party is open to everyone. For food and drinks, you're on your own!
 
 ## Saturday, October 10
 
@@ -135,8 +130,8 @@ title: Festival Schedule
   Session: “Divine Surf” in conversation with Grant Ellis  
   Book signing immediately following in the Ruby Room
 
-  **1:00 pm – 1:45 pm** — Patrick Moser, author of “The Surfer’s Code” (with Shaun Tomson)  
-  Session: “Surf and Rescue: George Freeth and the Birth of Surf Culture”  
+  **1:00 pm – 1:45 pm** — Patrick Moser, author of “Surf and Rescue: George Freeth and the Birth of California Beach Culture”  
+  Session: “Surf and Rescue: George Freeth and the Birth of California Beach Culture”  
   Book signing immediately following in the Ruby Room Patio
 
 - **Student Art Walk**  
