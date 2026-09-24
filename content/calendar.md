@@ -15,12 +15,13 @@ title: Festival Schedule
   Venue: St. Peter's Parish Hall  
   Time: 10:00 am to 2:30 pm  
   Bringing together the worlds of surfing and science to confront our most pressing coastal challenges.  
-  Moderated by Jeff Lehmann.
+  Moderated by Jeff Lehmann.  
+  All events are free, but space is limited. Please register at: [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under the event listed.
 
   **10:00 am – 10:45 am** — Kevin Whilden, Seatrees  
   “The Past, Present and Future of Sustainability in Surf Culture”
 
-  **10:45 am – 11:30 am** — Patrick McDonough, Coast Keepers  
+  **10:45 am – 11:30 am** — Patrick McDonough, San Diego Coastkeeper  
   “An Ocean of Plastic: Nurdles and the Global Plastics Crisis”
 
   **11:30 am – 12:30 pm** — Ryan Simkovsky, Algenesis  
@@ -45,7 +46,8 @@ title: Festival Schedule
   Venue: St Peter's Hall  
   In collaboration with the California Surf Museum  
   Featuring some of the best short surfing films, highlighted by a showing of legendary surfer Shaun Tomson's film Bustin' Down The Door, with Q&A session with Shaun to follow.  
-  Complimentary snacks, coffee and water will be available during the breaks between films.
+  Complimentary snacks, coffee and water will be available during the breaks between films.  
+  All events are free, but space is limited. Please register at: [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under the event listed.
 
   **11:30 am** — Godpower (8 min)
 
@@ -141,6 +143,16 @@ title: Festival Schedule
 
 - **Women on Waves**  
   Venue: St Peter's Parish Hall and Patio  
-  Time: 1:00 pm to 8:00 pm  
-  Featuring exceptional women whose lives have been shaped by water: speakers include, author Kim Dwinell, artist Sarah O'Connor, and meet the amazing mother/daughter team Valerie and Victoria Du Prat. During the week, Valerie is a scientist, and on the weekends she's a surfboard shaper. Daughter Victoria is a chamption teen surfer, riding the waves on boards her mother has created for her.  
-  Stay tuned for exact schedule.
+  Time: 1:00 pm to 5:00 pm  
+  Featuring exceptional women whose lives have been shaped by water.  
+  All events are free, but space is limited. Please register at: [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under the event listed.
+
+  **1:00 pm** — Sarah O’Connor, Artist
+
+  **1:30 pm** — Kim Dwinell, Author/Artist
+
+  **2:15 pm** — Break
+
+  **2:30 pm** — Valerie and Victoria Du Prat — Valerie: Scientist and Board Shaper; Victoria: Champion Junior USA Team Surfer
+
+  **3:30 pm** — Meredith Rose, Champion Bodysurfer and Engineer

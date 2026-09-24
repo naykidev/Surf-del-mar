@@ -127,7 +127,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 						</div>
 					</div>
 					<h3 data-editable="festival.events.woman-and-water.title">Women on Waves</h3>
-					<p data-editable="festival.events.woman-and-water.description">Featuring exceptional women whose lives have been shaped by water—including Kim Dwinell, Sarah O'Connor, and Valerie & Victoria Du Prat. Sunday, October 11, 2026.</p>
+					<p data-editable="festival.events.woman-and-water.description">Featuring exceptional women whose lives have been shaped by water—including Sarah O'Connor, Kim Dwinell, Valerie & Victoria Du Prat, and Meredith Rose. Sunday, October 11, 1:00 pm to 5:00 pm.</p>
 					<span class="event-card-hint">View schedule</span>
 				</article>
 			</div>
@@ -291,7 +291,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			'film-festival': {
 				title: 'Film Festival',
 				day: 'Friday, October 9',
-				blurb: "In collaboration with the California Surf Museum—featuring short surfing films highlighted by Shaun Tomson's Bustin' Down The Door with Q&A to follow. Complimentary snacks, coffee and water will be available during the breaks between films.",
+				blurb: "In collaboration with the California Surf Museum—featuring short surfing films highlighted by Shaun Tomson's Bustin' Down The Door with Q&A to follow. Complimentary snacks, coffee and water will be available during the breaks between films. All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.",
 				blocks: [
 					{
 						heading: 'Surfing Film Festival',
@@ -301,6 +301,15 @@ import Lighthouse from '../components/Lighthouse.astro';
 							{
 								label: 'Snacks',
 								value: 'Complimentary snacks, coffee and water during the breaks between films.',
+							},
+							{
+								label: 'Note',
+								value: 'All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.',
+							},
+							{
+								label: 'Register',
+								value: 'delmarhistoricalsociety.org',
+								href: 'https://delmarhistoricalsociety.org/',
 							},
 						],
 					},
@@ -485,7 +494,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 			sustainability: {
 				title: 'The Surfing and Sustainability Symposium',
 				day: 'Thursday, October 8',
-				blurb: 'Bringing together the worlds of surfing and science to confront our most pressing coastal challenges. Moderated by Jeff Lehmann.',
+				blurb: 'Bringing together the worlds of surfing and science to confront our most pressing coastal challenges. Moderated by Jeff Lehmann. All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.',
 				blocks: [
 					{
 						heading: 'The Surfing and Sustainability Symposium',
@@ -493,6 +502,15 @@ import Lighthouse from '../components/Lighthouse.astro';
 							{ label: 'Venue', value: "St. Peter's Parish Hall" },
 							{ label: 'Time', value: '10:00 am to 2:30 pm' },
 							{ label: 'Moderator', value: 'Jeff Lehmann' },
+							{
+								label: 'Note',
+								value: 'All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.',
+							},
+							{
+								label: 'Register',
+								value: 'delmarhistoricalsociety.org',
+								href: 'https://delmarhistoricalsociety.org/',
+							},
 						],
 					},
 					{
@@ -505,7 +523,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 					{
 						heading: '10:45 am – 11:30 am',
 						lines: [
-							{ label: 'Speaker', value: 'Patrick McDonough, Coast Keepers' },
+							{ label: 'Speaker', value: 'Patrick McDonough, San Diego Coastkeeper' },
 							{ label: 'Session', value: '“An Ocean of Plastic: Nurdles and the Global Plastics Crisis”' },
 						],
 					},
@@ -543,20 +561,49 @@ import Lighthouse from '../components/Lighthouse.astro';
 			'woman-and-water': {
 				title: 'Women on Waves',
 				day: 'Sunday, October 11',
-				blurb: 'Featuring exceptional women whose lives have been shaped by water. Stay tuned for exact schedule.',
+				blurb: 'Featuring exceptional women whose lives have been shaped by water. All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.',
 				blocks: [
 					{
 						heading: 'Women on Waves',
 						lines: [
 							{ label: 'Venue', value: "St Peter's Parish Hall and Patio" },
-							{ label: 'Time', value: '1:00 pm to 8:00 pm' },
+							{ label: 'Time', value: '1:00 pm to 5:00 pm' },
+							{
+								label: 'Note',
+								value: 'All events are free, but space is limited. Please register at delmarhistoricalsociety.org under the event listed.',
+							},
+							{
+								label: 'Register',
+								value: 'delmarhistoricalsociety.org',
+								href: 'https://delmarhistoricalsociety.org/',
+							},
+						],
+					},
+					{
+						heading: '1:00 pm',
+						lines: [{ label: 'Speaker', value: 'Sarah O’Connor, Artist' }],
+					},
+					{
+						heading: '1:30 pm',
+						lines: [{ label: 'Speaker', value: 'Kim Dwinell, Author/Artist' }],
+					},
+					{
+						heading: '2:15 pm',
+						lines: [{ label: 'Break', value: 'Break' }],
+					},
+					{
+						heading: '2:30 pm',
+						lines: [
+							{ label: 'Speakers', value: 'Valerie and Victoria Du Prat' },
 							{
 								label: 'Details',
-								value:
-									"Featuring exceptional women whose lives have been shaped by water: speakers include, author Kim Dwinell, artist Sarah O'Connor, and meet the amazing mother/daughter team Valerie and Victoria Du Prat. During the week, Valerie is a scientist, and on the weekends she's a surfboard shaper. Daughter Victoria is a chamption teen surfer, riding the waves on boards her mother has created for her.",
+								value: 'Valerie: Scientist and Board Shaper — Victoria: Champion Junior USA Team Surfer',
 							},
-							{ label: 'Note', value: 'Stay tuned for exact schedule.' },
 						],
+					},
+					{
+						heading: '3:30 pm',
+						lines: [{ label: 'Speaker', value: 'Meredith Rose, Champion Bodysurfer and Engineer' }],
 					},
 				],
 			},
