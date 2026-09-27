@@ -136,6 +136,10 @@ title: Festival Schedule
   Session: “Surf and Rescue: George Freeth and the Birth of California Beach Culture”  
   Book signing immediately following in the Ruby Room Patio
 
+  **2:00 pm – 2:45 pm** — Tom Keck, photographer  
+  Session: “Reflections: Life, Lens, Surf, Surfers”  
+  Book signing immediately following in the Ruby Room
+
 - **Student Art Walk**  
   Venue: L'Auberge/Jim Watkins Outdoor Amphitheater  
   Time: 11:00 am to 3:00 pm  
