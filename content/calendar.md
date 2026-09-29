@@ -76,6 +76,8 @@ title: Festival Schedule
   Time: 11:00 am to 9:30 pm
 
 - **Silent Auction**  
+  **SILENT AUCTION OPEN NOW!** Set to close on Saturday, October 10, 2026 at 5:30pm SHARP!  
+  [Bid now](https://www.zeffy.com/en-US/ticketing/del-mar-historical-societys-silent-auction)  
   Venue: Powerhouse Park, under the Welcome/Information Canopy  
   Bid sheets available all afternoon  
   Bidding closes at 5:30 pm; winners announced at 6:00 pm

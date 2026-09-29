@@ -4,6 +4,7 @@ import ScrollWaves from '../components/ScrollWaves.astro';
 import WaveSurfer from '../components/WaveSurfer.astro';
 import PirateShip from '../components/PirateShip.astro';
 import Lighthouse from '../components/Lighthouse.astro';
+import { ZEFFY_SHOP_URL } from '../config/siteLinks';
 ---
 
 <BaseLayout
@@ -109,7 +110,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 			<h2 class="section-heading">HOW TO ORDER</h2>
 
 			<article class="event-card contact-card">
-				<p class="contact-intro">To order your posters and T-shirts, please contact:</p>
+				<p class="contact-intro">Order posters and T-shirts online, or contact James Gooding.</p>
+				<a class="shop-btn" href={ZEFFY_SHOP_URL} target="_blank" rel="noopener noreferrer">Shop on Zeffy</a>
 				<div class="contact-block">
 					<p class="contact-name">James Gooding</p>
 					<a href="tel:6199773725" class="contact-link">619-977-3725</a>
@@ -425,6 +427,30 @@ import Lighthouse from '../components/Lighthouse.astro';
 		color: var(--color-ink);
 		line-height: 1.7;
 		margin-bottom: 1.25rem;
+	}
+
+	.shop-btn {
+		display: inline-block;
+		margin-bottom: 1.25rem;
+		padding: 0.75rem 1.4rem;
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--color-ink);
+		background: var(--color-cream);
+		border: 2px solid var(--color-sand-dark);
+		border-radius: 50px;
+		box-shadow: 0 2px 14px rgba(30, 122, 122, 0.2);
+		transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
+	}
+
+	.shop-btn:hover {
+		transform: translateY(-2px);
+		background: #fff;
+		box-shadow: 0 6px 22px rgba(30, 122, 122, 0.28);
 	}
 
 	.contact-block {

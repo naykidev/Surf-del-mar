@@ -4,6 +4,7 @@ import ScrollWaves from '../components/ScrollWaves.astro';
 import WaveSurfer from '../components/WaveSurfer.astro';
 import PirateShip from '../components/PirateShip.astro';
 import Lighthouse from '../components/Lighthouse.astro';
+import { ZEFFY_SILENT_AUCTION_URL, ZEFFY_SHOP_URL, SILENT_AUCTION_OPEN_NOTICE } from '../config/siteLinks';
 ---
 
 <BaseLayout
@@ -202,6 +203,14 @@ import Lighthouse from '../components/Lighthouse.astro';
 		</div>
 	</div>
 
+	<div
+		id="zeffy-campaigns"
+		hidden
+		data-auction={ZEFFY_SILENT_AUCTION_URL}
+		data-shop={ZEFFY_SHOP_URL}
+		data-notice={SILENT_AUCTION_OPEN_NOTICE}
+	></div>
+
 	<script>
 		type ScheduleLine = { label: string; value: string; href?: string };
 		type ScheduleBlock = { heading?: string; lines: ScheduleLine[] };
@@ -211,6 +220,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 			blurb: string;
 			blocks: ScheduleBlock[];
 		};
+
+		const zeffyMeta = document.getElementById('zeffy-campaigns');
+		const ZEFFY_SILENT_AUCTION_URL = zeffyMeta?.dataset.auction ?? '';
+		const ZEFFY_SHOP_URL = zeffyMeta?.dataset.shop ?? '';
+		const SILENT_AUCTION_OPEN_NOTICE = zeffyMeta?.dataset.notice ?? '';
 
 		const EVENT_SCHEDULES: Record<string, EventSchedule> = {
 			'surfers-reunion': {
@@ -232,6 +246,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 							{ label: 'Bid Sheets', value: 'Available all afternoon' },
 							{ label: 'Bidding Closes', value: '5:30 pm' },
 							{ label: 'Winners Announced', value: '6:00 pm' },
+							{ label: 'Bid online', value: SILENT_AUCTION_OPEN_NOTICE, href: ZEFFY_SILENT_AUCTION_URL },
 							{ label: 'Details', value: 'See the Silent Auction page for items and reserve bids.', href: '/silent-auction/' },
 						],
 					},
@@ -245,6 +260,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 								value:
 									'Woodies on display at the Del Mar Train Station from Noon to 3:00 pm. Festival Merchandise on sale at the Del Mar Train Station from Noon to 7:00 pm, including Festival Posters, T-shirts, beach towels, vintage shirts, a women’s wetsuit, and more.',
 							},
+							{ label: 'Shop online', value: 'Festival posters, T-shirts, and more', href: ZEFFY_SHOP_URL },
 						],
 					},
 					{

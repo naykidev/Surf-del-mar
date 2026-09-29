@@ -4,6 +4,7 @@ import ScrollWaves from '../components/ScrollWaves.astro';
 import WaveSurfer from '../components/WaveSurfer.astro';
 import PirateShip from '../components/PirateShip.astro';
 import Lighthouse from '../components/Lighthouse.astro';
+import { ZEFFY_SILENT_AUCTION_URL, ZEFFY_SHOP_URL, SILENT_AUCTION_OPEN_NOTICE } from '../config/siteLinks';
 ---
 
 <BaseLayout
@@ -26,6 +27,11 @@ import Lighthouse from '../components/Lighthouse.astro';
 
 	<section class="auction-content">
 		<div class="container">
+
+			<div class="auction-open">
+				<p class="auction-open-notice">{SILENT_AUCTION_OPEN_NOTICE}</p>
+				<a class="auction-bid-btn" href={ZEFFY_SILENT_AUCTION_URL} target="_blank" rel="noopener noreferrer">Bid now</a>
+			</div>
 
 			<p class="auction-intro">
 				The Surf Del Mar Festival Silent Auction will be held on <strong>Saturday, October 10, 2026</strong> in Powerhouse Park under the Welcome/Information Canopy. Bid sheets will be available all afternoon. Bidding closes at <strong>5:30 pm</strong>, and the winners will be announced at <strong>6:00 pm</strong>. All proceeds support the Del Mar Historical Society and the Surfing Festival.
@@ -96,6 +102,8 @@ import Lighthouse from '../components/Lighthouse.astro';
 				</article>
 			</div>
 
+			<a class="auction-bid-btn auction-bid-btn-after" href={ZEFFY_SILENT_AUCTION_URL} target="_blank" rel="noopener noreferrer">Bid now on Zeffy</a>
+
 			<article class="event-card info-card">
 				<h3 class="info-title">How the Auction Works</h3>
 				<ul class="info-list">
@@ -109,8 +117,9 @@ import Lighthouse from '../components/Lighthouse.astro';
 			<article class="event-card info-card">
 				<h3 class="info-title">Also for Sale at the Train Station</h3>
 				<p class="merchandise-note">
-					There will be many other items for sale like Festival Posters, T-shirts, beach towels, vintage shirts, a women’s wetsuit, and more at the Del Mar Train Station across from the Park.
+					There will be many other items for sale like Festival Posters, T-shirts, beach towels, vintage shirts, a women’s wetsuit, and more at the Del Mar Train Station across from the Park. Those items are also available online now.
 				</p>
+				<a class="auction-bid-btn" href={ZEFFY_SHOP_URL} target="_blank" rel="noopener noreferrer">Shop festival merchandise</a>
 			</article>
 
 		</div>
@@ -180,6 +189,54 @@ import Lighthouse from '../components/Lighthouse.astro';
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
+	}
+
+	.auction-open {
+		background: var(--color-ink);
+		color: var(--color-cream);
+		border-radius: 12px;
+		padding: 1.25rem 1.35rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.85rem;
+	}
+
+	.auction-open-notice {
+		font-family: var(--font-body);
+		font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		line-height: 1.45;
+		margin: 0;
+		color: var(--color-active);
+	}
+
+	.auction-bid-btn {
+		display: inline-block;
+		padding: 0.75rem 1.4rem;
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--color-ink);
+		background: var(--color-cream);
+		border: 2px solid var(--color-sand-dark);
+		border-radius: 50px;
+		box-shadow: 0 2px 14px rgba(30, 122, 122, 0.2);
+		transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
+	}
+
+	.auction-bid-btn:hover {
+		transform: translateY(-2px);
+		background: #fff;
+		box-shadow: 0 6px 22px rgba(30, 122, 122, 0.28);
+	}
+
+	.auction-bid-btn-after {
+		align-self: flex-start;
 	}
 
 	.auction-intro {
@@ -340,7 +397,7 @@ import Lighthouse from '../components/Lighthouse.astro';
 		font-size: 1rem;
 		color: var(--color-ink);
 		line-height: 1.7;
-		margin: 0;
+		margin: 0 0 1rem;
 	}
 
 	@media (max-width: 768px) {

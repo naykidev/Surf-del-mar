@@ -31,8 +31,9 @@ Uses **`public/admin/config.yml`**. After you save in the CMS, changes are **com
 
 ## Donation link (Zeffy)
 
-- **Homepage:** “Donate with Zeffy” button and **Support** heading/body use `src/config/siteLinks.ts` and the same URL as the footer.
-- **Override in production:** Set **`PUBLIC_ZEFFY_DONATION_URL`** in Netlify → Site settings → Environment variables → redeploy.
+- **Donate** (header, footer, homepage “Donate with Zeffy”) goes to the donations-only form in `src/config/siteLinks.ts`.
+- **Silent auction** and **shop** buttons use the matching Zeffy campaigns in that same file.
+- **Override Donate in production:** Set **`PUBLIC_ZEFFY_DONATION_URL`** in Netlify → Site settings → Environment variables → redeploy. Leave it unset to use the donations-only form.
 
 ## Del Mar Historical Society link
 
