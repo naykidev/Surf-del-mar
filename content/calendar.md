@@ -69,6 +69,9 @@ title: Festival Schedule
 
   **5:30 pm** — Bustin’ Down The Door (1 hr 46 min)
 
+  **Special Film Showing Just Added** — “Del Mar Surf History: Roots” by Jim Lischer  
+  Sunday, October 11th at 5:00 pm at St. Peter's Church Parish Hall. The film features stories and interviews with over 75 Del Mar surfers over the years, the first of its kind to document Del Mar surfing history. A short film honoring Don Hansen will be shown just before “Roots.” The event is free, but space is limited. Please register at [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under Festival events.
+
 ## Saturday, October 10
 
 - **Surfer's Reunion**  
@@ -153,7 +156,7 @@ title: Festival Schedule
   Featuring exceptional women whose lives have been shaped by water.  
   All events are free, but space is limited. Please register at: [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under the event listed.
 
-  **1:00 pm** — Sarah O’Connor, Artist
+  **1:00 pm** — Olga Freedman, Artist
 
   **1:30 pm** — Kim Dwinell, Author/Artist
 
@@ -162,3 +165,10 @@ title: Festival Schedule
   **2:30 pm** — Valerie and Victoria Du Prat — Valerie: Scientist and Board Shaper; Victoria: Champion Junior USA Team Surfer
 
   **3:30 pm** — Meredith Rose, Champion Bodysurfer and Engineer
+
+- **Special Film Showing Just Added**  
+  **“Del Mar Surf History: Roots”** by Jim Lischer  
+  Venue: St. Peter's Church Parish Hall  
+  Time: 5:00 pm  
+  The film features stories and interviews with over 75 Del Mar surfers over the years, the first of its kind to document Del Mar surfing history. A short film honoring Don Hansen will be shown just before “Roots.”  
+  The event is free, but space is limited. Please register at: [delmarhistoricalsociety.org](https://delmarhistoricalsociety.org/) under Festival events.
