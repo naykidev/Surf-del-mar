@@ -116,6 +116,11 @@ title: Festival Schedule
   Venue: Powerhouse Park  
   Time: 2:00 pm to 5:00 pm
 
+- **Tower 7 at En Fuego**  
+  Venue: En Fuego Cantina & Grill, Del Mar  
+  Time: 6:00 pm to 9:00 pm  
+  Free, all-ages surf instrumental show. Tower 7 started in Del Mar in 1979.
+
 - **Showing of The Endless Summer**  
   Venue: Powerhouse Park Lawn  
   Time: Starts between 6:30 pm and 7:00 pm (as soon as it's dark)  
